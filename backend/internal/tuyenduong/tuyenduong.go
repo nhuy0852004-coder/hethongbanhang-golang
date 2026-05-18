@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"hethongbanhang/backend/internal/caidat"
+	"hethongbanhang/backend/internal/modules/danhmuc"
 	"hethongbanhang/backend/internal/modules/taikhoan"
 	"hethongbanhang/backend/internal/phanhoi"
 	"hethongbanhang/backend/internal/trunggian"
@@ -35,13 +36,30 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh) {
 	taikhoanService := taikhoan.TaoTaiKhoanService(taikhoanRepository, cauhinh.JWTBiMat)
 	taikhoanHandler := taikhoan.TaoTaiKhoanHandler(taikhoanService)
 
+	danhmucRepository := danhmuc.TaoDanhMucRepository(db)
+	danhmucService := danhmuc.TaoDanhMucService(danhmucRepository)
+	danhmucHandler := danhmuc.TaoDanhMucHandler(danhmucService)
+
 	api.POST("/dangnhap", taikhoanHandler.DangNhap)
+
+	api.GET("/danhmuc", danhmucHandler.DanhSach)
+	api.GET("/danhmuc/:id", danhmucHandler.ChiTiet)
 
 	nhomDaDangNhap := api.Group("")
 	nhomDaDangNhap.Use(trunggian.KiemTraJWT(cauhinh.JWTBiMat))
 	{
 		nhomDaDangNhap.POST("/dangxuat", taikhoanHandler.DangXuat)
 		nhomDaDangNhap.GET("/thong-tin-tai-khoan", taikhoanHandler.ThongTinTaiKhoan)
+	}
+
+	nhomQuanTriGoc := api.Group("")
+	nhomQuanTriGoc.Use(trunggian.KiemTraJWT(cauhinh.JWTBiMat))
+	nhomQuanTriGoc.Use(trunggian.ChiQuanTri())
+	{
+		nhomQuanTriGoc.POST("/danhmuc", danhmucHandler.Tao)
+		nhomQuanTriGoc.PUT("/danhmuc/:id", danhmucHandler.CapNhat)
+		nhomQuanTriGoc.DELETE("/danhmuc/:id", danhmucHandler.Xoa)
+		nhomQuanTriGoc.PATCH("/danhmuc/:id/trangthai", danhmucHandler.CapNhatTrangThai)
 	}
 
 	nhomQuanTri := api.Group("/admin")
