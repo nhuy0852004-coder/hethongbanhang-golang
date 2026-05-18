@@ -1,5 +1,5 @@
 ﻿import { createBrowserRouter } from "react-router-dom";
-import BocCucAdmin from "../layouts/BocCucAdmin";
+import BocCucAdmin from "../layouts/admin/BocCucAdmin";
 import TrangKiemTra from "../pages/TrangKiemTra";
 import TrangRong from "../components/TrangRong";
 import BaoVeDangNhap from "../components/BaoVeDangNhap";
