@@ -102,6 +102,180 @@ body {
   min-width: 0;
 }
 
+.trang-dang-nhap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #f5f7fa;
+}
+
+.hop-dang-nhap {
+  width: 100%;
+  max-width: 430px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 30px;
+}
+
+.logo-dang-nhap {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+}
+
+.hop-dang-nhap h1 {
+  font-size: 24px;
+  margin: 0 0 8px;
+  color: #111827;
+}
+
+.hop-dang-nhap p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.form-dang-nhap {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nhom-nhap label {
+  display: block;
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 7px;
+  font-weight: 600;
+}
+
+.o-nhap-co-icon {
+  height: 44px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  color: #6b7280;
+  background: #ffffff;
+}
+
+.o-nhap-co-icon:focus-within {
+  border-color: #2563eb;
+}
+
+.o-nhap-co-icon input {
+  border: 0;
+  outline: 0;
+  flex: 1;
+  font-size: 14px;
+  color: #111827;
+}
+
+.nut-dang-nhap {
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.nut-dang-nhap:hover {
+  background: #1d4ed8;
+}
+
+.nut-dang-nhap:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.goi-y-dang-nhap {
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.goi-y-dang-nhap span {
+  color: #6b7280;
+}
+
+.goi-y-dang-nhap strong {
+  color: #111827;
+}
+
+.cum-ben-phai-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tai-khoan-header {
+  height: 42px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+  padding: 0 8px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tai-khoan-header strong {
+  display: block;
+  font-size: 13px;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.tai-khoan-header span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.nut-dang-xuat {
+  border: 0;
+  background: #f3f4f6;
+  color: #374151;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+}
+
+.nut-dang-xuat:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+@media (max-width: 768px) {
+  .cum-ben-phai-header {
+    gap: 8px;
+  }
+
+  .tai-khoan-header div {
+    display: none;
+  }
+}
 .dau-trang-admin {
   height: 76px;
   background: var(--mau-the);

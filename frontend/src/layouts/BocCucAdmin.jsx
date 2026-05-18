@@ -1,5 +1,17 @@
-﻿import { Outlet, NavLink } from "react-router-dom";
-import { LayoutDashboard, Package, Tags, ShoppingCart, Users, Bell, BarChart3, Settings } from "lucide-react";
+﻿import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Package,
+  Tags,
+  ShoppingCart,
+  Users,
+  Bell,
+  BarChart3,
+  Settings,
+  LogOut,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import useTaiKhoanStore from "../stores/taikhoanStore";
 
 const menu = [
   { ten: "Tổng quan", duongdan: "/", icon: LayoutDashboard },
@@ -13,6 +25,16 @@ const menu = [
 ];
 
 export default function BocCucAdmin() {
+  const navigate = useNavigate();
+  const taikhoan = useTaiKhoanStore((state) => state.taikhoan);
+  const dangXuat = useTaiKhoanStore((state) => state.dangXuat);
+
+  const xuLyDangXuat = () => {
+    dangXuat();
+    toast.success("Đã đăng xuất");
+    navigate("/dangnhap", { replace: true });
+  };
+
   return (
     <div className="bo-cuc-admin">
       <aside className="thanh-ben">
@@ -45,10 +67,23 @@ export default function BocCucAdmin() {
             <p>Quản lý cửa hàng, sản phẩm, đơn hàng và doanh thu</p>
           </div>
 
-          <button className="nut-thong-bao">
-            <Bell size={18} />
-            <span>0</span>
-          </button>
+          <div className="cum-ben-phai-header">
+            <button className="nut-thong-bao">
+              <Bell size={18} />
+              <span>0</span>
+            </button>
+
+            <div className="tai-khoan-header">
+              <div>
+                <strong>{taikhoan?.hoten || "Quản trị viên"}</strong>
+                <span>{taikhoan?.vaitro === "quantri" ? "Quản trị" : "Nhân viên"}</span>
+              </div>
+
+              <button className="nut-dang-xuat" onClick={xuLyDangXuat}>
+                <LogOut size={17} />
+              </button>
+            </div>
+          </div>
         </header>
 
         <section className="khung-noi-dung">

@@ -1,41 +1,45 @@
 ﻿package main
 
 import (
-    "log"
+	"log"
 
-    "hethongbanhang/backend/internal/caidat"
-    "hethongbanhang/backend/internal/cosodulieu"
-    "hethongbanhang/backend/internal/truycap"
-    "hethongbanhang/backend/internal/tuyenduong"
+	"hethongbanhang/backend/internal/caidat"
+	"hethongbanhang/backend/internal/cosodulieu"
+	"hethongbanhang/backend/internal/modules/taikhoan"
+	"hethongbanhang/backend/internal/truycap"
+	"hethongbanhang/backend/internal/tuyenduong"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-    cauhinh := caidat.LayCauHinh()
+	cauhinh := caidat.LayCauHinh()
 
-    if cauhinh.CheDo == "production" {
-        gin.SetMode(gin.ReleaseMode)
-    }
+	if cauhinh.CheDo == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
-    db, loi := cosodulieu.KetNoi(cauhinh)
-    if loi != nil {
-        log.Fatal("Không thể kết nối MySQL: ", loi)
-    }
-    defer db.Close()
+	db, loi := cosodulieu.KetNoi(cauhinh)
+	if loi != nil {
+		log.Fatal("Không thể kết nối MySQL: ", loi)
+	}
+	defer db.Close()
 
-    r := gin.Default()
+	taikhoan.TaoTaiKhoanQuanTriMacDinh(db)
 
-    r.Use(truycap.ChoPhepTruyCap(cauhinh.URLFrontend))
+	r := gin.Default()
 
-    r.Static("/uploads", "./public/uploads")
+	r.Use(truycap.ChoPhepTruyCap(cauhinh.URLFrontend))
 
-    tuyenduong.DangKy(r, db)
+	r.Static("/uploads", "./public/uploads")
 
-    log.Println("Backend đang chạy tại cổng:", cauhinh.CongChay)
-    log.Println("API kiểm tra: http://localhost:" + cauhinh.CongChay + "/api/kiemtra")
+	tuyenduong.DangKy(r, db, cauhinh)
 
-    if loi := r.Run(":" + cauhinh.CongChay); loi != nil {
-        log.Fatal("Không thể chạy backend: ", loi)
-    }
+	log.Println("Backend đang chạy tại cổng:", cauhinh.CongChay)
+	log.Println("API kiểm tra: http://localhost:" + cauhinh.CongChay + "/api/kiemtra")
+	log.Println("API đăng nhập: http://localhost:" + cauhinh.CongChay + "/api/dangnhap")
+
+	if loi := r.Run(":" + cauhinh.CongChay); loi != nil {
+		log.Fatal("Không thể chạy backend: ", loi)
+	}
 }
