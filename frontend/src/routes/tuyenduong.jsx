@@ -5,6 +5,7 @@ import TrangRong from "../components/TrangRong";
 import BaoVeDangNhap from "../components/BaoVeDangNhap";
 import DangNhap from "../modules/taikhoan/DangNhap";
 import DanhSachDanhMuc from "../modules/danhmuc/DanhSachDanhMuc";
+import DanhSachSanPham from "../modules/sanpham/DanhSachSanPham";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
           },
           {
             path: "admin/sanpham",
-            element: <TrangRong tieude="Module sản phẩm" mota="Sẽ làm chi tiết ở Ngày 5." />,
+            element: <DanhSachSanPham />,
           },
           {
             path: "admin/donhang",
