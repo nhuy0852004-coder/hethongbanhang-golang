@@ -6,6 +6,7 @@ import (
 	"hethongbanhang/backend/internal/caidat"
 	"hethongbanhang/backend/internal/cosodulieu"
 	"hethongbanhang/backend/internal/modules/taikhoan"
+	"hethongbanhang/backend/internal/thoigianthuc"
 	"hethongbanhang/backend/internal/truycap"
 	"hethongbanhang/backend/internal/tuyenduong"
 
@@ -27,17 +28,19 @@ func main() {
 
 	taikhoan.TaoTaiKhoanQuanTriMacDinh(db)
 
+	realtime := thoigianthuc.TaoTrungTamRealtime()
+
 	r := gin.Default()
 
 	r.Use(truycap.ChoPhepTruyCap(cauhinh.URLFrontend))
 
 	r.Static("/uploads", "./public/uploads")
 
-	tuyenduong.DangKy(r, db, cauhinh)
+	tuyenduong.DangKy(r, db, cauhinh, realtime)
 
 	log.Println("Backend đang chạy tại cổng:", cauhinh.CongChay)
 	log.Println("API kiểm tra: http://localhost:" + cauhinh.CongChay + "/api/kiemtra")
-	log.Println("API đăng nhập: http://localhost:" + cauhinh.CongChay + "/api/dangnhap")
+	log.Println("WebSocket realtime: ws://localhost:" + cauhinh.CongChay + "/ws")
 
 	if loi := r.Run(":" + cauhinh.CongChay); loi != nil {
 		log.Fatal("Không thể chạy backend: ", loi)

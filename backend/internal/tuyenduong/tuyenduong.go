@@ -11,12 +11,17 @@ import (
 	"hethongbanhang/backend/internal/modules/sanpham"
 	"hethongbanhang/backend/internal/modules/taikhoan"
 	"hethongbanhang/backend/internal/phanhoi"
+	"hethongbanhang/backend/internal/thoigianthuc"
 	"hethongbanhang/backend/internal/trunggian"
 
 	"github.com/gin-gonic/gin"
 )
 
-func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh) {
+func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigianthuc.TrungTamRealtime) {
+	r.GET("/ws", func(c *gin.Context) {
+		realtime.XuLyKetNoi(c, cauhinh.JWTBiMat)
+	})
+
 	api := r.Group("/api")
 
 	api.GET("/kiemtra", func(c *gin.Context) {
@@ -47,7 +52,7 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh) {
 	sanphamHandler := sanpham.TaoSanPhamHandler(sanphamService)
 
 	donhangRepository := donhang.TaoDonHangRepository(db)
-	donhangService := donhang.TaoDonHangService(donhangRepository)
+	donhangService := donhang.TaoDonHangService(donhangRepository, realtime)
 	donhangHandler := donhang.TaoDonHangHandler(donhangService)
 
 	api.POST("/dangnhap", taikhoanHandler.DangNhap)

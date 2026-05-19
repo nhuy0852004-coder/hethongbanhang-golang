@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import useTaiKhoanStore from "../../stores/taikhoanStore";
 import useGiaoDienStore from "../../stores/giaodienStore";
+import useRealtimeAdmin from "../../hooks/useRealtimeAdmin";
 
 export default function DauTrangAdmin() {
   const navigate = useNavigate();
@@ -13,6 +14,10 @@ export default function DauTrangAdmin() {
   const moSidebarMobile = useGiaoDienStore((state) => state.moSidebarMobile);
   const tieuDeTrang = useGiaoDienStore((state) => state.tieuDeTrang);
   const moTaTrang = useGiaoDienStore((state) => state.moTaTrang);
+
+  const { daKetNoi } = useRealtimeAdmin({
+    bat: Boolean(taikhoan),
+  });
 
   const xuLyDangXuat = () => {
     dangXuat();
@@ -41,6 +46,10 @@ export default function DauTrangAdmin() {
       </div>
 
       <div className="header-phai">
+        <div className={daKetNoi ? "trang-thai-realtime ket-noi" : "trang-thai-realtime mat-ket-noi"}>
+          {daKetNoi ? "Realtime" : "Mất kết nối"}
+        </div>
+
         <button className="nut-chuong">
           <Bell size={19} />
           <span>0</span>
