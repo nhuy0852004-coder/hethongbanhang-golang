@@ -22,7 +22,7 @@ func (r *TongQuanRepository) LayThongKe() (ThongKeTongQuan, error) {
 		SELECT COALESCE(SUM(tongtien), 0)
 		FROM donhang
 		WHERE DATE(created_at) = CURDATE()
-		AND trangthai = 'hoan_thanh'
+		AND trangthai != 'da_huy'
 		AND deleted_at IS NULL
 	`).Scan(&thongKe.DoanhThuHomNay)
 
@@ -70,15 +70,15 @@ func (r *TongQuanRepository) LayDoanhThuBayNgay() ([]DoanhThuTheoNgay, error) {
 
 	rows, loi := r.db.Query(`
 		SELECT
-			DATE(created_at) AS ngay,
-			COALESCE(SUM(CASE WHEN trangthai = 'hoan_thanh' THEN tongtien ELSE 0 END), 0) AS doanhthu,
+			DATE_FORMAT(created_at, '%Y-%m-%d') AS ngay,
+			COALESCE(SUM(CASE WHEN trangthai != 'da_huy' THEN tongtien ELSE 0 END), 0) AS doanhthu,
 			COUNT(*) AS donhang
 		FROM donhang
 		WHERE deleted_at IS NULL
 		AND DATE(created_at) >= ?
 		AND DATE(created_at) <= ?
-		GROUP BY DATE(created_at)
-		ORDER BY DATE(created_at) ASC
+		GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')
+		ORDER BY DATE_FORMAT(created_at, '%Y-%m-%d') ASC
 	`, ngayBatDau, ngayKetThuc)
 
 	if loi != nil {
@@ -136,7 +136,7 @@ func (r *TongQuanRepository) LayDonHangMoiNhat() ([]DonHangMoiNhat, error) {
 		FROM donhang
 		WHERE deleted_at IS NULL
 		ORDER BY id DESC
-		LIMIT 6
+		LIMIT 8
 	`)
 
 	if loi != nil {
@@ -182,9 +182,9 @@ func (r *TongQuanRepository) LaySanPhamSapHet() ([]SanPhamSapHet, error) {
 		FROM sanpham sp
 		LEFT JOIN danhmuc dm ON dm.id = sp.danhmuc_id
 		WHERE sp.deleted_at IS NULL
-		AND sp.soluongton <= 5
+		AND sp.soluongton <= 10
 		ORDER BY sp.soluongton ASC, sp.id DESC
-		LIMIT 8
+		LIMIT 10
 	`)
 
 	if loi != nil {

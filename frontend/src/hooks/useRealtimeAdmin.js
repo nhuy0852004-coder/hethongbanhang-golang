@@ -4,32 +4,30 @@ import toast from "react-hot-toast";
 export default function useRealtimeAdmin({
   bat = true,
   onDonHangMoi,
-  onCapNhatDonHang,
   onThongBaoMoi,
+  onCapNhatDonHang,
 } = {}) {
   const wsRef = useRef(null);
   const reconnectRef = useRef(null);
 
   const onDonHangMoiRef = useRef(onDonHangMoi);
-  const onCapNhatDonHangRef = useRef(onCapNhatDonHang);
   const onThongBaoMoiRef = useRef(onThongBaoMoi);
+  const onCapNhatDonHangRef = useRef(onCapNhatDonHang);
 
   const [daKetNoi, setDaKetNoi] = useState(false);
 
   useEffect(() => {
     onDonHangMoiRef.current = onDonHangMoi;
-    onCapNhatDonHangRef.current = onCapNhatDonHang;
     onThongBaoMoiRef.current = onThongBaoMoi;
-  }, [onDonHangMoi, onCapNhatDonHang, onThongBaoMoi]);
+    onCapNhatDonHangRef.current = onCapNhatDonHang;
+  }, [onDonHangMoi, onThongBaoMoi, onCapNhatDonHang]);
 
   useEffect(() => {
-    if (!bat) {
-      return;
-    }
+    if (!bat) return;
 
     let daHuy = false;
 
-    const ketNoi = () => {
+    function ketNoi() {
       const token = localStorage.getItem("ma_dang_nhap");
 
       if (!token) {
@@ -45,7 +43,6 @@ export default function useRealtimeAdmin({
 
       ws.onopen = () => {
         if (daHuy) {
-          ws.close();
           return;
         }
 
@@ -69,8 +66,8 @@ export default function useRealtimeAdmin({
           if (tinNhan.sukien === "cap_nhat_trang_thai_don_hang") {
             onCapNhatDonHangRef.current?.(tinNhan.dulieu);
           }
-        } catch (error) {
-          console.warn("Tin nhắn realtime không hợp lệ", error);
+        } catch {
+          console.warn("Tin nhắn realtime không hợp lệ");
         }
       };
 
@@ -87,7 +84,7 @@ export default function useRealtimeAdmin({
           }, 2500);
         }
       };
-    };
+    }
 
     ketNoi();
 
@@ -96,16 +93,19 @@ export default function useRealtimeAdmin({
 
       if (reconnectRef.current) {
         clearTimeout(reconnectRef.current);
+        reconnectRef.current = null;
       }
 
       const ws = wsRef.current;
+
       if (ws) {
         ws.onopen = null;
         ws.onmessage = null;
         ws.onerror = null;
         ws.onclose = null;
-        if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
-          ws.close();
+
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.close(1000, "Component unmount");
         }
       }
 
@@ -113,5 +113,7 @@ export default function useRealtimeAdmin({
     };
   }, [bat]);
 
-  return { daKetNoi };
+  return {
+    daKetNoi,
+  };
 }
