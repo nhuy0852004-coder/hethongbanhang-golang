@@ -6,18 +6,25 @@ import (
 	"math"
 	"time"
 
+	thongbaomodule "hethongbanhang/backend/internal/modules/thongbao"
 	"hethongbanhang/backend/internal/thoigianthuc"
 )
 
 type DonHangService struct {
-	repository *DonHangRepository
-	realtime   *thoigianthuc.TrungTamRealtime
+	repository      *DonHangRepository
+	realtime        *thoigianthuc.TrungTamRealtime
+	thongbaoService *thongbaomodule.ThongBaoService
 }
 
-func TaoDonHangService(repository *DonHangRepository, realtime *thoigianthuc.TrungTamRealtime) *DonHangService {
+func TaoDonHangService(
+	repository *DonHangRepository,
+	realtime *thoigianthuc.TrungTamRealtime,
+	thongbaoService *thongbaomodule.ThongBaoService,
+) *DonHangService {
 	return &DonHangService{
-		repository: repository,
-		realtime:   realtime,
+		repository:      repository,
+		realtime:        realtime,
+		thongbaoService: thongbaoService,
 	}
 }
 
@@ -82,13 +89,27 @@ func (s *DonHangService) TaoDonHang(request TaoDonHangRequest) (*DonHang, error)
 		return nil, loi
 	}
 
+	var thongBaoMoi interface{} = nil
+
+	if s.thongbaoService != nil {
+		tb, loiTaoThongBao := s.thongbaoService.TaoThongBaoDonHangMoi(
+			duLieu.ID,
+			duLieu.MaDonHang,
+			duLieu.HoTen,
+			duLieu.TongTien,
+		)
+
+		if loiTaoThongBao == nil {
+			thongBaoMoi = tb
+		}
+	}
+
 	if s.realtime != nil {
 		s.realtime.GuiChoAdmin("don_hang_moi", duLieu)
-		s.realtime.GuiChoAdmin("thong_bao_moi", map[string]interface{}{
-			"tieude":  "Đơn hàng mới",
-			"noidung": "Bạn có đơn hàng mới từ " + duLieu.HoTen,
-			"donhang": duLieu,
-		})
+
+		if thongBaoMoi != nil {
+			s.realtime.GuiChoAdmin("thong_bao_moi", thongBaoMoi)
+		}
 	}
 
 	return duLieu, nil

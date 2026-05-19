@@ -10,6 +10,7 @@ import (
 	"hethongbanhang/backend/internal/modules/donhang"
 	"hethongbanhang/backend/internal/modules/sanpham"
 	"hethongbanhang/backend/internal/modules/taikhoan"
+	"hethongbanhang/backend/internal/modules/thongbao"
 	"hethongbanhang/backend/internal/phanhoi"
 	"hethongbanhang/backend/internal/thoigianthuc"
 	"hethongbanhang/backend/internal/trunggian"
@@ -51,8 +52,12 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	sanphamService := sanpham.TaoSanPhamService(sanphamRepository)
 	sanphamHandler := sanpham.TaoSanPhamHandler(sanphamService)
 
+	thongbaoRepository := thongbao.TaoThongBaoRepository(db)
+	thongbaoService := thongbao.TaoThongBaoService(thongbaoRepository)
+	thongbaoHandler := thongbao.TaoThongBaoHandler(thongbaoService)
+
 	donhangRepository := donhang.TaoDonHangRepository(db)
-	donhangService := donhang.TaoDonHangService(donhangRepository, realtime)
+	donhangService := donhang.TaoDonHangService(donhangRepository, realtime, thongbaoService)
 	donhangHandler := donhang.TaoDonHangHandler(donhangService)
 
 	api.POST("/dangnhap", taikhoanHandler.DangNhap)
@@ -91,6 +96,12 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 		nhomQuanTriGoc.GET("/donhang/:id", donhangHandler.ChiTiet)
 		nhomQuanTriGoc.PATCH("/donhang/:id/trangthai", donhangHandler.CapNhatTrangThai)
 		nhomQuanTriGoc.DELETE("/donhang/:id", donhangHandler.Xoa)
+
+		nhomQuanTriGoc.GET("/thongbao", thongbaoHandler.DanhSach)
+		nhomQuanTriGoc.GET("/thongbao/dem-chua-doc", thongbaoHandler.DemChuaDoc)
+		nhomQuanTriGoc.PATCH("/thongbao/:id/dadoc", thongbaoHandler.CapNhatDaDoc)
+		nhomQuanTriGoc.PATCH("/thongbao/danh-dau-tat-ca", thongbaoHandler.DanhDauTatCaDaDoc)
+		nhomQuanTriGoc.DELETE("/thongbao/:id", thongbaoHandler.Xoa)
 	}
 
 	nhomQuanTri := api.Group("/admin")

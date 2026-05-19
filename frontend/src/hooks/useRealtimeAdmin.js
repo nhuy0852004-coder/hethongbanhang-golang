@@ -4,25 +4,26 @@ import toast from "react-hot-toast";
 export default function useRealtimeAdmin({
   bat = true,
   onDonHangMoi,
+  onThongBaoMoi,
   onCapNhatDonHang,
 } = {}) {
   const wsRef = useRef(null);
   const reconnectRef = useRef(null);
 
   const onDonHangMoiRef = useRef(onDonHangMoi);
+  const onThongBaoMoiRef = useRef(onThongBaoMoi);
   const onCapNhatDonHangRef = useRef(onCapNhatDonHang);
 
   const [daKetNoi, setDaKetNoi] = useState(false);
 
   useEffect(() => {
     onDonHangMoiRef.current = onDonHangMoi;
+    onThongBaoMoiRef.current = onThongBaoMoi;
     onCapNhatDonHangRef.current = onCapNhatDonHang;
-  }, [onDonHangMoi, onCapNhatDonHang]);
+  }, [onDonHangMoi, onThongBaoMoi, onCapNhatDonHang]);
 
   useEffect(() => {
-    if (!bat) {
-      return;
-    }
+    if (!bat) return;
 
     let daHuy = false;
 
@@ -46,15 +47,12 @@ export default function useRealtimeAdmin({
           return;
         }
 
-        console.log("WebSocket admin đã kết nối");
         setDaKetNoi(true);
       };
 
       ws.onmessage = (event) => {
         try {
           const tinNhan = JSON.parse(event.data);
-
-          console.log("Realtime admin:", tinNhan);
 
           if (tinNhan.sukien === "don_hang_moi") {
             toast.success("Bạn có đơn hàng mới");
@@ -63,6 +61,7 @@ export default function useRealtimeAdmin({
 
           if (tinNhan.sukien === "thong_bao_moi") {
             toast.success(tinNhan.dulieu?.noidung || "Bạn có thông báo mới");
+            onThongBaoMoiRef.current?.(tinNhan.dulieu);
           }
 
           if (tinNhan.sukien === "cap_nhat_trang_thai_don_hang") {
@@ -73,12 +72,9 @@ export default function useRealtimeAdmin({
         }
       };
 
-      ws.onerror = (error) => {
-        console.error("WebSocket admin lỗi:", error);
-      };
+      ws.onerror = () => {};
 
-      ws.onclose = (event) => {
-        console.warn("WebSocket admin đã đóng:", event.code, event.reason);
+      ws.onclose = () => {
         setDaKetNoi(false);
 
         if (!daHuy) {
