@@ -81,6 +81,11 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh) {
 		nhomQuanTriGoc.DELETE("/sanpham/:id", sanphamHandler.Xoa)
 		nhomQuanTriGoc.PATCH("/sanpham/:id/trangthai", sanphamHandler.CapNhatTrangThai)
 		nhomQuanTriGoc.POST("/sanpham/:id/upload-anh", sanphamHandler.UploadAnh)
+
+		nhomQuanTriGoc.GET("/donhang", donhangHandler.DanhSach)
+		nhomQuanTriGoc.GET("/donhang/:id", donhangHandler.ChiTiet)
+		nhomQuanTriGoc.PATCH("/donhang/:id/trangthai", donhangHandler.CapNhatTrangThai)
+		nhomQuanTriGoc.DELETE("/donhang/:id", donhangHandler.Xoa)
 	}
 
 	nhomQuanTri := api.Group("/admin")

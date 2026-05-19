@@ -7,17 +7,21 @@ import (
 )
 
 type TaoDonHangRequest struct {
-	HoTen       string                   `json:"hoten"`
-	SoDienThoai string                   `json:"sodienthoai"`
-	Email       string                   `json:"email"`
-	DiaChi      string                   `json:"diachi"`
-	GhiChu      string                   `json:"ghichu"`
-	SanPham     []ChiTietDonHangRequest  `json:"sanpham"`
+	HoTen       string                  `json:"hoten"`
+	SoDienThoai string                  `json:"sodienthoai"`
+	Email       string                  `json:"email"`
+	DiaChi      string                  `json:"diachi"`
+	GhiChu      string                  `json:"ghichu"`
+	SanPham     []ChiTietDonHangRequest `json:"sanpham"`
 }
 
 type ChiTietDonHangRequest struct {
 	SanPhamID uint64 `json:"sanpham_id"`
 	SoLuong   int    `json:"soluong"`
+}
+
+type CapNhatTrangThaiDonHangRequest struct {
+	TrangThai string `json:"trangthai"`
 }
 
 func (r *TaoDonHangRequest) KiemTra() error {
@@ -74,4 +78,15 @@ func (r *TaoDonHangRequest) KiemTra() error {
 	}
 
 	return nil
+}
+
+func (r *CapNhatTrangThaiDonHangRequest) KiemTra() error {
+	r.TrangThai = strings.TrimSpace(r.TrangThai)
+
+	switch r.TrangThai {
+	case "cho_xac_nhan", "da_xac_nhan", "dang_giao_hang", "hoan_thanh", "da_huy":
+		return nil
+	default:
+		return errors.New("trạng thái đơn hàng không hợp lệ")
+	}
 }

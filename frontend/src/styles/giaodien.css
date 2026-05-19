@@ -2825,3 +2825,151 @@ button {
     flex-direction: column;
   }
 }
+
+.bo-loc-don-hang {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.bo-loc-don-hang select,
+.bo-loc-don-hang input[type="date"] {
+  height: 40px;
+  border: 1px solid var(--mau-vien);
+  background: white;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 14px;
+  color: var(--mau-chu);
+  outline: 0;
+}
+
+.bang-don-hang {
+  min-width: 950px;
+}
+
+.ma-don-hang,
+.khach-don-hang {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ma-don-hang strong,
+.khach-don-hang strong {
+  font-size: 14px;
+  color: var(--mau-chu);
+}
+
+.ma-don-hang span,
+.khach-don-hang span {
+  font-size: 12px;
+  color: var(--mau-phu);
+}
+
+.chi-tiet-don-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 16px;
+}
+
+.khung-thong-tin-don {
+  border: 1px solid var(--mau-vien);
+  border-radius: 14px;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.khung-thong-tin-don h4 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--mau-chu);
+}
+
+.trang-thai-hien-tai {
+  margin-bottom: 14px;
+}
+
+.canh-bao-trang-thai {
+  margin-top: 12px;
+  padding: 11px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.bang-chi-tiet-don {
+  min-width: 760px;
+}
+
+.san-pham-trong-don {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.san-pham-trong-don img,
+.anh-don-trong {
+  width: 48px;
+  height: 48px;
+  border-radius: 11px;
+  border: 1px solid var(--mau-vien);
+  background: #f9fafb;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.anh-don-trong {
+  display: grid;
+  place-items: center;
+  color: var(--mau-phu);
+  font-size: 12px;
+}
+
+.san-pham-trong-don strong {
+  display: block;
+  font-size: 14px;
+  color: var(--mau-chu);
+}
+
+.san-pham-trong-don span {
+  display: block;
+  color: var(--mau-phu);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.tong-tien-chi-tiet-don {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-top: 1px solid var(--mau-vien);
+  background: #f9fafb;
+}
+
+.tong-tien-chi-tiet-don span {
+  color: var(--mau-phu);
+  font-weight: 700;
+}
+
+.tong-tien-chi-tiet-don strong {
+  color: #dc2626;
+  font-size: 20px;
+}
+
+@media (max-width: 992px) {
+  .bo-loc-don-hang {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chi-tiet-don-grid {
+    grid-template-columns: 1fr;
+  }
+}

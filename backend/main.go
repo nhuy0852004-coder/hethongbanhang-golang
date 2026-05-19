@@ -1,45 +1,32 @@
-package main
+import ketNoiApi from "./ketnoiapi";
 
-import (
-	"log"
+export async function taoDonHang(duLieu) {
+  const phanHoi = await ketNoiApi.post("/donhang", duLieu);
+  return phanHoi.data;
+}
 
-	"hethongbanhang/backend/internal/caidat"
-	"hethongbanhang/backend/internal/cosodulieu"
-	"hethongbanhang/backend/internal/modules/taikhoan"
-	"hethongbanhang/backend/internal/truycap"
-	"hethongbanhang/backend/internal/tuyenduong"
+export async function layDanhSachDonHang(params = {}) {
+  const phanHoi = await ketNoiApi.get("/donhang", {
+    params,
+  });
 
-	"github.com/gin-gonic/gin"
-)
+  return phanHoi.data;
+}
 
-func main() {
-	cauhinh := caidat.LayCauHinh()
+export async function layChiTietDonHang(id) {
+  const phanHoi = await ketNoiApi.get(`/donhang/${id}`);
+  return phanHoi.data;
+}
 
-	if cauhinh.CheDo == "production" {
-		gin.SetMode(gin.ReleaseMode)
-	}
+export async function capNhatTrangThaiDonHang(id, trangthai) {
+  const phanHoi = await ketNoiApi.patch(`/donhang/${id}/trangthai`, {
+    trangthai,
+  });
 
-	db, loi := cosodulieu.KetNoi(cauhinh)
-	if loi != nil {
-		log.Fatal("Không thể kết nối MySQL: ", loi)
-	}
-	defer db.Close()
+  return phanHoi.data;
+}
 
-	taikhoan.TaoTaiKhoanQuanTriMacDinh(db)
-
-	r := gin.Default()
-
-	r.Use(truycap.ChoPhepTruyCap(cauhinh.URLFrontend))
-
-	r.Static("/uploads", "./public/uploads")
-
-	tuyenduong.DangKy(r, db, cauhinh)
-
-	log.Println("Backend đang chạy tại cổng:", cauhinh.CongChay)
-	log.Println("API kiểm tra: http://localhost:" + cauhinh.CongChay + "/api/kiemtra")
-	log.Println("API đăng nhập: http://localhost:" + cauhinh.CongChay + "/api/dangnhap")
-
-	if loi := r.Run(":" + cauhinh.CongChay); loi != nil {
-		log.Fatal("Không thể chạy backend: ", loi)
-	}
+export async function xoaDonHang(id) {
+  const phanHoi = await ketNoiApi.delete(`/donhang/${id}`);
+  return phanHoi.data;
 }
