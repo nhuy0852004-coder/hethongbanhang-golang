@@ -11,6 +11,7 @@ import TrangChuWebsite from "../modules/website/trangchu/TrangChuWebsite";
 import DanhSachSanPhamWebsite from "../modules/website/sanpham/DanhSachSanPhamWebsite";
 import ChiTietSanPhamWebsite from "../modules/website/sanpham/ChiTietSanPhamWebsite";
 import GioHangWebsite from "../modules/website/giohang/GioHangWebsite";
+import ThanhToanWebsite from "../modules/website/thanhtoan/ThanhToanWebsite";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
             mota="Chức năng tra cứu đơn hàng sẽ được làm sau phần đặt hàng."
           />
         ),
+      },
+      {
+        path: "thanhtoan",
+        element: <ThanhToanWebsite />,
       },
     ],
   },

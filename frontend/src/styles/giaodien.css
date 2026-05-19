@@ -2616,3 +2616,212 @@ button {
     width: 100%;
   }
 }
+
+.trang-thanh-toan-web {
+  padding-top: 30px;
+}
+
+.thanh-toan-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.khung-form-thanh-toan {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.tieu-de-form-thanh-toan {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  color: #2563eb;
+}
+
+.tieu-de-form-thanh-toan h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 19px;
+}
+
+.tieu-de-form-thanh-toan p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.luoi-thanh-toan-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.tom-tat-thanh-toan {
+  position: sticky;
+  top: 92px;
+}
+
+.ds-san-pham-thanh-toan {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 14px;
+  padding-top: 10px;
+}
+
+.dong-sp-thanh-toan {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.dong-sp-thanh-toan strong {
+  display: block;
+  font-size: 14px;
+  color: #111827;
+  line-height: 1.4;
+}
+
+.dong-sp-thanh-toan span {
+  display: block;
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+.dong-sp-thanh-toan b {
+  white-space: nowrap;
+  color: #dc2626;
+  font-size: 14px;
+}
+
+.nut-dat-hang-web {
+  width: 100%;
+  height: 46px;
+  border: 0;
+  border-radius: 12px;
+  background: #2563eb;
+  color: white;
+  font-weight: 800;
+  margin-top: 10px;
+}
+
+.nut-dat-hang-web:hover {
+  background: #1d4ed8;
+}
+
+.nut-dat-hang-web:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.ghi-chu-thanh-toan {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f9fafb;
+  color: #6b7280;
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.dat-hang-thanh-cong {
+  max-width: 760px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 34px;
+  text-align: center;
+}
+
+.icon-thanh-cong {
+  width: 82px;
+  height: 82px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #16a34a;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+}
+
+.dat-hang-thanh-cong h1 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.dat-hang-thanh-cong p {
+  color: #6b7280;
+  margin: 10px auto 22px;
+  max-width: 560px;
+  line-height: 1.6;
+}
+
+.dat-hang-thanh-cong p strong {
+  color: #111827;
+}
+
+.thong-tin-don-thanh-cong {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.thong-tin-don-thanh-cong div {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  background: #f9fafb;
+}
+
+.thong-tin-don-thanh-cong span {
+  display: block;
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.thong-tin-don-thanh-cong strong {
+  color: #111827;
+}
+
+.hanh-dong-thanh-cong {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.hanh-dong-thanh-cong button {
+  border: 0;
+}
+
+@media (max-width: 960px) {
+  .thanh-toan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tom-tat-thanh-toan {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .luoi-thanh-toan-2,
+  .thong-tin-don-thanh-cong {
+    grid-template-columns: 1fr;
+  }
+
+  .hanh-dong-thanh-cong {
+    flex-direction: column;
+  }
+}

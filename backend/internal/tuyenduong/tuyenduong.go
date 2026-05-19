@@ -7,6 +7,7 @@ import (
 
 	"hethongbanhang/backend/internal/caidat"
 	"hethongbanhang/backend/internal/modules/danhmuc"
+	"hethongbanhang/backend/internal/modules/donhang"
 	"hethongbanhang/backend/internal/modules/sanpham"
 	"hethongbanhang/backend/internal/modules/taikhoan"
 	"hethongbanhang/backend/internal/phanhoi"
@@ -45,6 +46,10 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh) {
 	sanphamService := sanpham.TaoSanPhamService(sanphamRepository)
 	sanphamHandler := sanpham.TaoSanPhamHandler(sanphamService)
 
+	donhangRepository := donhang.TaoDonHangRepository(db)
+	donhangService := donhang.TaoDonHangService(donhangRepository)
+	donhangHandler := donhang.TaoDonHangHandler(donhangService)
+
 	api.POST("/dangnhap", taikhoanHandler.DangNhap)
 
 	api.GET("/danhmuc", danhmucHandler.DanhSach)
@@ -52,6 +57,8 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh) {
 
 	api.GET("/sanpham", sanphamHandler.DanhSach)
 	api.GET("/sanpham/:id", sanphamHandler.ChiTiet)
+
+	api.POST("/donhang", donhangHandler.TaoDonHang)
 
 	nhomDaDangNhap := api.Group("")
 	nhomDaDangNhap.Use(trunggian.KiemTraJWT(cauhinh.JWTBiMat))
