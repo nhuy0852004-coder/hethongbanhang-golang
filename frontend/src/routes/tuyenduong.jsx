@@ -10,6 +10,7 @@ import DanhSachSanPham from "../modules/sanpham/DanhSachSanPham";
 import TrangChuWebsite from "../modules/website/trangchu/TrangChuWebsite";
 import DanhSachSanPhamWebsite from "../modules/website/sanpham/DanhSachSanPhamWebsite";
 import ChiTietSanPhamWebsite from "../modules/website/sanpham/ChiTietSanPhamWebsite";
+import GioHangWebsite from "../modules/website/giohang/GioHangWebsite";
 
 const router = createBrowserRouter([
   {
@@ -30,12 +31,7 @@ const router = createBrowserRouter([
       },
       {
         path: "giohang",
-        element: (
-          <TrangRong
-            tieude="Giỏ hàng"
-            mota="Chức năng giỏ hàng sẽ được làm ở Ngày 7."
-          />
-        ),
+        element: <GioHangWebsite />,
       },
       {
         path: "tra-cuu-don-hang",

@@ -7,9 +7,11 @@ import TrangRong from "../../../components/TrangRong";
 import { layChiTietSanPham, layDanhSachSanPham } from "../../../api/sanphamApi";
 import { formatTienVietNam } from "../../../utils/dinhtien";
 import TheSanPhamWebsite from "./TheSanPhamWebsite";
+import useGioHangStore from "../../../stores/giohangStore";
 
 export default function ChiTietSanPhamWebsite() {
   const { id } = useParams();
+  const themVaoGio = useGioHangStore((state) => state.themVaoGio);
 
   const [dangTai, setDangTai] = useState(true);
   const [sanPham, setSanPham] = useState(null);
@@ -66,8 +68,16 @@ export default function ChiTietSanPhamWebsite() {
     setSoLuong((cu) => cu - 1);
   };
 
-  const themVaoGio = () => {
-    toast.success("Chức năng giỏ hàng sẽ làm ở Ngày 7");
+  const themSanPhamVaoGio = () => {
+    if (!sanPham) return;
+
+    if (sanPham.soluongton <= 0 || sanPham.trangthai === "het_hang") {
+      toast.error("Sản phẩm đã hết hàng");
+      return;
+    }
+
+    themVaoGio(sanPham, soLuong);
+    toast.success("Đã thêm sản phẩm vào giỏ hàng");
   };
 
   if (dangTai) {
@@ -81,7 +91,10 @@ export default function ChiTietSanPhamWebsite() {
   if (!sanPham) {
     return (
       <div className="container-website">
-        <TrangRong tieude="Không tìm thấy sản phẩm" mota="Sản phẩm có thể đã bị ẩn hoặc không tồn tại." />
+        <TrangRong
+          tieude="Không tìm thấy sản phẩm"
+          mota="Sản phẩm có thể đã bị ẩn hoặc không tồn tại."
+        />
       </div>
     );
   }
@@ -156,7 +169,7 @@ export default function ChiTietSanPhamWebsite() {
           <button
             className="nut-them-gio-web"
             disabled={sanPham.soluongton <= 0}
-            onClick={themVaoGio}
+            onClick={themSanPhamVaoGio}
           >
             <ShoppingCart size={19} />
             {sanPham.soluongton <= 0 ? "Hết hàng" : "Thêm vào giỏ hàng"}

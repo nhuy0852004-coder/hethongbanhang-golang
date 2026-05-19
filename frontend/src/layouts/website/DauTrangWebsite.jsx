@@ -1,7 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
 import { Search, ShoppingCart, Store } from "lucide-react";
+import useGioHangStore from "../../stores/giohangStore";
 
 export default function DauTrangWebsite() {
+  const danhSach = useGioHangStore((state) => state.danhsach);
+  const tongSoLuong = danhSach.reduce((tong, item) => tong + Number(item.soluong || 0), 0);
+
   return (
     <header className="header-website">
       <div className="container-website header-website-inner">
@@ -31,7 +35,7 @@ export default function DauTrangWebsite() {
 
           <Link to="/giohang" className="nut-gio-hang-website">
             <ShoppingCart size={20} />
-            <span>0</span>
+            <span>{tongSoLuong}</span>
           </Link>
         </div>
       </div>
