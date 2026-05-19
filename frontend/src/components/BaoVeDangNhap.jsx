@@ -5,7 +5,7 @@ export default function BaoVeDangNhap() {
   const daDangNhap = useTaiKhoanStore((state) => state.daDangNhap);
 
   if (!daDangNhap) {
-    return <Navigate to="/dangnhap" replace />;
+    return <Navigate to="/admin/dangnhap" replace />;
   }
 
   return <Outlet />;

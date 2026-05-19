@@ -17,7 +17,7 @@ export default function DauTrangAdmin() {
   const xuLyDangXuat = () => {
     dangXuat();
     toast.success("Đã đăng xuất");
-    navigate("/dangnhap", { replace: true });
+    navigate("/admin/dangnhap", { replace: true });
   };
 
   return (

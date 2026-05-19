@@ -48,7 +48,7 @@ export default function DangNhap() {
       });
 
       toast.success("Đăng nhập thành công");
-      navigate("/", { replace: true });
+      navigate("/admin", { replace: true });
     } catch (loi) {
       const thongBao =
         loi?.response?.data?.thongbao || "Đăng nhập thất bại, vui lòng kiểm tra lại";
