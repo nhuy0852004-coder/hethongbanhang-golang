@@ -17,11 +17,7 @@ const useThongBaoStore = create((set, get) => ({
 
     try {
       const ketQua = await layDanhSachThongBao(params);
-
-      set({
-        danhsach: ketQua.dulieu.danhsach || [],
-      });
-
+      set({ danhsach: ketQua.dulieu.danhsach || [] });
       return ketQua;
     } finally {
       set({ dangTai: false });
@@ -30,11 +26,7 @@ const useThongBaoStore = create((set, get) => ({
 
   taiSoChuaDoc: async () => {
     const ketQua = await demThongBaoChuaDoc();
-
-    set({
-      soChuaDoc: ketQua.dulieu.sochuadoc || 0,
-    });
-
+    set({ soChuaDoc: ketQua.dulieu.sochuadoc || 0 });
     return ketQua;
   },
 
@@ -42,9 +34,8 @@ const useThongBaoStore = create((set, get) => ({
     if (!thongbao) return;
 
     const danhSachCu = get().danhsach;
-
     set({
-      danhsach: [thongbao, ...danhSachCu].slice(0, 8),
+      danhsach: [thongbao, ...danhSachCu],
       soChuaDoc: get().soChuaDoc + 1,
     });
   },
@@ -52,16 +43,13 @@ const useThongBaoStore = create((set, get) => ({
   capNhatDaDoc: async (id, dadoc = true) => {
     const ketQua = await capNhatDaDocThongBao(id, dadoc);
 
-    const danhSachMoi = get().danhsach.map((item) =>
-      item.id === id ? { ...item, dadoc } : item
-    );
-
     set({
-      danhsach: danhSachMoi,
+      danhsach: get().danhsach.map((item) =>
+        item.id === id ? { ...item, dadoc } : item
+      ),
     });
 
     await get().taiSoChuaDoc();
-
     return ketQua;
   },
 
@@ -69,10 +57,7 @@ const useThongBaoStore = create((set, get) => ({
     const ketQua = await danhDauTatCaThongBaoDaDoc();
 
     set({
-      danhsach: get().danhsach.map((item) => ({
-        ...item,
-        dadoc: true,
-      })),
+      danhsach: get().danhsach.map((item) => ({ ...item, dadoc: true })),
       soChuaDoc: 0,
     });
 
@@ -81,13 +66,10 @@ const useThongBaoStore = create((set, get) => ({
 
   xoaThongBao: async (id) => {
     const ketQua = await xoaThongBao(id);
-
     set({
       danhsach: get().danhsach.filter((item) => item.id !== id),
     });
-
     await get().taiSoChuaDoc();
-
     return ketQua;
   },
 }));

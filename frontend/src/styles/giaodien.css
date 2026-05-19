@@ -3175,3 +3175,256 @@ button {
     align-items: stretch;
   }
 }
+
+.dashboard-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.dashboard-grid-card {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.dashboard-card {
+  background: white;
+  border: 1px solid var(--mau-vien);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.dashboard-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.dashboard-card-icon.xanh {
+  background: #ecfdf5;
+  color: #16a34a;
+}
+
+.dashboard-card-icon.duong {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.dashboard-card-icon.tim {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.dashboard-card-icon.cam {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.dashboard-card span {
+  display: block;
+  color: var(--mau-phu);
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.dashboard-card strong {
+  display: block;
+  color: var(--mau-chu);
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.dashboard-card p {
+  margin: 6px 0 0;
+  color: var(--mau-phu);
+  font-size: 12px;
+}
+
+.dashboard-grid-chinh {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.8fr);
+  gap: 16px;
+}
+
+.dashboard-box {
+  background: white;
+  border: 1px solid var(--mau-vien);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.dashboard-box-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.dashboard-box-title h2 {
+  margin: 0;
+  color: var(--mau-chu);
+  font-size: 19px;
+}
+
+.dashboard-box-title p {
+  margin: 5px 0 0;
+  color: var(--mau-phu);
+  font-size: 13px;
+}
+
+.bieu-do-doanh-thu {
+  height: 230px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  align-items: end;
+}
+
+.cot-bieu-do {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+  gap: 8px;
+}
+
+.cot-gia-tri {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+  gap: 8px;
+}
+
+.cot-gia-tri span {
+  font-size: 11px;
+  color: var(--mau-phu);
+  white-space: nowrap;
+}
+
+.cot-gia-tri div {
+  width: 70%;
+  max-width: 44px;
+  border-radius: 10px 10px 4px 4px;
+  background: #2563eb;
+}
+
+.cot-bieu-do small {
+  color: var(--mau-phu);
+  font-size: 12px;
+}
+
+.dashboard-empty-mini {
+  min-height: 220px;
+  border: 1px dashed var(--mau-vien-dam);
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--mau-phu);
+}
+
+.dashboard-empty-mini span {
+  display: block;
+  margin-top: 8px;
+}
+
+.ds-san-pham-sap-het {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-san-pham-sap-het {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 42px;
+  gap: 11px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--mau-vien);
+  border-radius: 13px;
+}
+
+.item-san-pham-sap-het img,
+.anh-sap-het-trong {
+  width: 48px;
+  height: 48px;
+  border-radius: 11px;
+  border: 1px solid var(--mau-vien);
+  background: #f9fafb;
+  object-fit: cover;
+}
+
+.anh-sap-het-trong {
+  display: grid;
+  place-items: center;
+  color: var(--mau-phu);
+  font-size: 12px;
+}
+
+.item-san-pham-sap-het strong {
+  display: block;
+  font-size: 14px;
+  color: var(--mau-chu);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-san-pham-sap-het span {
+  display: block;
+  font-size: 12px;
+  color: var(--mau-phu);
+  margin-top: 3px;
+}
+
+.item-san-pham-sap-het b {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #fef3c7;
+  color: #92400e;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+}
+
+.bang-dashboard-don {
+  min-width: 850px;
+}
+
+@media (max-width: 1180px) {
+  .dashboard-grid-card {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid-chinh {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-grid-card {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-card {
+    padding: 15px;
+  }
+
+  .bieu-do-doanh-thu {
+    overflow-x: auto;
+    grid-template-columns: repeat(7, 72px);
+  }
+}

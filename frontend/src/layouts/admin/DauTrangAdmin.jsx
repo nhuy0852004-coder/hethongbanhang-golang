@@ -9,7 +9,6 @@ import useThongBaoStore from "../../stores/thongbaoStore";
 
 export default function DauTrangAdmin() {
   const navigate = useNavigate();
-
   const [moThongBao, setMoThongBao] = useState(false);
 
   const taikhoan = useTaiKhoanStore((state) => state.taikhoan);
@@ -38,6 +37,7 @@ export default function DauTrangAdmin() {
     bat: Boolean(taikhoan),
     onThongBaoMoi: (thongbao) => {
       themThongBaoMoi(thongbao);
+      taiSoChuaDoc();
     },
   });
 
@@ -53,7 +53,6 @@ export default function DauTrangAdmin() {
     }
 
     const donhangID = item.dulieu?.donhang_id;
-
     if (donhangID) {
       navigate("/admin/donhang");
       setMoThongBao(false);
@@ -136,15 +135,11 @@ export default function DauTrangAdmin() {
         </div>
 
         <div className="tai-khoan-admin">
-          <div className="avatar-admin">
-            {(taikhoan?.hoten || "Q").charAt(0).toUpperCase()}
-          </div>
-
+          <div className="avatar-admin">{(taikhoan?.hoten || "Q").charAt(0).toUpperCase()}</div>
           <div className="thong-tin-admin">
             <strong>{taikhoan?.hoten || "Quản trị viên"}</strong>
             <span>{taikhoan?.vaitro === "quantri" ? "Quản trị" : "Nhân viên"}</span>
           </div>
-
           <button className="nut-dang-xuat-admin" onClick={xuLyDangXuat}>
             <LogOut size={17} />
           </button>

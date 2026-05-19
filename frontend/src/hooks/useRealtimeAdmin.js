@@ -4,26 +4,28 @@ import toast from "react-hot-toast";
 export default function useRealtimeAdmin({
   bat = true,
   onDonHangMoi,
-  onThongBaoMoi,
   onCapNhatDonHang,
+  onThongBaoMoi,
 } = {}) {
   const wsRef = useRef(null);
   const reconnectRef = useRef(null);
 
   const onDonHangMoiRef = useRef(onDonHangMoi);
-  const onThongBaoMoiRef = useRef(onThongBaoMoi);
   const onCapNhatDonHangRef = useRef(onCapNhatDonHang);
+  const onThongBaoMoiRef = useRef(onThongBaoMoi);
 
   const [daKetNoi, setDaKetNoi] = useState(false);
 
   useEffect(() => {
     onDonHangMoiRef.current = onDonHangMoi;
-    onThongBaoMoiRef.current = onThongBaoMoi;
     onCapNhatDonHangRef.current = onCapNhatDonHang;
-  }, [onDonHangMoi, onThongBaoMoi, onCapNhatDonHang]);
+    onThongBaoMoiRef.current = onThongBaoMoi;
+  }, [onDonHangMoi, onCapNhatDonHang, onThongBaoMoi]);
 
   useEffect(() => {
-    if (!bat) return;
+    if (!bat) {
+      return;
+    }
 
     let daHuy = false;
 
@@ -72,7 +74,9 @@ export default function useRealtimeAdmin({
         }
       };
 
-      ws.onerror = () => {};
+      ws.onerror = () => {
+        setDaKetNoi(false);
+      };
 
       ws.onclose = () => {
         setDaKetNoi(false);
@@ -95,14 +99,12 @@ export default function useRealtimeAdmin({
       }
 
       const ws = wsRef.current;
-
       if (ws) {
         ws.onopen = null;
         ws.onmessage = null;
         ws.onerror = null;
         ws.onclose = null;
-
-        if (ws.readyState === WebSocket.OPEN) {
+        if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
           ws.close();
         }
       }
@@ -111,7 +113,5 @@ export default function useRealtimeAdmin({
     };
   }, [bat]);
 
-  return {
-    daKetNoi,
-  };
+  return { daKetNoi };
 }

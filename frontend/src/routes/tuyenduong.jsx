@@ -1,8 +1,8 @@
 ﻿import { createBrowserRouter } from "react-router-dom";
 import BocCucAdmin from "../layouts/admin/BocCucAdmin";
 import BocCucWebsite from "../layouts/website/BocCucWebsite";
-import TrangKiemTra from "../pages/TrangKiemTra";
 import TrangRong from "../components/TrangRong";
+import DashboardAdmin from "../modules/tongquan/DashboardAdmin";
 import BaoVeDangNhap from "../components/BaoVeDangNhap";
 import DangNhap from "../modules/taikhoan/DangNhap";
 import DanhSachDanhMuc from "../modules/danhmuc/DanhSachDanhMuc";
@@ -64,7 +64,7 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <TrangKiemTra />,
+            element: <DashboardAdmin />,
           },
           {
             path: "danhmuc",
