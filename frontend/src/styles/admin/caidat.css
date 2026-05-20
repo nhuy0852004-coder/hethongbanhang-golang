@@ -1,0 +1,222 @@
+/* ==================================================
+   ADMIN - CÀI ĐẶT CỬA HÀNG
+   Scoped: .trang-cai-dat-admin
+================================================== */
+
+/* ================= Layout chính ================= */
+
+.trang-cai-dat-admin.cai-dat-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  
+  /* ================= Khung form ================= */
+  
+  .trang-cai-dat-admin .khung-form-thanh-toan {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 18px;
+    padding: 20px;
+  }
+  
+  .trang-cai-dat-admin .tieu-de-form-thanh-toan {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    color: var(--mau-chinh);
+  }
+  
+  .trang-cai-dat-admin .tieu-de-form-thanh-toan h2 {
+    margin: 0;
+    color: var(--mau-chu);
+    font-size: 19px;
+    font-weight: 800;
+  }
+  
+  .trang-cai-dat-admin .tieu-de-form-thanh-toan p {
+    margin: 4px 0 0;
+    color: var(--mau-phu);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  /* ================= Form group ================= */
+  
+  .trang-cai-dat-admin .nhom-form {
+    margin-bottom: 15px;
+  }
+  
+  .trang-cai-dat-admin .nhom-form label {
+    display: block;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+  
+  .trang-cai-dat-admin .nhom-form label span {
+    color: var(--mau-nguy-hiem);
+  }
+  
+  .trang-cai-dat-admin .nhom-form input,
+  .trang-cai-dat-admin .nhom-form textarea {
+    width: 100%;
+    border: 1px solid var(--mau-vien-dam);
+    border-radius: 10px;
+    outline: 0;
+    font-size: 14px;
+    color: var(--mau-chu);
+    background: #ffffff;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .trang-cai-dat-admin .nhom-form input {
+    height: 42px;
+    padding: 0 12px;
+  }
+  
+  .trang-cai-dat-admin .nhom-form textarea {
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 96px;
+    line-height: 1.55;
+  }
+  
+  .trang-cai-dat-admin .nhom-form input:hover,
+  .trang-cai-dat-admin .nhom-form textarea:hover {
+    background: #fafafa;
+  }
+  
+  .trang-cai-dat-admin .nhom-form input:focus,
+  .trang-cai-dat-admin .nhom-form textarea:focus {
+    border-color: #93c5fd;
+    background: #ffffff;
+  }
+  
+  /* ================= Grid 2 cột ================= */
+  
+  .trang-cai-dat-admin .luoi-thanh-toan-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  
+  /* ================= Nút lưu ================= */
+  
+  .trang-cai-dat-admin .nut-bam {
+    margin-top: 4px;
+  }
+  
+  /* ================= Khung logo ================= */
+  
+  .trang-cai-dat-admin .khung-logo-cai-dat {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 18px;
+    padding: 18px;
+    position: sticky;
+    top: 92px;
+  }
+  
+  .trang-cai-dat-admin .khung-logo-cai-dat h3 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--mau-chu);
+  }
+  
+  .trang-cai-dat-admin .khung-logo-cai-dat p {
+    color: var(--mau-phu);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 8px 0 16px;
+  }
+  
+  /* ================= Upload logo ================= */
+  
+  .trang-cai-dat-admin .khung-upload-logo {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 1px dashed var(--mau-vien-dam);
+    background: #f9fafb;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: 0.15s ease;
+  }
+  
+  .trang-cai-dat-admin .khung-upload-logo:hover {
+    border-color: var(--mau-chinh);
+    background: #eff6ff;
+  }
+  
+  .trang-cai-dat-admin .khung-upload-logo input {
+    display: none;
+  }
+  
+  .trang-cai-dat-admin .khung-upload-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .trang-cai-dat-admin .khung-upload-logo div {
+    text-align: center;
+    color: var(--mau-phu);
+    padding: 18px;
+  }
+  
+  .trang-cai-dat-admin .khung-upload-logo strong {
+    display: block;
+    color: var(--mau-chu);
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  
+  .trang-cai-dat-admin .khung-upload-logo span {
+    display: block;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  
+  /* ================= Responsive ================= */
+  
+  @media (max-width: 992px) {
+    .trang-cai-dat-admin.cai-dat-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-cai-dat-admin .khung-logo-cai-dat {
+      position: static;
+    }
+  
+    .trang-cai-dat-admin .khung-upload-logo {
+      max-width: 260px;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .trang-cai-dat-admin .khung-form-thanh-toan,
+    .trang-cai-dat-admin .khung-logo-cai-dat {
+      padding: 16px;
+      border-radius: 16px;
+    }
+  
+    .trang-cai-dat-admin .luoi-thanh-toan-2 {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-cai-dat-admin .khung-upload-logo {
+      max-width: 220px;
+    }
+  
+    .trang-cai-dat-admin .nut-bam {
+      width: 100%;
+    }
+  }

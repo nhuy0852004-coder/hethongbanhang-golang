@@ -1,0 +1,491 @@
+/* ==================================================
+   WEBSITE - TRANG CHỦ
+   Route: /
+   Scoped: .trang-chu-website
+================================================== */
+
+.trang-chu-website {
+    background: #f8fafc;
+  }
+  
+  /* ==================================================
+     HERO
+  ================================================== */
+  
+  .trang-chu-website .hero-website {
+    padding: 54px 0;
+    background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .trang-chu-website .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 34px;
+    align-items: center;
+  }
+  
+  .trang-chu-website .hero-noi-dung {
+    min-width: 0;
+  }
+  
+  .trang-chu-website .nhan-hero {
+    display: inline-flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+  
+  .trang-chu-website .hero-noi-dung h1 {
+    font-size: clamp(32px, 5vw, 54px);
+    line-height: 1.06;
+    margin: 0;
+    letter-spacing: -0.04em;
+    color: #111827;
+    max-width: 720px;
+  }
+  
+  .trang-chu-website .hero-noi-dung p {
+    margin: 18px 0 0;
+    color: #4b5563;
+    font-size: 16px;
+    line-height: 1.7;
+    max-width: 620px;
+  }
+  
+  .trang-chu-website .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 26px;
+  }
+  
+  /* ==================================================
+     BUTTON WEB
+  ================================================== */
+  
+  .trang-chu-website .nut-web-chinh,
+  .trang-chu-website .nut-web-phu {
+    height: 44px;
+    padding: 0 18px;
+    border-radius: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: 0.15s ease;
+  }
+  
+  .trang-chu-website .nut-web-chinh {
+    background: #2563eb;
+    color: #ffffff;
+    border: 1px solid #2563eb;
+  }
+  
+  .trang-chu-website .nut-web-chinh:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    color: #ffffff;
+  }
+  
+  .trang-chu-website .nut-web-phu {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+  }
+  
+  .trang-chu-website .nut-web-phu:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    color: #111827;
+  }
+  
+  /* ==================================================
+     HERO CARD
+  ================================================== */
+  
+  .trang-chu-website .hero-card {
+    background: #ffffff;
+    border: 1px solid #dbeafe;
+    border-radius: 22px;
+    padding: 26px;
+  }
+  
+  .trang-chu-website .hero-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    color: #2563eb;
+    margin-bottom: 30px;
+  }
+  
+  .trang-chu-website .hero-card-top span {
+    color: #6b7280;
+    font-size: 14px;
+  }
+  
+  .trang-chu-website .hero-card strong {
+    display: block;
+    font-size: 58px;
+    line-height: 1;
+    color: #111827;
+    font-weight: 900;
+  }
+  
+  .trang-chu-website .hero-card p {
+    margin: 8px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  /* ==================================================
+     LỢI ÍCH
+  ================================================== */
+  
+  .trang-chu-website .loi-ich-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 24px;
+  }
+  
+  .trang-chu-website .loi-ich-item {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    color: #2563eb;
+  }
+  
+  .trang-chu-website .loi-ich-item strong {
+    display: block;
+    color: #111827;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  
+  .trang-chu-website .loi-ich-item span {
+    color: #6b7280;
+    font-size: 13px;
+    display: block;
+    margin-top: 3px;
+  }
+  
+  /* ==================================================
+     KHỐI WEBSITE
+  ================================================== */
+  
+  .trang-chu-website .khoi-website {
+    padding: 34px 0;
+  }
+  
+  .trang-chu-website .tieu-de-khoi-web {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  
+  .trang-chu-website .tieu-de-khoi-web h2 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 900;
+    color: #111827;
+    letter-spacing: -0.02em;
+  }
+  
+  .trang-chu-website .tieu-de-khoi-web p {
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+  }
+  
+  .trang-chu-website .tieu-de-khoi-web a {
+    color: #2563eb;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  
+  .trang-chu-website .tieu-de-khoi-web a:hover {
+    color: #1d4ed8;
+  }
+  
+  /* ==================================================
+     DANH MỤC NỔI BẬT
+  ================================================== */
+  
+  .trang-chu-website .danh-muc-web-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+  
+  .trang-chu-website .danh-muc-web-item {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 18px;
+    color: #111827;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .trang-chu-website .danh-muc-web-item:hover {
+    border-color: #bfdbfe;
+    background: #fbfdff;
+  }
+  
+  .trang-chu-website .danh-muc-web-item div {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: grid;
+    place-items: center;
+    margin-bottom: 14px;
+  }
+  
+  .trang-chu-website .danh-muc-web-item strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .trang-chu-website .danh-muc-web-item span {
+    display: block;
+    color: #6b7280;
+    margin-top: 4px;
+    font-size: 13px;
+  }
+  
+  /* ==================================================
+     SẢN PHẨM MỚI TRÊN TRANG CHỦ
+  ================================================== */
+  
+  .trang-chu-website .san-pham-web-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  
+  .trang-chu-website .the-san-pham-website {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .trang-chu-website .the-san-pham-website:hover {
+    border-color: #bfdbfe;
+    background: #fbfdff;
+  }
+  
+  .trang-chu-website .anh-the-san-pham {
+    position: relative;
+    display: block;
+    aspect-ratio: 1 / 1;
+    background: #f9fafb;
+    color: #6b7280;
+    text-decoration: none;
+    overflow: hidden;
+  }
+  
+  .trang-chu-website .anh-the-san-pham img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .trang-chu-website .anh-san-pham-website-trong {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: #9ca3af;
+  }
+  
+  .trang-chu-website .nhan-giam-gia {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ef4444;
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 5px 9px;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  
+  .trang-chu-website .noi-dung-the-san-pham {
+    padding: 14px;
+  }
+  
+  .trang-chu-website .ten-san-pham-web {
+    display: block;
+    min-height: 42px;
+    color: #111827;
+    text-decoration: none;
+    font-weight: 800;
+    line-height: 1.4;
+    font-size: 14px;
+  }
+  
+  .trang-chu-website .ten-san-pham-web:hover {
+    color: #2563eb;
+  }
+  
+  .trang-chu-website .noi-dung-the-san-pham p {
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .trang-chu-website .gia-san-pham-web {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .trang-chu-website .gia-san-pham-web strong {
+    color: #dc2626;
+    font-size: 16px;
+    font-weight: 900;
+  }
+  
+  .trang-chu-website .gia-san-pham-web span {
+    color: #9ca3af;
+    text-decoration: line-through;
+    font-size: 13px;
+  }
+  
+  .trang-chu-website .chan-the-san-pham {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .trang-chu-website .chan-the-san-pham span {
+    color: #6b7280;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  
+  .trang-chu-website .chan-the-san-pham button {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: grid;
+    place-items: center;
+    transition: 0.15s ease;
+    flex: 0 0 auto;
+  }
+  
+  .trang-chu-website .chan-the-san-pham button:hover {
+    background: #dbeafe;
+  }
+  
+  /* ==================================================
+     RESPONSIVE
+  ================================================== */
+  
+  @media (max-width: 1080px) {
+    .trang-chu-website .hero-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-chu-website .hero-card {
+      max-width: 420px;
+    }
+  
+    .trang-chu-website .san-pham-web-grid,
+    .trang-chu-website .danh-muc-web-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  
+  @media (max-width: 860px) {
+    .trang-chu-website .hero-website {
+      padding: 40px 0;
+    }
+  
+    .trang-chu-website .loi-ich-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-chu-website .san-pham-web-grid,
+    .trang-chu-website .danh-muc-web-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  
+    .trang-chu-website .tieu-de-khoi-web {
+      align-items: flex-start;
+    }
+  }
+  
+  @media (max-width: 560px) {
+    .trang-chu-website .hero-noi-dung h1 {
+      font-size: 32px;
+    }
+  
+    .trang-chu-website .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .trang-chu-website .nut-web-chinh,
+    .trang-chu-website .nut-web-phu {
+      width: 100%;
+    }
+  
+    .trang-chu-website .hero-card {
+      max-width: none;
+      padding: 22px;
+    }
+  
+    .trang-chu-website .hero-card strong {
+      font-size: 48px;
+    }
+  
+    .trang-chu-website .tieu-de-khoi-web {
+      flex-direction: column;
+      gap: 8px;
+    }
+  
+    .trang-chu-website .san-pham-web-grid,
+    .trang-chu-website .danh-muc-web-grid {
+      grid-template-columns: 1fr;
+    }
+  }

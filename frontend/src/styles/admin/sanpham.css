@@ -1,0 +1,518 @@
+/* ==================================================
+   ADMIN - MODULE SẢN PHẨM
+   Scoped: .trang-san-pham-admin
+================================================== */
+
+/* ================= Toolbar / Bộ lọc ================= */
+
+.trang-san-pham-admin .thanh-cong-cu-trang {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .trang-san-pham-admin .bo-loc-san-pham {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) 180px 170px auto;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .trang-san-pham-admin .o-tim-kiem-bang {
+    height: 42px;
+    min-width: 0;
+    max-width: none;
+    border: 1px solid transparent;
+    background: #f9fafb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    color: var(--mau-phu);
+    transition: 0.15s ease;
+  }
+  
+  .trang-san-pham-admin .o-tim-kiem-bang:hover {
+    background: #ffffff;
+    border-color: var(--mau-vien);
+  }
+  
+  .trang-san-pham-admin .o-tim-kiem-bang:focus-within {
+    background: #ffffff;
+    border-color: #93c5fd;
+  }
+  
+  .trang-san-pham-admin .o-tim-kiem-bang input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    color: var(--mau-chu);
+  }
+  
+  .trang-san-pham-admin .o-tim-kiem-bang input::placeholder {
+    color: #9ca3af;
+  }
+  
+  /* Select trong bộ lọc sản phẩm */
+  .trang-san-pham-admin .bo-loc-san-pham select {
+    width: 100%;
+    height: 42px;
+    min-height: 42px;
+    border: 1px solid var(--mau-vien);
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 38px 0 13px;
+    outline: none;
+    cursor: pointer;
+    line-height: 42px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.5 7.5L10 12L14.5 7.5' stroke='%236B7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+  }
+  
+  .trang-san-pham-admin .bo-loc-san-pham select:hover {
+    border-color: #d1d5db;
+    background-color: #fafafa;
+  }
+  
+  .trang-san-pham-admin .bo-loc-san-pham select:focus {
+    border-color: #93c5fd;
+    background-color: #ffffff;
+  }
+  
+  /* Nút tìm kiếm nếu còn dùng */
+  .trang-san-pham-admin .bo-loc-san-pham .nut-bam {
+    height: 42px;
+    white-space: nowrap;
+  }
+  
+  /* Nút thêm sản phẩm */
+  .trang-san-pham-admin > .thanh-cong-cu-trang > .nut-bam {
+    height: 42px;
+    border-radius: 10px;
+    font-weight: 700;
+  }
+  
+  /* ================= Khung bảng ================= */
+  
+  .trang-san-pham-admin .khung-bang {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  
+  .trang-san-pham-admin .bang-responsive {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+  }
+  
+  .trang-san-pham-admin .bang-du-lieu {
+    width: 100%;
+    min-width: 1080px;
+    border-collapse: collapse;
+    background: #ffffff;
+  }
+  
+  .trang-san-pham-admin .bang-san-pham {
+    min-width: 1100px;
+  }
+  
+  .trang-san-pham-admin .bang-du-lieu th,
+  .trang-san-pham-admin .bang-du-lieu td {
+    white-space: nowrap;
+  }
+  
+  .trang-san-pham-admin .bang-du-lieu thead {
+    background: #f9fafb;
+  }
+  
+  .trang-san-pham-admin .bang-du-lieu thead th {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--mau-vien);
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    vertical-align: middle;
+  }
+  
+  .trang-san-pham-admin .bang-du-lieu tbody td {
+    padding: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--mau-chu);
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  
+  .trang-san-pham-admin .bang-du-lieu tbody tr {
+    transition: background-color 0.15s ease;
+  }
+  
+  .trang-san-pham-admin .bang-du-lieu tbody tr:hover {
+    background: #fafafa;
+  }
+  
+  .trang-san-pham-admin .bang-du-lieu tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  
+  /* ================= Ảnh sản phẩm ================= */
+  
+  .trang-san-pham-admin .anh-san-pham-bang,
+  .trang-san-pham-admin .anh-san-pham-trong {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    border: 1px solid var(--mau-vien);
+    background: #f9fafb;
+    flex: 0 0 auto;
+  }
+  
+  .trang-san-pham-admin .anh-san-pham-bang {
+    object-fit: cover;
+    display: block;
+  }
+  
+  .trang-san-pham-admin .anh-san-pham-trong {
+    color: var(--mau-phu);
+    display: grid;
+    place-items: center;
+    border-style: dashed;
+  }
+  
+  /* ================= Tên sản phẩm ================= */
+  
+  .trang-san-pham-admin .cot-ten-san-pham {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    max-width: 280px;
+  }
+  
+  .trang-san-pham-admin .cot-ten-san-pham strong {
+    display: block;
+    color: var(--mau-chu);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .trang-san-pham-admin .cot-ten-san-pham span {
+    display: block;
+    color: var(--mau-phu);
+    font-size: 12px;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .trang-san-pham-admin .chu-phu {
+    color: var(--mau-phu);
+    font-size: 13px;
+  }
+  
+  /* ================= Giá sản phẩm ================= */
+  
+  .trang-san-pham-admin .cot-gia-san-pham {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  
+  .trang-san-pham-admin .cot-gia-san-pham strong {
+    color: var(--mau-chu);
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  
+  .trang-san-pham-admin .cot-gia-san-pham span {
+    color: #9ca3af;
+    font-size: 12px;
+    text-decoration: line-through;
+    white-space: nowrap;
+  }
+  
+  /* ================= Tồn kho ================= */
+  
+  .trang-san-pham-admin .ton-kho {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  
+  .trang-san-pham-admin .ton-kho strong {
+    color: var(--mau-chu);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  
+  .trang-san-pham-admin .ton-kho span {
+    color: var(--mau-phu);
+    font-size: 12px;
+  }
+  
+  /* ================= Trạng thái sản phẩm ================= */
+  
+  .trang-san-pham-admin .the-trang-thai {
+    min-height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    box-shadow: none;
+  }
+  
+  .trang-san-pham-admin .the-xanh {
+    background: #f0fdf4;
+    color: #15803d;
+    border-color: #bbf7d0;
+  }
+  
+  .trang-san-pham-admin .the-xam {
+    background: #f9fafb;
+    color: #6b7280;
+    border-color: #e5e7eb;
+  }
+  
+  .trang-san-pham-admin .the-do {
+    background: #fef2f2;
+    color: #b91c1c;
+    border-color: #fecaca;
+  }
+  
+  /* ================= Thao tác ================= */
+  
+  .trang-san-pham-admin .nhom-nut-thao-tac {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  
+  .trang-san-pham-admin .nut-icon {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    color: #475569;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    transition: 0.15s ease;
+  }
+  
+  .trang-san-pham-admin .nut-icon:hover:not(:disabled) {
+    background: #f8fafc;
+    color: #111827;
+    border-color: #d1d5db;
+  }
+  
+  .trang-san-pham-admin .nut-icon.nguy-hiem {
+    color: var(--mau-nguy-hiem);
+  }
+  
+  .trang-san-pham-admin .nut-icon.nguy-hiem:hover:not(:disabled) {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+  }
+  
+  .trang-san-pham-admin .nut-icon:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  
+  /* ================= Phân trang ================= */
+  
+  .trang-san-pham-admin .phan-trang {
+    background: #ffffff;
+    border-top: 1px solid var(--mau-vien);
+    padding: 12px 14px;
+    color: var(--mau-phu);
+    font-size: 14px;
+  }
+  
+  .trang-san-pham-admin .nut-phan-trang button {
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    color: #374151;
+  }
+  
+  .trang-san-pham-admin .nut-phan-trang button:hover:not(:disabled) {
+    background: #f9fafb;
+  }
+  
+  .trang-san-pham-admin .nut-phan-trang button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* ==================================================
+     MODAL SẢN PHẨM
+  ================================================== */
+  
+  .trang-san-pham-admin .hop-modal-rong {
+    max-width: 920px;
+  }
+  
+  .trang-san-pham-admin .luoi-form-san-pham {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 250px;
+    gap: 18px;
+  }
+  
+  .trang-san-pham-admin .luoi-form-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 130px;
+    gap: 12px;
+  }
+  
+  .trang-san-pham-admin .label-anh-san-pham {
+    display: block;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+  
+  .trang-san-pham-admin .khung-upload-anh {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 1px dashed var(--mau-vien-dam);
+    background: #f9fafb;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: 0.15s ease;
+  }
+  
+  .trang-san-pham-admin .khung-upload-anh:hover {
+    border-color: var(--mau-chinh);
+    background: #eff6ff;
+  }
+  
+  .trang-san-pham-admin .khung-upload-anh input {
+    display: none;
+  }
+  
+  .trang-san-pham-admin .khung-upload-anh img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .trang-san-pham-admin .khung-upload-anh div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: var(--mau-phu);
+    padding: 18px;
+  }
+  
+  .trang-san-pham-admin .khung-upload-anh strong {
+    color: var(--mau-chu);
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  
+  .trang-san-pham-admin .khung-upload-anh span {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  
+  .trang-san-pham-admin .ghi-chu-anh {
+    margin: 9px 0 0;
+    color: var(--mau-phu);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  /* ================= Responsive ================= */
+  
+  @media (max-width: 1180px) {
+    .trang-san-pham-admin .bo-loc-san-pham {
+      grid-template-columns: minmax(260px, 1fr) 1fr 1fr;
+    }
+  
+    .trang-san-pham-admin .bo-loc-san-pham .nut-bam {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .trang-san-pham-admin .thanh-cong-cu-trang {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-san-pham-admin .bo-loc-san-pham {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-san-pham-admin .thanh-cong-cu-trang > .nut-bam {
+      width: fit-content;
+      justify-self: end;
+    }
+  
+    .trang-san-pham-admin .luoi-form-san-pham {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-san-pham-admin .khung-upload-anh {
+      max-width: 260px;
+    }
+  
+    .trang-san-pham-admin .bang-du-lieu {
+      min-width: 1050px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .trang-san-pham-admin .luoi-form-3 {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-san-pham-admin .thanh-cong-cu-trang > .nut-bam {
+      width: 100%;
+    }
+  
+    .trang-san-pham-admin .khung-upload-anh {
+      max-width: 220px;
+    }
+  }

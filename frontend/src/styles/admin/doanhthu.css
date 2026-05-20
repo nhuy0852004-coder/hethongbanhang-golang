@@ -1,0 +1,462 @@
+/* ==================================================
+   ADMIN - BÁO CÁO DOANH THU
+   Scoped: .trang-doanh-thu-admin
+================================================== */
+
+/* ================= Bộ lọc báo cáo ================= */
+
+.trang-doanh-thu-admin .bo-loc-bao-cao {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    align-items: end;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  
+  .trang-doanh-thu-admin .nhom-loc-bao-cao {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  
+  .trang-doanh-thu-admin .nhom-loc-bao-cao label {
+    color: #374151;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  
+  .trang-doanh-thu-admin .nhom-loc-bao-cao input {
+    height: 42px;
+    min-width: 170px;
+    border: 1px solid var(--mau-vien);
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--mau-chu);
+    padding: 0 12px;
+    outline: none;
+    font-size: 14px;
+    transition: 0.15s ease;
+  }
+  
+  .trang-doanh-thu-admin .nhom-loc-bao-cao input:hover {
+    background: #fafafa;
+    border-color: #d1d5db;
+  }
+  
+  .trang-doanh-thu-admin .nhom-loc-bao-cao input:focus {
+    background: #ffffff;
+    border-color: #93c5fd;
+  }
+  
+  .trang-doanh-thu-admin .bo-loc-bao-cao button {
+    height: 42px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--mau-chinh);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    transition: 0.15s ease;
+  }
+  
+  .trang-doanh-thu-admin .bo-loc-bao-cao button:hover {
+    background: var(--mau-chinh-dam);
+  }
+  
+  /* ================= Card thống kê ================= */
+  
+  .trang-doanh-thu-admin .dashboard-grid-card {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-card {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-card-icon.xanh {
+    background: #ecfdf5;
+    color: #16a34a;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-card-icon.duong {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-card-icon.tim {
+    background: #f5f3ff;
+    color: #7c3aed;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-card-icon.cam {
+    background: #fff7ed;
+    color: #ea580c;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-card span {
+    display: block;
+    color: var(--mau-phu);
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-card strong {
+    display: block;
+    color: var(--mau-chu);
+    font-size: 24px;
+    line-height: 1.15;
+    font-weight: 800;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-card p {
+    margin: 6px 0 0;
+    color: var(--mau-phu);
+    font-size: 12px;
+  }
+  
+  /* ================= Grid chính ================= */
+  
+  .trang-doanh-thu-admin .dashboard-grid-chinh {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.8fr);
+    gap: 16px;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-box {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 16px;
+    padding: 18px;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-box-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-box-title h2 {
+    margin: 0;
+    color: var(--mau-chu);
+    font-size: 19px;
+    font-weight: 800;
+  }
+  
+  .trang-doanh-thu-admin .dashboard-box-title p {
+    margin: 5px 0 0;
+    color: var(--mau-phu);
+    font-size: 13px;
+  }
+  
+  /* ================= Biểu đồ doanh thu ================= */
+  
+  .trang-doanh-thu-admin .bieu-do-doanh-thu {
+    height: 230px;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+  }
+  
+  .trang-doanh-thu-admin .cot-bieu-do {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .trang-doanh-thu-admin .cot-gia-tri {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .trang-doanh-thu-admin .cot-gia-tri span {
+    font-size: 11px;
+    color: var(--mau-phu);
+    white-space: nowrap;
+  }
+  
+  .trang-doanh-thu-admin .cot-gia-tri div {
+    width: 70%;
+    max-width: 44px;
+    min-height: 8px;
+    border-radius: 10px 10px 4px 4px;
+    background: var(--mau-chinh);
+  }
+  
+  .trang-doanh-thu-admin .cot-bieu-do small {
+    color: var(--mau-phu);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  .trang-doanh-thu-admin .tong-bao-cao-duoi-bieu-do {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #f9fafb;
+    color: var(--mau-phu);
+    font-size: 14px;
+  }
+  
+  .trang-doanh-thu-admin .tong-bao-cao-duoi-bieu-do strong {
+    color: #dc2626;
+    font-weight: 800;
+  }
+  
+  /* ================= Top sản phẩm ================= */
+  
+  .trang-doanh-thu-admin .ds-san-pham-sap-het {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .trang-doanh-thu-admin .item-san-pham-sap-het {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 42px;
+    gap: 11px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--mau-vien);
+    border-radius: 13px;
+    background: #ffffff;
+  }
+  
+  .trang-doanh-thu-admin .item-san-pham-sap-het img,
+  .trang-doanh-thu-admin .anh-sap-het-trong {
+    width: 48px;
+    height: 48px;
+    border-radius: 11px;
+    border: 1px solid var(--mau-vien);
+    background: #f9fafb;
+    object-fit: cover;
+  }
+  
+  .trang-doanh-thu-admin .anh-sap-het-trong {
+    display: grid;
+    place-items: center;
+    color: var(--mau-phu);
+    font-size: 12px;
+  }
+  
+  .trang-doanh-thu-admin .item-san-pham-sap-het strong {
+    display: block;
+    font-size: 14px;
+    color: var(--mau-chu);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .trang-doanh-thu-admin .item-san-pham-sap-het span {
+    display: block;
+    font-size: 12px;
+    color: var(--mau-phu);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  
+  .trang-doanh-thu-admin .item-san-pham-sap-het b {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: var(--mau-chinh);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  
+  /* ================= Empty state trong báo cáo ================= */
+  
+  .trang-doanh-thu-admin .trang-rong-moi,
+  .trang-doanh-thu-admin .bang-trong {
+    background: #ffffff;
+    border: 1px dashed var(--mau-vien-dam);
+    border-radius: 14px;
+    padding: 42px 20px;
+    text-align: center;
+  }
+  
+  /* ================= Responsive ================= */
+  
+  @media (max-width: 1180px) {
+    .trang-doanh-thu-admin .dashboard-grid-card {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  
+    .trang-doanh-thu-admin .dashboard-grid-chinh {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .trang-doanh-thu-admin .bo-loc-bao-cao {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .trang-doanh-thu-admin .nhom-loc-bao-cao input,
+    .trang-doanh-thu-admin .bo-loc-bao-cao button {
+      width: 100%;
+    }
+  
+    .trang-doanh-thu-admin .bieu-do-doanh-thu {
+      overflow-x: auto;
+      grid-template-columns: repeat(7, 72px);
+      padding-bottom: 6px;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .trang-doanh-thu-admin .dashboard-grid-card {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-doanh-thu-admin .dashboard-card {
+      padding: 15px;
+    }
+  
+    .trang-doanh-thu-admin .dashboard-card strong {
+      font-size: 22px;
+    }
+  
+    .trang-doanh-thu-admin .dashboard-box {
+      padding: 15px;
+    }
+  }
+
+  /* ==================================================
+   FIX CỨNG BỘ LỌC DOANH THU
+================================================== */
+
+.trang-doanh-thu-admin .bo-loc-bao-cao {
+    width: 100% !important;
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 14px !important;
+    padding: 14px !important;
+    margin-bottom: 18px !important;
+  
+    display: flex !important;
+    align-items: flex-end !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+  }
+  
+  .trang-doanh-thu-admin .nhom-loc-bao-cao {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 7px !important;
+    min-width: 180px !important;
+  }
+  
+  .trang-doanh-thu-admin .nhom-loc-bao-cao label {
+    color: #374151 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+  }
+  
+  .trang-doanh-thu-admin .nhom-loc-bao-cao input[type="date"] {
+    width: 100% !important;
+    height: 42px !important;
+    min-height: 42px !important;
+  
+    border: 1px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+  
+    color: #111827 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+  
+    padding: 0 12px !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+  .trang-doanh-thu-admin .nhom-loc-bao-cao input[type="date"]:hover {
+    border-color: #d1d5db !important;
+    background: #fafafa !important;
+  }
+  
+  .trang-doanh-thu-admin .nhom-loc-bao-cao input[type="date"]:focus {
+    border-color: #93c5fd !important;
+    background: #ffffff !important;
+  }
+  
+  .trang-doanh-thu-admin .bo-loc-bao-cao button[type="submit"] {
+    height: 42px !important;
+    min-height: 42px !important;
+  
+    border: 1px solid #2563eb !important;
+    border-radius: 10px !important;
+    background: #2563eb !important;
+    color: #ffffff !important;
+  
+    padding: 0 16px !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+  
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+  }
+  
+  .trang-doanh-thu-admin .bo-loc-bao-cao button[type="submit"]:hover {
+    background: #1d4ed8 !important;
+    border-color: #1d4ed8 !important;
+  }
+  
+  /* Mobile */
+  @media (max-width: 768px) {
+    .trang-doanh-thu-admin .bo-loc-bao-cao {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+  
+    .trang-doanh-thu-admin .nhom-loc-bao-cao,
+    .trang-doanh-thu-admin .bo-loc-bao-cao button[type="submit"] {
+      width: 100% !important;
+    }
+  }

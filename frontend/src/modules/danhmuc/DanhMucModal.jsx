@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import NutBam from "../../components/ui/NutBam";
 
@@ -19,7 +19,10 @@ export default function DanhMucModal({
   onDong,
   onLuu,
 }) {
+  const inputTenRef = useRef(null);
+
   const [form, setForm] = useState(formMacDinh);
+  const [loiForm, setLoiForm] = useState({});
 
   useEffect(() => {
     if (mo && duLieuSua) {
@@ -30,48 +33,157 @@ export default function DanhMucModal({
         trangthai: duLieuSua.trangthai || "hien_thi",
         danhmuccha_id: duLieuSua.danhmuccha_id || null,
       });
+
+      setLoiForm({});
       return;
     }
 
     if (mo) {
       setForm(formMacDinh);
+      setLoiForm({});
     }
   }, [mo, duLieuSua]);
 
-  if (!mo) {
-    return null;
-  }
+  useEffect(() => {
+    if (mo && cheDo === "them") {
+      setTimeout(() => {
+        inputTenRef.current?.focus();
+      }, 80);
+    }
+  }, [mo, cheDo]);
+
+  if (!mo) return null;
+
+  const kiemTraTungTruong = (tenTruong, giaTri, duLieuMoi = form) => {
+    switch (tenTruong) {
+      case "tendanhmuc": {
+        const ten = String(giaTri || "").trim();
+
+        if (!ten) return "Vui lòng nhập tên danh mục";
+        if (ten.length < 2) return "Tên danh mục phải có ít nhất 2 ký tự";
+        if (ten.length > 150) return "Tên danh mục không được vượt quá 150 ký tự";
+
+        const trungTen = danhSachDanhMuc.some((item) => {
+          const khacChinhNo = item.id !== duLieuSua?.id;
+          const chuaBiXoa = !item.daxoa;
+          return (
+            khacChinhNo &&
+            chuaBiXoa &&
+            item.tendanhmuc?.trim().toLowerCase() === ten.toLowerCase()
+          );
+        });
+
+        if (trungTen) return "Tên danh mục này đã tồn tại";
+
+        return "";
+      }
+
+      case "thutu": {
+        const so = Number(giaTri || 0);
+
+        if (Number.isNaN(so)) return "Thứ tự phải là số";
+        if (so < 0) return "Thứ tự không được âm";
+
+        return "";
+      }
+
+      case "danhmuccha_id": {
+        if (!giaTri) return "";
+
+        if (Number(giaTri) === Number(duLieuSua?.id)) {
+          return "Không được chọn chính nó làm danh mục cha";
+        }
+
+        return "";
+      }
+
+      case "trangthai": {
+        if (!["hien_thi", "an"].includes(duLieuMoi.trangthai)) {
+          return "Trạng thái không hợp lệ";
+        }
+
+        return "";
+      }
+
+      default:
+        return "";
+    }
+  };
+
+  const kiemTraForm = () => {
+    const loiMoi = {
+      tendanhmuc: kiemTraTungTruong("tendanhmuc", form.tendanhmuc),
+      thutu: kiemTraTungTruong("thutu", form.thutu),
+      danhmuccha_id: kiemTraTungTruong("danhmuccha_id", form.danhmuccha_id),
+      trangthai: kiemTraTungTruong("trangthai", form.trangthai),
+    };
+
+    Object.keys(loiMoi).forEach((key) => {
+      if (!loiMoi[key]) delete loiMoi[key];
+    });
+
+    setLoiForm(loiMoi);
+
+    return Object.keys(loiMoi).length === 0;
+  };
 
   const capNhatForm = (event) => {
     const { name, value } = event.target;
 
-    setForm((duLieuCu) => ({
-      ...duLieuCu,
-      [name]:
-        name === "thutu"
-          ? Number(value || 0)
-          : name === "danhmuccha_id"
-          ? value
-            ? Number(value)
-            : null
-          : value,
+    const giaTriMoi =
+      name === "thutu"
+        ? Number(value || 0)
+        : name === "danhmuccha_id"
+        ? value
+          ? Number(value)
+          : null
+        : value;
+
+    const formMoi = {
+      ...form,
+      [name]: giaTriMoi,
+    };
+
+    setForm(formMoi);
+
+    setLoiForm((loiCu) => ({
+      ...loiCu,
+      [name]: kiemTraTungTruong(name, giaTriMoi, formMoi),
+    }));
+  };
+
+  const xuLyBlur = (event) => {
+    const { name, value } = event.target;
+
+    setLoiForm((loiCu) => ({
+      ...loiCu,
+      [name]: kiemTraTungTruong(name, value),
     }));
   };
 
   const xuLySubmit = (event) => {
     event.preventDefault();
 
+    if (!kiemTraForm()) return;
+
     onLuu({
       ...form,
       tendanhmuc: form.tendanhmuc.trim(),
       mota: form.mota.trim(),
       danhmuccha_id: form.danhmuccha_id || null,
+      thutu: Number(form.thutu || 0),
     });
   };
 
+  const danhSachChaHopLe = danhSachDanhMuc.filter((item) => {
+    if (item.daxoa) return false;
+    if (item.id === duLieuSua?.id) return false;
+    return true;
+  });
+
   return (
     <div className="modal-phu">
-      <div className="nen-modal" onClick={onDong} />
+      <div className="nen-modal" onClick={dangXuLy ? undefined : onDong} />
 
       <div className="hop-modal">
         <div className="dau-modal">
@@ -84,27 +196,40 @@ export default function DanhMucModal({
             </p>
           </div>
 
-          <button className="nut-dong-modal" onClick={onDong}>
+          <button
+            type="button"
+            className="nut-dong-modal"
+            disabled={dangXuLy}
+            onClick={onDong}
+          >
             <X size={20} />
           </button>
         </div>
 
-        <form onSubmit={xuLySubmit} className="noi-dung-modal">
+        <form onSubmit={xuLySubmit} className="noi-dung-modal" noValidate>
           <div className="nhom-form">
             <label>
               Tên danh mục <span>*</span>
             </label>
+
             <input
+              ref={inputTenRef}
               name="tendanhmuc"
               value={form.tendanhmuc}
               onChange={capNhatForm}
+              onBlur={xuLyBlur}
+              className={loiForm.tendanhmuc ? "input-loi" : ""}
               placeholder="Ví dụ: Áo thun, Quần jean, Phụ kiện..."
-              autoFocus
             />
+
+            {loiForm.tendanhmuc && (
+              <div className="loi-form">{loiForm.tendanhmuc}</div>
+            )}
           </div>
 
           <div className="nhom-form">
             <label>Mô tả</label>
+
             <textarea
               name="mota"
               value={form.mota}
@@ -117,45 +242,91 @@ export default function DanhMucModal({
           <div className="luoi-form-2">
             <div className="nhom-form">
               <label>Danh mục cha</label>
+
               <select
                 name="danhmuccha_id"
                 value={form.danhmuccha_id || ""}
                 onChange={capNhatForm}
+                onBlur={xuLyBlur}
+                className={loiForm.danhmuccha_id ? "input-loi" : ""}
               >
                 <option value="">Danh mục gốc</option>
 
-                {danhSachDanhMuc
-                  .filter((item) => item.id !== duLieuSua?.id)
-                  .map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.tendanhmuc}
-                    </option>
-                  ))}
+                {danhSachChaHopLe.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.tendanhmuc}
+                  </option>
+                ))}
               </select>
+
+              {loiForm.danhmuccha_id && (
+                <div className="loi-form">{loiForm.danhmuccha_id}</div>
+              )}
             </div>
 
             <div className="nhom-form">
               <label>Thứ tự</label>
+
               <input
                 type="number"
                 name="thutu"
                 min="0"
                 value={form.thutu}
                 onChange={capNhatForm}
+                onBlur={xuLyBlur}
+                className={loiForm.thutu ? "input-loi" : ""}
               />
+
+              {loiForm.thutu && <div className="loi-form">{loiForm.thutu}</div>}
             </div>
           </div>
 
           <div className="nhom-form">
             <label>Trạng thái</label>
-            <select name="trangthai" value={form.trangthai} onChange={capNhatForm}>
-              <option value="hien_thi">Hiển thị</option>
-              <option value="an">Đang ẩn</option>
-            </select>
+
+            <div className="dong-toggle-modal">
+              <button
+                type="button"
+                className={`nut-toggle-trang-thai ${
+                  form.trangthai === "hien_thi" ? "bat" : "tat"
+                }`}
+                onClick={() => {
+                  const trangThaiMoi =
+                    form.trangthai === "hien_thi" ? "an" : "hien_thi";
+
+                  setForm((cu) => ({
+                    ...cu,
+                    trangthai: trangThaiMoi,
+                  }));
+
+                  setLoiForm((loiCu) => ({
+                    ...loiCu,
+                    trangthai: "",
+                  }));
+                }}
+              >
+                <span className="toggle-thumb"></span>
+              </button>
+
+              <div>
+                <strong>
+                  {form.trangthai === "hien_thi" ? "Hiển thị" : "Đang ẩn"}
+                </strong>
+                <span>
+                  {form.trangthai === "hien_thi"
+                    ? "Danh mục sẽ hiển thị trên website và trong bộ lọc sản phẩm."
+                    : "Danh mục sẽ được ẩn khỏi website và bộ lọc sản phẩm."}
+                </span>
+              </div>
+            </div>
+
+            {loiForm.trangthai && (
+              <div className="loi-form">{loiForm.trangthai}</div>
+            )}
           </div>
 
           <div className="chan-modal">
-            <NutBam type="button" bienThe="phu" onClick={onDong}>
+            <NutBam type="button" bienThe="phu" disabled={dangXuLy} onClick={onDong}>
               Hủy
             </NutBam>
 

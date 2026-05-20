@@ -86,16 +86,26 @@ export default function BaoCaoDoanhThu() {
   };
 
   return (
-    <div>
+    <div className="trang-doanh-thu-admin">
       <form className="bo-loc-bao-cao" onSubmit={taiBaoCao}>
         <div className="nhom-loc-bao-cao">
           <label>Từ ngày</label>
-          <input type="date" name="tungay" value={boLoc.tungay} onChange={capNhatBoLoc} />
+          <input
+            type="date"
+            name="tungay"
+            value={boLoc.tungay}
+            onChange={capNhatBoLoc}
+          />
         </div>
 
         <div className="nhom-loc-bao-cao">
           <label>Đến ngày</label>
-          <input type="date" name="denngay" value={boLoc.denngay} onChange={capNhatBoLoc} />
+          <input
+            type="date"
+            name="denngay"
+            value={boLoc.denngay}
+            onChange={capNhatBoLoc}
+          />
         </div>
 
         <button type="submit">Lọc báo cáo</button>

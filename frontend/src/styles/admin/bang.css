@@ -1,0 +1,142 @@
+/* ==================================================
+   ADMIN TABLE + PHÂN TRANG DÙNG CHUNG
+================================================== */
+
+.khung-bang {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  
+  .bang-responsive {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+  }
+  
+  .bang-du-lieu {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+  }
+  
+  .bang-du-lieu thead {
+    background: #f9fafb;
+  }
+  
+  .bang-du-lieu th {
+    text-align: left;
+    font-size: 13px;
+    color: #374151;
+    font-weight: 700;
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--mau-vien);
+    white-space: nowrap;
+  }
+  
+  .bang-du-lieu td {
+    padding: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+    color: var(--mau-chu);
+    vertical-align: middle;
+  }
+  
+  .bang-du-lieu tbody tr:hover {
+    background: #fafafa;
+  }
+  
+  .bang-du-lieu tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  
+  /* ==================================================
+     PHÂN TRANG - FIX KHÔNG DỒN CÙNG MỘT BÊN
+  ================================================== */
+  
+  .phan-trang {
+    width: 100%;
+    min-height: 58px;
+    padding: 13px 16px;
+    border-top: 1px solid var(--mau-vien);
+    background: #ffffff;
+  
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px;
+  
+    color: var(--mau-phu);
+    font-size: 14px;
+  }
+  
+  .phan-trang > div:first-child {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .phan-trang strong {
+    color: var(--mau-chu);
+    font-weight: 700;
+  }
+  
+  .nut-phan-trang {
+    margin-left: auto;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  
+  .nut-phan-trang button {
+    height: 34px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 0 12px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  
+  .nut-phan-trang button:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #d1d5db;
+  }
+  
+  .nut-phan-trang button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .nut-phan-trang span {
+    color: var(--mau-chu);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  
+  /* Mobile thì cho xuống dòng tự nhiên */
+  @media (max-width: 640px) {
+    .phan-trang {
+      flex-direction: column;
+      align-items: stretch !important;
+      justify-content: flex-start !important;
+    }
+  
+    .nut-phan-trang {
+      width: 100%;
+      margin-left: 0;
+      justify-content: space-between !important;
+    }
+  
+    .nut-phan-trang button {
+      flex: 1;
+    }
+  
+    .nut-phan-trang span {
+      text-align: center;
+      flex: 1;
+    }
+  }

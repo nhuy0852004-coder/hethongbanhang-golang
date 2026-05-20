@@ -1,0 +1,531 @@
+/* ==================================================
+   ADMIN DASHBOARD
+   Trang tổng quan /admin
+================================================== */
+
+.dashboard-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  
+  /* ================= Card thống kê ================= */
+  
+  .dashboard-grid-card {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  
+  .dashboard-card {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  
+  .dashboard-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+  
+  .dashboard-card-icon.xanh {
+    background: #ecfdf5;
+    color: #16a34a;
+  }
+  
+  .dashboard-card-icon.duong {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+  
+  .dashboard-card-icon.tim {
+    background: #f5f3ff;
+    color: #7c3aed;
+  }
+  
+  .dashboard-card-icon.cam {
+    background: #fff7ed;
+    color: #ea580c;
+  }
+  
+  .dashboard-card span {
+    display: block;
+    color: var(--mau-phu);
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+  
+  .dashboard-card strong {
+    display: block;
+    color: var(--mau-chu);
+    font-size: 24px;
+    line-height: 1.15;
+    font-weight: 800;
+  }
+  
+  .dashboard-card p {
+    margin: 6px 0 0;
+    color: var(--mau-phu);
+    font-size: 12px;
+  }
+  
+  /* ================= Grid chính ================= */
+  
+  .dashboard-grid-chinh {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.8fr);
+    gap: 16px;
+  }
+  
+  .dashboard-box {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 16px;
+    padding: 18px;
+  }
+  
+  .dashboard-box-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+  
+  .dashboard-box-title h2 {
+    margin: 0;
+    color: var(--mau-chu);
+    font-size: 19px;
+    font-weight: 800;
+  }
+  
+  .dashboard-box-title p {
+    margin: 5px 0 0;
+    color: var(--mau-phu);
+    font-size: 13px;
+  }
+  
+  /* ================= Biểu đồ doanh thu ================= */
+  
+  .bieu-do-doanh-thu {
+    height: 230px;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+  }
+  
+  .cot-bieu-do {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .cot-gia-tri {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .cot-gia-tri span {
+    font-size: 11px;
+    color: var(--mau-phu);
+    white-space: nowrap;
+  }
+  
+  .cot-gia-tri div {
+    width: 70%;
+    max-width: 44px;
+    border-radius: 10px 10px 4px 4px;
+    background: #2563eb;
+    min-height: 8px;
+  }
+  
+  .cot-bieu-do small {
+    color: var(--mau-phu);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  /* ================= Sản phẩm sắp hết ================= */
+  
+  .dashboard-empty-mini {
+    min-height: 220px;
+    border: 1px dashed var(--mau-vien-dam);
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    color: var(--mau-phu);
+  }
+  
+  .dashboard-empty-mini span {
+    display: block;
+    margin-top: 8px;
+  }
+  
+  .ds-san-pham-sap-het {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .item-san-pham-sap-het {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 42px;
+    gap: 11px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--mau-vien);
+    border-radius: 13px;
+    background: #ffffff;
+  }
+  
+  .item-san-pham-sap-het img,
+  .anh-sap-het-trong {
+    width: 48px;
+    height: 48px;
+    border-radius: 11px;
+    border: 1px solid var(--mau-vien);
+    background: #f9fafb;
+    object-fit: cover;
+  }
+  
+  .anh-sap-het-trong {
+    display: grid;
+    place-items: center;
+    color: var(--mau-phu);
+    font-size: 12px;
+  }
+  
+  .item-san-pham-sap-het strong {
+    display: block;
+    font-size: 14px;
+    color: var(--mau-chu);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .item-san-pham-sap-het span {
+    display: block;
+    font-size: 12px;
+    color: var(--mau-phu);
+    margin-top: 3px;
+  }
+  
+  .item-san-pham-sap-het b {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #fef3c7;
+    color: #92400e;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+  }
+  
+  /* ================= Responsive ================= */
+  
+  @media (max-width: 1180px) {
+    .dashboard-grid-card {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  
+    .dashboard-grid-chinh {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .dashboard-grid-card {
+      grid-template-columns: 1fr;
+    }
+  
+    .dashboard-card {
+      padding: 15px;
+    }
+  
+    .dashboard-card strong {
+      font-size: 22px;
+    }
+  
+    .bieu-do-doanh-thu {
+      overflow-x: auto;
+      grid-template-columns: repeat(7, 72px);
+      padding-bottom: 6px;
+    }
+  
+    .dashboard-box {
+      padding: 15px;
+    }
+  }
+
+  /* ==================================================
+   DASHBOARD - ĐƠN HÀNG MỚI NHẤT
+================================================== */
+
+.dashboard-box.don-hang-moi-nhat,
+.dashboard-box:has(.bang-dashboard-don) {
+  background: #ffffff;
+  border: 1px solid var(--mau-vien);
+  border-radius: 16px;
+  padding: 18px;
+  overflow: hidden;
+}
+
+/* Tiêu đề khối */
+.dashboard-box:has(.bang-dashboard-don) .dashboard-box-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.dashboard-box:has(.bang-dashboard-don) .dashboard-box-title h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--mau-chu);
+}
+
+.dashboard-box:has(.bang-dashboard-don) .dashboard-box-title p {
+  margin: 5px 0 0;
+  color: var(--mau-phu);
+  font-size: 13px;
+}
+
+/* Bọc bảng */
+.dashboard-box:has(.bang-dashboard-don) .bang-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #eef2f7;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+/* Bảng */
+.bang-dashboard-don {
+  width: 100%;
+  min-width: 880px;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+/* Header bảng */
+.bang-dashboard-don thead {
+  background: #f9fafb;
+}
+
+.bang-dashboard-don thead th {
+  padding: 13px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Dòng dữ liệu */
+.bang-dashboard-don tbody td {
+  padding: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #111827;
+  font-size: 14px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.bang-dashboard-don tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.bang-dashboard-don tbody tr:hover {
+  background: #fafafa;
+}
+
+.bang-dashboard-don tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Mã đơn */
+.bang-dashboard-don .ma-don-hang {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.bang-dashboard-don .ma-don-hang strong {
+  display: block;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.bang-dashboard-don .ma-don-hang span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+/* Khách hàng */
+.bang-dashboard-don .khach-don-hang {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.bang-dashboard-don .khach-don-hang strong {
+  display: block;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bang-dashboard-don .khach-don-hang span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+/* Tổng tiền */
+.bang-dashboard-don td:nth-child(3) strong {
+  color: #111827;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Trạng thái */
+.bang-dashboard-don td:nth-child(4),
+.bang-dashboard-don th:nth-child(4) {
+  text-align: center;
+}
+
+.bang-dashboard-don .the-trang-thai {
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+/* Màu trạng thái đơn hàng */
+.bang-dashboard-don .the-vang {
+  background: #fffbeb !important;
+  color: #b45309 !important;
+  border-color: #fde68a !important;
+}
+
+.bang-dashboard-don .the-duong {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  border-color: #bfdbfe !important;
+}
+
+.bang-dashboard-don .the-xanh {
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+  border-color: #bbf7d0 !important;
+}
+
+.bang-dashboard-don .the-do {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border-color: #fecaca !important;
+}
+
+.bang-dashboard-don .the-xam {
+  background: #f9fafb !important;
+  color: #6b7280 !important;
+  border-color: #e5e7eb !important;
+}
+
+/* Thời gian */
+.bang-dashboard-don td:nth-child(5) {
+  color: #6b7280;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Empty state nếu không có đơn */
+.dashboard-box:has(.bang-dashboard-don) .trang-rong-moi,
+.dashboard-box:has(.bang-dashboard-don) .bang-trong {
+  border: 1px dashed #d1d5db;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 42px 20px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .dashboard-box:has(.bang-dashboard-don) {
+    padding: 15px;
+  }
+
+  .bang-dashboard-don {
+    min-width: 820px;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-box:has(.bang-dashboard-don) {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .dashboard-box:has(.bang-dashboard-don) .dashboard-box-title {
+    margin-bottom: 14px;
+  }
+
+  .dashboard-box:has(.bang-dashboard-don) .dashboard-box-title h2 {
+    font-size: 17px;
+  }
+
+  .dashboard-box:has(.bang-dashboard-don) .dashboard-box-title p {
+    font-size: 12px;
+  }
+
+  .bang-dashboard-don {
+    min-width: 780px;
+  }
+
+  .bang-dashboard-don thead th,
+  .bang-dashboard-don tbody td {
+    padding: 12px;
+  }
+}

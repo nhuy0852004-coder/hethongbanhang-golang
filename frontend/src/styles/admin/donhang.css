@@ -1,0 +1,500 @@
+/* ==================================================
+   ADMIN - MODULE ĐƠN HÀNG
+   Scoped: .trang-don-hang-admin
+================================================== */
+
+/* ================= Toolbar / Bộ lọc ================= */
+
+.trang-don-hang-admin .thanh-cong-cu-trang {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .trang-don-hang-admin .bo-loc-don-hang {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) 180px 160px 160px auto;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .trang-don-hang-admin .o-tim-kiem-bang {
+    height: 42px;
+    min-width: 0;
+    max-width: none;
+    border: 1px solid transparent;
+    background: #f9fafb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    color: var(--mau-phu);
+    transition: 0.15s ease;
+  }
+  
+  .trang-don-hang-admin .o-tim-kiem-bang:hover {
+    background: #ffffff;
+    border-color: var(--mau-vien);
+  }
+  
+  .trang-don-hang-admin .o-tim-kiem-bang:focus-within {
+    background: #ffffff;
+    border-color: #93c5fd;
+  }
+  
+  .trang-don-hang-admin .o-tim-kiem-bang input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    color: var(--mau-chu);
+  }
+  
+  .trang-don-hang-admin .o-tim-kiem-bang input::placeholder {
+    color: #9ca3af;
+  }
+  
+  /* Select + Date trong bộ lọc */
+  .trang-don-hang-admin .bo-loc-don-hang select,
+  .trang-don-hang-admin .bo-loc-don-hang input[type="date"] {
+    width: 100%;
+    height: 42px;
+    min-height: 42px;
+    border: 1px solid var(--mau-vien);
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    line-height: 42px;
+  }
+  
+  .trang-don-hang-admin .bo-loc-don-hang input[type="date"] {
+    padding: 0 12px;
+  }
+  
+  .trang-don-hang-admin .bo-loc-don-hang select {
+    padding: 0 38px 0 13px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.5 7.5L10 12L14.5 7.5' stroke='%236B7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+  }
+  
+  .trang-don-hang-admin .bo-loc-don-hang select:hover,
+  .trang-don-hang-admin .bo-loc-don-hang input[type="date"]:hover {
+    border-color: #d1d5db;
+    background-color: #fafafa;
+  }
+  
+  .trang-don-hang-admin .bo-loc-don-hang select:focus,
+  .trang-don-hang-admin .bo-loc-don-hang input[type="date"]:focus {
+    border-color: #93c5fd;
+    background-color: #ffffff;
+  }
+  
+  .trang-don-hang-admin .bo-loc-don-hang .nut-bam {
+    height: 42px;
+    white-space: nowrap;
+  }
+  
+  /* ================= Bảng đơn hàng ================= */
+  
+  .trang-don-hang-admin .khung-bang {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  
+  .trang-don-hang-admin .bang-responsive {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+  }
+  
+  .trang-don-hang-admin .bang-du-lieu {
+    width: 100%;
+    min-width: 980px;
+    border-collapse: collapse;
+    background: #ffffff;
+  }
+  
+  .trang-don-hang-admin .bang-don-hang {
+    min-width: 980px;
+  }
+  
+  .trang-don-hang-admin .bang-du-lieu th,
+  .trang-don-hang-admin .bang-du-lieu td {
+    white-space: nowrap;
+  }
+  
+  .trang-don-hang-admin .bang-du-lieu thead {
+    background: #f9fafb;
+  }
+  
+  .trang-don-hang-admin .bang-du-lieu thead th {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--mau-vien);
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    vertical-align: middle;
+  }
+  
+  .trang-don-hang-admin .bang-du-lieu tbody td {
+    padding: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--mau-chu);
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  
+  .trang-don-hang-admin .bang-du-lieu tbody tr {
+    transition: background-color 0.15s ease;
+  }
+  
+  .trang-don-hang-admin .bang-du-lieu tbody tr:hover {
+    background: #fafafa;
+  }
+  
+  .trang-don-hang-admin .bang-du-lieu tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  
+  /* ================= Mã đơn / khách hàng ================= */
+  
+  .trang-don-hang-admin .ma-don-hang,
+  .trang-don-hang-admin .khach-don-hang {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  
+  .trang-don-hang-admin .ma-don-hang strong,
+  .trang-don-hang-admin .khach-don-hang strong {
+    display: block;
+    font-size: 14px;
+    color: var(--mau-chu);
+    font-weight: 700;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .trang-don-hang-admin .ma-don-hang span,
+  .trang-don-hang-admin .khach-don-hang span {
+    display: block;
+    font-size: 12px;
+    color: var(--mau-phu);
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  
+  /* Tổng tiền */
+  .trang-don-hang-admin .bang-du-lieu td:nth-child(3) strong {
+    font-weight: 800;
+    color: var(--mau-chu);
+  }
+  
+  /* Trạng thái căn giữa */
+  .trang-don-hang-admin .bang-du-lieu th:nth-child(4),
+  .trang-don-hang-admin .bang-du-lieu td:nth-child(4) {
+    text-align: center;
+  }
+  
+  /* ================= Trạng thái đơn hàng ================= */
+  
+  .trang-don-hang-admin .the-trang-thai {
+    min-height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    box-shadow: none;
+  }
+  
+  /* Chờ xác nhận */
+  .trang-don-hang-admin .the-vang {
+    background: #fffbeb !important;
+    color: #b45309 !important;
+    border-color: #fde68a !important;
+  }
+  
+  /* Đã xác nhận / đang giao */
+  .trang-don-hang-admin .the-duong {
+    background: #eff6ff !important;
+    color: #2563eb !important;
+    border-color: #bfdbfe !important;
+  }
+  
+  /* Hoàn thành */
+  .trang-don-hang-admin .the-xanh {
+    background: #f0fdf4 !important;
+    color: #15803d !important;
+    border-color: #bbf7d0 !important;
+  }
+  
+  /* Đã hủy */
+  .trang-don-hang-admin .the-do {
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+    border-color: #fecaca !important;
+  }
+  
+  .trang-don-hang-admin .the-xam {
+    background: #f9fafb !important;
+    color: #6b7280 !important;
+    border-color: #e5e7eb !important;
+  }
+  
+  /* ================= Thao tác ================= */
+  
+  .trang-don-hang-admin .nhom-nut-thao-tac {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  
+  .trang-don-hang-admin .nut-icon {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    color: #475569;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    transition: 0.15s ease;
+  }
+  
+  .trang-don-hang-admin .nut-icon:hover:not(:disabled) {
+    background: #f8fafc;
+    color: #111827;
+    border-color: #d1d5db;
+  }
+  
+  .trang-don-hang-admin .nut-icon.nguy-hiem {
+    color: var(--mau-nguy-hiem);
+  }
+  
+  .trang-don-hang-admin .nut-icon.nguy-hiem:hover:not(:disabled) {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+  }
+  
+  .trang-don-hang-admin .nut-icon:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  
+  /* ================= Modal chi tiết đơn ================= */
+  
+  .trang-don-hang-admin .hop-modal-rong {
+    max-width: 920px;
+  }
+  
+  .trang-don-hang-admin .chi-tiet-don-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 16px;
+  }
+  
+  .trang-don-hang-admin .khung-thong-tin-don {
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    padding: 16px;
+    background: #ffffff;
+  }
+  
+  .trang-don-hang-admin .khung-thong-tin-don h4 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--mau-chu);
+  }
+  
+  .trang-don-hang-admin .trang-thai-hien-tai {
+    margin-bottom: 14px;
+  }
+  
+  .trang-don-hang-admin .canh-bao-trang-thai {
+    margin-top: 12px;
+    padding: 11px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  
+  /* Select trong modal trạng thái */
+  .trang-don-hang-admin .khung-thong-tin-don select {
+    width: 100%;
+    height: 42px;
+    min-height: 42px;
+    border: 1px solid var(--mau-vien);
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 38px 0 13px;
+    outline: none;
+    cursor: pointer;
+    line-height: 42px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.5 7.5L10 12L14.5 7.5' stroke='%236B7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+  }
+  
+  .trang-don-hang-admin .khung-thong-tin-don select:hover {
+    border-color: #d1d5db;
+    background-color: #fafafa;
+  }
+  
+  .trang-don-hang-admin .khung-thong-tin-don select:focus {
+    border-color: #93c5fd;
+    background-color: #ffffff;
+  }
+  
+  /* ================= Sản phẩm trong đơn ================= */
+  
+  .trang-don-hang-admin .bang-chi-tiet-don {
+    min-width: 760px;
+  }
+  
+  .trang-don-hang-admin .san-pham-trong-don {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  
+  .trang-don-hang-admin .san-pham-trong-don img,
+  .trang-don-hang-admin .anh-don-trong {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    border: 1px solid var(--mau-vien);
+    background: #f9fafb;
+    object-fit: cover;
+    flex: 0 0 auto;
+  }
+  
+  .trang-don-hang-admin .anh-don-trong {
+    display: grid;
+    place-items: center;
+    color: var(--mau-phu);
+    font-size: 12px;
+  }
+  
+  .trang-don-hang-admin .san-pham-trong-don strong {
+    display: block;
+    color: var(--mau-chu);
+    font-size: 14px;
+    font-weight: 700;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .trang-don-hang-admin .san-pham-trong-don span {
+    display: block;
+    color: var(--mau-phu);
+    font-size: 12px;
+    margin-top: 3px;
+  }
+  
+  .trang-don-hang-admin .tong-tien-chi-tiet-don {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border-top: 1px solid var(--mau-vien);
+    background: #f9fafb;
+  }
+  
+  .trang-don-hang-admin .tong-tien-chi-tiet-don span {
+    color: var(--mau-phu);
+    font-weight: 700;
+  }
+  
+  .trang-don-hang-admin .tong-tien-chi-tiet-don strong {
+    color: #dc2626;
+    font-size: 20px;
+    font-weight: 800;
+  }
+  
+  /* ================= Responsive ================= */
+  
+  @media (max-width: 1180px) {
+    .trang-don-hang-admin .bo-loc-don-hang {
+      grid-template-columns: minmax(260px, 1fr) 1fr 1fr;
+    }
+  
+    .trang-don-hang-admin .bo-loc-don-hang .nut-bam {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .trang-don-hang-admin .bo-loc-don-hang {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-don-hang-admin .chi-tiet-don-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-don-hang-admin .bang-du-lieu {
+      min-width: 920px;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .trang-don-hang-admin .bo-loc-don-hang .nut-bam {
+      width: 100%;
+    }
+  
+    .trang-don-hang-admin .khung-thong-tin-don {
+      padding: 14px;
+    }
+  
+    .trang-don-hang-admin .tong-tien-chi-tiet-don {
+      justify-content: space-between;
+    }
+  }

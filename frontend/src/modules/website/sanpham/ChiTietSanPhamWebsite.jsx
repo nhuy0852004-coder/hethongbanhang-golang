@@ -4,21 +4,22 @@ import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import DangTai from "../../../components/DangTai";
 import TrangRong from "../../../components/TrangRong";
-import useTieuDeTrang from "../../../hooks/useTieuDeTrang";
 import { layChiTietSanPham, layDanhSachSanPham } from "../../../api/sanphamApi";
 import { formatTienVietNam } from "../../../utils/dinhtien";
 import TheSanPhamWebsite from "./TheSanPhamWebsite";
 import useGioHangStore from "../../../stores/giohangStore";
+import useTieuDeTrang from "../../../hooks/useTieuDeTrang";
 
 export default function ChiTietSanPhamWebsite() {
   const { id } = useParams();
-  useTieuDeTrang(sanPham?.tensanpham || "Chi tiết sản phẩm");
   const themVaoGio = useGioHangStore((state) => state.themVaoGio);
 
   const [dangTai, setDangTai] = useState(true);
   const [sanPham, setSanPham] = useState(null);
   const [sanPhamLienQuan, setSanPhamLienQuan] = useState([]);
   const [soLuong, setSoLuong] = useState(1);
+
+  useTieuDeTrang(sanPham?.tensanpham || "Chi tiết sản phẩm");
 
   useEffect(() => {
     taiChiTiet();

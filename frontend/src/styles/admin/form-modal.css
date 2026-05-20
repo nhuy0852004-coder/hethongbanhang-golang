@@ -1,0 +1,493 @@
+/* ==================================================
+   ADMIN FORM + MODAL + DROPDOWN
+   Dùng chung cho modal thêm/sửa/xóa
+================================================== */
+
+/* ================= Modal nền ================= */
+
+.modal-phu {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+  }
+  
+  .nen-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.45);
+  }
+  
+  /* ================= Modal chính ================= */
+  
+  .hop-modal {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 620px;
+    max-height: calc(100vh - 40px);
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid var(--mau-vien);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .hop-modal-rong {
+    max-width: 900px;
+  }
+  
+  .dau-modal {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--mau-vien);
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  
+  .dau-modal h3 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--mau-chu);
+  }
+  
+  .dau-modal p {
+    margin: 5px 0 0;
+    color: var(--mau-phu);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  
+  .nut-dong-modal {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    border-radius: 10px;
+    color: #374151;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+  
+  .nut-dong-modal:hover:not(:disabled) {
+    background: #f3f4f6;
+  }
+  
+  .nut-dong-modal:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  
+  .noi-dung-modal {
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  /* ================= Form group ================= */
+  
+  .nhom-form {
+    margin-bottom: 15px;
+  }
+  
+  .nhom-form label {
+    display: block;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+  
+  .nhom-form label span {
+    color: var(--mau-nguy-hiem);
+  }
+  
+  .nhom-form input,
+  .nhom-form textarea,
+  .nhom-form select {
+    width: 100%;
+    border: 1px solid var(--mau-vien-dam);
+    border-radius: 10px;
+    outline: 0;
+    font-size: 14px;
+    color: var(--mau-chu);
+    background-color: #ffffff;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .nhom-form input,
+  .nhom-form select {
+    height: 42px;
+    padding: 0 12px;
+  }
+  
+  .nhom-form textarea {
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 92px;
+    line-height: 1.5;
+  }
+  
+  .nhom-form input:hover,
+  .nhom-form textarea:hover,
+  .nhom-form select:hover {
+    background-color: #fafafa;
+  }
+  
+  .nhom-form input:focus,
+  .nhom-form textarea:focus,
+  .nhom-form select:focus {
+    border-color: #93c5fd;
+    background-color: #ffffff;
+  }
+  
+  .nhom-form small {
+    display: block;
+    margin-top: 5px;
+    color: var(--mau-phu);
+    font-size: 12px;
+  }
+  
+  /* ================= Dropdown / Select chuẩn ================= */
+  
+  select,
+  .nhom-form select,
+  .select-loc-wrap select,
+  .bo-loc-danh-muc select,
+  .bo-loc-san-pham select,
+  .bo-loc-don-hang select,
+  .bo-loc-khach-hang select,
+  .bo-loc-thong-bao select {
+    height: 42px;
+    min-height: 42px;
+    border: 1px solid var(--mau-vien);
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 42px;
+    padding: 0 38px 0 13px;
+    outline: none;
+    cursor: pointer;
+  
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.5 7.5L10 12L14.5 7.5' stroke='%236B7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+  }
+  
+  select:hover,
+  .nhom-form select:hover,
+  .select-loc-wrap select:hover,
+  .bo-loc-danh-muc select:hover,
+  .bo-loc-san-pham select:hover,
+  .bo-loc-don-hang select:hover,
+  .bo-loc-khach-hang select:hover,
+  .bo-loc-thong-bao select:hover {
+    border-color: #d1d5db;
+    background-color: #fafafa;
+  }
+  
+  select:focus,
+  .nhom-form select:focus,
+  .select-loc-wrap select:focus,
+  .bo-loc-danh-muc select:focus,
+  .bo-loc-san-pham select:focus,
+  .bo-loc-don-hang select:focus,
+  .bo-loc-khach-hang select:focus,
+  .bo-loc-thong-bao select:focus {
+    border-color: #93c5fd;
+    background-color: #ffffff;
+  }
+  
+  .select-loc-wrap {
+    position: relative;
+    min-width: 170px;
+  }
+  
+  .select-loc-wrap::after {
+    display: none !important;
+  }
+  
+  /* ================= Grid form ================= */
+  
+  .luoi-form-2 {
+    display: grid;
+    grid-template-columns: 1fr 150px;
+    gap: 12px;
+  }
+  
+  .luoi-form-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 130px;
+    gap: 12px;
+  }
+  
+  .luoi-form-san-pham {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 18px;
+  }
+  
+  /* ================= Footer modal ================= */
+  
+  .chan-modal {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 6px;
+  }
+  
+  /* ================= Validate ================= */
+  
+  .input-loi {
+    border-color: var(--mau-nguy-hiem) !important;
+    background: #fffafa !important;
+  }
+  
+  .loi-form {
+    margin-top: 6px;
+    color: var(--mau-nguy-hiem);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  /* ================= Toggle trong modal ================= */
+  
+  .dong-toggle-modal {
+    min-height: 54px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .dong-toggle-modal .nut-toggle-trang-thai {
+    width: 46px;
+    height: 24px;
+    border: 0;
+    border-radius: 999px;
+    padding: 0;
+    position: relative;
+    flex: 0 0 auto;
+    cursor: pointer;
+  }
+  
+  .dong-toggle-modal .nut-toggle-trang-thai.bat {
+    background: #6477b7;
+  }
+  
+  .dong-toggle-modal .nut-toggle-trang-thai.tat {
+    background: #cbd5e1;
+  }
+  
+  .dong-toggle-modal .nut-toggle-trang-thai .toggle-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #ffffff;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: left 0.18s ease;
+  }
+  
+  .dong-toggle-modal .nut-toggle-trang-thai.bat .toggle-thumb {
+    left: 25px;
+  }
+  
+  .dong-toggle-modal strong {
+    display: block;
+    color: var(--mau-chu);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  
+  .dong-toggle-modal span {
+    display: block;
+    color: var(--mau-phu);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  /* ================= Modal xác nhận ================= */
+  
+  .hop-modal-xac-nhan {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 460px;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid var(--mau-vien);
+    overflow: hidden;
+  }
+  
+  .dau-modal-xac-nhan {
+    padding: 16px 18px 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  
+  .icon-xac-nhan {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #fef2f2;
+    color: var(--mau-nguy-hiem);
+    display: grid;
+    place-items: center;
+  }
+  
+  .than-modal-xac-nhan {
+    padding: 14px 18px 4px;
+  }
+  
+  .than-modal-xac-nhan h3 {
+    margin: 0 0 8px;
+    color: var(--mau-chu);
+    font-size: 20px;
+    font-weight: 800;
+  }
+  
+  .than-modal-xac-nhan p {
+    margin: 0;
+    color: #4b5563;
+    line-height: 1.6;
+  }
+  
+  .noi-dung-canh-bao {
+    margin-top: 12px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 12px;
+    color: var(--mau-phu);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .chan-modal-xac-nhan {
+    padding: 16px 18px 18px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  /* ================= Upload trong modal ================= */
+  
+  .label-anh-san-pham {
+    display: block;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+  
+  .khung-upload-anh {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 1px dashed var(--mau-vien-dam);
+    background: #f9fafb;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  
+  .khung-upload-anh:hover {
+    border-color: var(--mau-chinh);
+    background: #eff6ff;
+  }
+  
+  .khung-upload-anh input {
+    display: none;
+  }
+  
+  .khung-upload-anh img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .khung-upload-anh div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: var(--mau-phu);
+    padding: 18px;
+  }
+  
+  .khung-upload-anh strong {
+    color: var(--mau-chu);
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  
+  .khung-upload-anh span {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  
+  .ghi-chu-anh {
+    margin: 9px 0 0;
+    color: var(--mau-phu);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  /* ================= Responsive ================= */
+  
+  @media (max-width: 768px) {
+    .hop-modal {
+      max-width: 100%;
+    }
+  
+    .luoi-form-2,
+    .luoi-form-3,
+    .luoi-form-san-pham {
+      grid-template-columns: 1fr;
+    }
+  
+    .chan-modal,
+    .chan-modal-xac-nhan {
+      flex-direction: column-reverse;
+    }
+  
+    .chan-modal .nut-bam,
+    .chan-modal-xac-nhan .nut-bam {
+      width: 100%;
+    }
+  
+    select,
+    .nhom-form select,
+    .select-loc-wrap select,
+    .bo-loc-danh-muc select,
+    .bo-loc-san-pham select,
+    .bo-loc-don-hang select,
+    .bo-loc-khach-hang select,
+    .bo-loc-thong-bao select {
+      width: 100%;
+      min-width: 0;
+    }
+  
+    .select-loc-wrap {
+      width: 100%;
+      min-width: 0;
+    }
+  }

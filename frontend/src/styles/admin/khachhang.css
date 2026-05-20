@@ -1,0 +1,512 @@
+/* ==================================================
+   ADMIN - MODULE KHÁCH HÀNG
+   Scoped: .trang-khach-hang-admin
+================================================== */
+
+/* ================= Toolbar / Bộ lọc ================= */
+
+.trang-khach-hang-admin .thanh-cong-cu-trang {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .trang-khach-hang-admin .bo-loc-khach-hang {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) 180px auto;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .trang-khach-hang-admin .o-tim-kiem-bang {
+    height: 42px;
+    min-width: 0;
+    max-width: none;
+    border: 1px solid transparent;
+    background: #f9fafb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    color: var(--mau-phu);
+    transition: 0.15s ease;
+  }
+  
+  .trang-khach-hang-admin .o-tim-kiem-bang:hover {
+    background: #ffffff;
+    border-color: var(--mau-vien);
+  }
+  
+  .trang-khach-hang-admin .o-tim-kiem-bang:focus-within {
+    background: #ffffff;
+    border-color: #93c5fd;
+  }
+  
+  .trang-khach-hang-admin .o-tim-kiem-bang input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    color: var(--mau-chu);
+  }
+  
+  .trang-khach-hang-admin .o-tim-kiem-bang input::placeholder {
+    color: #9ca3af;
+  }
+  
+  /* Select bộ lọc */
+  .trang-khach-hang-admin .bo-loc-khach-hang select {
+    width: 100%;
+    height: 42px;
+    min-height: 42px;
+    border: 1px solid var(--mau-vien);
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 38px 0 13px;
+    outline: none;
+    cursor: pointer;
+    line-height: 42px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.5 7.5L10 12L14.5 7.5' stroke='%236B7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+  }
+  
+  .trang-khach-hang-admin .bo-loc-khach-hang select:hover {
+    border-color: #d1d5db;
+    background-color: #fafafa;
+  }
+  
+  .trang-khach-hang-admin .bo-loc-khach-hang select:focus {
+    border-color: #93c5fd;
+    background-color: #ffffff;
+  }
+  
+  .trang-khach-hang-admin .bo-loc-khach-hang .nut-bam {
+    height: 42px;
+    white-space: nowrap;
+  }
+  
+  /* ================= Bảng khách hàng ================= */
+  
+  .trang-khach-hang-admin .khung-bang {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  
+  .trang-khach-hang-admin .bang-responsive {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+  }
+  
+  .trang-khach-hang-admin .bang-du-lieu {
+    width: 100%;
+    min-width: 1080px;
+    border-collapse: collapse;
+    background: #ffffff;
+  }
+  
+  .trang-khach-hang-admin .bang-khach-hang {
+    min-width: 1080px;
+  }
+  
+  .trang-khach-hang-admin .bang-du-lieu th,
+  .trang-khach-hang-admin .bang-du-lieu td {
+    white-space: nowrap;
+  }
+  
+  .trang-khach-hang-admin .bang-du-lieu thead {
+    background: #f9fafb;
+  }
+  
+  .trang-khach-hang-admin .bang-du-lieu thead th {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--mau-vien);
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    vertical-align: middle;
+  }
+  
+  .trang-khach-hang-admin .bang-du-lieu tbody td {
+    padding: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--mau-chu);
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  
+  .trang-khach-hang-admin .bang-du-lieu tbody tr {
+    transition: background-color 0.15s ease;
+  }
+  
+  .trang-khach-hang-admin .bang-du-lieu tbody tr:hover {
+    background: #fafafa;
+  }
+  
+  .trang-khach-hang-admin .bang-du-lieu tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  
+  /* ================= Cột khách hàng ================= */
+  
+  .trang-khach-hang-admin .cot-khach-hang {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  
+  .trang-khach-hang-admin .avatar-khach-hang {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    flex: 0 0 auto;
+  }
+  
+  .trang-khach-hang-admin .cot-khach-hang strong {
+    display: block;
+    font-size: 14px;
+    color: var(--mau-chu);
+    font-weight: 700;
+    line-height: 1.35;
+    max-width: 240px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .trang-khach-hang-admin .cot-khach-hang span {
+    display: block;
+    color: var(--mau-phu);
+    font-size: 12px;
+    margin-top: 3px;
+    max-width: 340px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* ================= Liên hệ ================= */
+  
+  .trang-khach-hang-admin .lien-he-khach {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  
+  .trang-khach-hang-admin .lien-he-khach strong {
+    display: block;
+    font-size: 14px;
+    color: var(--mau-chu);
+    font-weight: 700;
+  }
+  
+  .trang-khach-hang-admin .lien-he-khach span {
+    display: block;
+    color: var(--mau-phu);
+    font-size: 12px;
+    max-width: 210px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Tổng đơn / tổng chi tiêu */
+  .trang-khach-hang-admin .bang-du-lieu td:nth-child(3) strong,
+  .trang-khach-hang-admin .bang-du-lieu td:nth-child(4) strong {
+    font-weight: 800;
+    color: var(--mau-chu);
+  }
+  
+  .trang-khach-hang-admin .bang-du-lieu td:nth-child(4) strong {
+    color: #111827;
+  }
+  
+  /* Trạng thái khách hàng */
+  .trang-khach-hang-admin .the-trang-thai {
+    min-height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    box-shadow: none;
+  }
+  
+  .trang-khach-hang-admin .the-xanh {
+    background: #f0fdf4 !important;
+    color: #15803d !important;
+    border-color: #bbf7d0 !important;
+  }
+  
+  .trang-khach-hang-admin .the-do {
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+    border-color: #fecaca !important;
+  }
+  
+  .trang-khach-hang-admin .the-xam {
+    background: #f9fafb !important;
+    color: #6b7280 !important;
+    border-color: #e5e7eb !important;
+  }
+  
+  /* ================= Thao tác ================= */
+  
+  .trang-khach-hang-admin .nhom-nut-thao-tac {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  
+  .trang-khach-hang-admin .nut-icon {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    color: #475569;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    transition: 0.15s ease;
+  }
+  
+  .trang-khach-hang-admin .nut-icon:hover:not(:disabled) {
+    background: #f8fafc;
+    color: #111827;
+    border-color: #d1d5db;
+  }
+  
+  .trang-khach-hang-admin .nut-icon:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  
+  /* ================= Modal chi tiết khách hàng ================= */
+  
+  .trang-khach-hang-admin .hop-modal-rong {
+    max-width: 920px;
+  }
+  
+  .trang-khach-hang-admin .khach-hang-chi-tiet-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 16px;
+  }
+  
+  .trang-khach-hang-admin .khung-thong-tin-don {
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    padding: 16px;
+    background: #ffffff;
+  }
+  
+  .trang-khach-hang-admin .khung-thong-tin-don h4 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--mau-chu);
+  }
+  
+  /* Dòng thông tin trong modal */
+  .trang-khach-hang-admin .dong-thong-tin {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--mau-vien);
+  }
+  
+  .trang-khach-hang-admin .dong-thong-tin:first-child {
+    padding-top: 0;
+  }
+  
+  .trang-khach-hang-admin .dong-thong-tin:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  
+  .trang-khach-hang-admin .dong-thong-tin span {
+    color: var(--mau-phu);
+    font-size: 14px;
+  }
+  
+  .trang-khach-hang-admin .dong-thong-tin strong {
+    color: var(--mau-chu);
+    font-size: 14px;
+    text-align: right;
+    line-height: 1.45;
+    max-width: 60%;
+    word-break: break-word;
+  }
+  
+  /* ================= Thống kê mua hàng ================= */
+  
+  .trang-khach-hang-admin .the-thong-ke-khach {
+    border: 1px solid var(--mau-vien);
+    border-radius: 13px;
+    padding: 14px;
+    margin-bottom: 10px;
+    background: #f9fafb;
+  }
+  
+  .trang-khach-hang-admin .the-thong-ke-khach:last-child {
+    margin-bottom: 0;
+  }
+  
+  .trang-khach-hang-admin .the-thong-ke-khach span {
+    display: block;
+    color: var(--mau-phu);
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+  
+  .trang-khach-hang-admin .the-thong-ke-khach strong {
+    display: block;
+    color: var(--mau-chu);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+  
+  /* ================= Lịch sử đơn hàng khách ================= */
+  
+  .trang-khach-hang-admin .bang-lich-su-khach {
+    min-width: 760px;
+  }
+  
+  .trang-khach-hang-admin .bang-lich-su-khach .ma-don-hang {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .trang-khach-hang-admin .bang-lich-su-khach .ma-don-hang strong {
+    display: block;
+    color: var(--mau-chu);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  
+  .trang-khach-hang-admin .bang-lich-su-khach .ma-don-hang span {
+    display: block;
+    color: var(--mau-phu);
+    font-size: 12px;
+  }
+  
+  .trang-khach-hang-admin .bang-lich-su-khach td:nth-child(2) strong {
+    font-weight: 800;
+  }
+  
+  .trang-khach-hang-admin .dong-rong-bang {
+    text-align: center;
+    color: var(--mau-phu);
+    padding: 28px;
+    font-size: 14px;
+  }
+  
+  /* ================= Phân trang ================= */
+  
+  .trang-khach-hang-admin .phan-trang {
+    background: #ffffff;
+    border-top: 1px solid var(--mau-vien);
+    padding: 12px 14px;
+    color: var(--mau-phu);
+    font-size: 14px;
+  }
+  
+  .trang-khach-hang-admin .nut-phan-trang button {
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    color: #374151;
+  }
+  
+  .trang-khach-hang-admin .nut-phan-trang button:hover:not(:disabled) {
+    background: #f9fafb;
+  }
+  
+  .trang-khach-hang-admin .nut-phan-trang button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* ================= Responsive ================= */
+  
+  @media (max-width: 1180px) {
+    .trang-khach-hang-admin .bo-loc-khach-hang {
+      grid-template-columns: minmax(260px, 1fr) 1fr;
+    }
+  
+    .trang-khach-hang-admin .bo-loc-khach-hang .nut-bam {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .trang-khach-hang-admin .bo-loc-khach-hang {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-khach-hang-admin .khach-hang-chi-tiet-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-khach-hang-admin .bang-du-lieu {
+      min-width: 1020px;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .trang-khach-hang-admin .bo-loc-khach-hang .nut-bam {
+      width: 100%;
+    }
+  
+    .trang-khach-hang-admin .khung-thong-tin-don {
+      padding: 14px;
+    }
+  
+    .trang-khach-hang-admin .dong-thong-tin {
+      flex-direction: column;
+      gap: 4px;
+    }
+  
+    .trang-khach-hang-admin .dong-thong-tin strong {
+      text-align: left;
+      max-width: 100%;
+    }
+  }

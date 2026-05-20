@@ -1,0 +1,79 @@
+/* ==================================================
+   BIẾN MÀU + RESET CHUNG ADMIN
+================================================== */
+
+:root {
+    --mau-nen: #f5f7fa;
+    --mau-the: #ffffff;
+  
+    --mau-chu: #111827;
+    --mau-chu-nhat: #374151;
+    --mau-phu: #6b7280;
+  
+    --mau-vien: #e5e7eb;
+    --mau-vien-dam: #d1d5db;
+  
+    --mau-chinh: #2563eb;
+    --mau-chinh-dam: #1d4ed8;
+    --mau-xanh-nhat: #eff6ff;
+  
+    --mau-thanh-cong: #16a34a;
+    --mau-nguy-hiem: #dc2626;
+    --mau-canh-bao: #d97706;
+  
+    --do-rong-sidebar: 276px;
+    --do-rong-sidebar-thu-gon: 82px;
+    --cao-header: 74px;
+  
+    --radius-nho: 8px;
+    --radius-vua: 10px;
+    --radius-lon: 14px;
+    --radius-xl: 16px;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    min-height: 100%;
+    background: var(--mau-nen);
+  }
+  
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--mau-nen);
+    color: var(--mau-chu);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+    font-size: 14px;
+  }
+  
+  button,
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+  }
+  
+  button {
+    cursor: pointer;
+  }
+  
+  button:disabled {
+    cursor: not-allowed;
+  }
+  
+  a {
+    color: inherit;
+  }
+  
+  img {
+    max-width: 100%;
+  }
+  
+  #root {
+    min-height: 100vh;
+    background: var(--mau-nen);
+  }

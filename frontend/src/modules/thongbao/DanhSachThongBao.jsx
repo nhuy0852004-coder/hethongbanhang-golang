@@ -92,35 +92,34 @@ export default function DanhSachThongBao() {
   };
 
   return (
-    <div>
-      <div className="thanh-cong-cu-trang">
-        <form className="bo-loc-don-hang" onSubmit={timKiem}>
-          <div className="o-tim-kiem-bang">
-            <Search size={18} />
-            <input
-              name="timkiem"
-              value={boLoc.timkiem}
-              onChange={capNhatBoLoc}
-              placeholder="Tìm tiêu đề, nội dung..."
-            />
+    <div className="trang-thong-bao-admin">
+      <form className="thanh-thong-bao" onSubmit={timKiem}>
+        <div className="bo-loc-card-thong-bao">
+          <div className="select-thong-bao-wrap">
+            <select name="dadoc" value={boLoc.dadoc} onChange={capNhatBoLoc}>
+              <option value="">Tất cả trạng thái</option>
+              <option value="0">Chưa đọc</option>
+              <option value="1">Đã đọc</option>
+            </select>
           </div>
 
-          <select name="dadoc" value={boLoc.dadoc} onChange={capNhatBoLoc}>
-            <option value="">Tất cả trạng thái</option>
-            <option value="0">Chưa đọc</option>
-            <option value="1">Đã đọc</option>
-          </select>
+          <div className="select-thong-bao-wrap">
+            <select name="loai" value={boLoc.loai} onChange={capNhatBoLoc}>
+              <option value="">Tất cả loại</option>
+              <option value="don_hang_moi">Đơn hàng mới</option>
+              <option value="he_thong">Hệ thống</option>
+            </select>
+          </div>
 
-          <NutBam type="submit" bienThe="phu">
-            Tìm kiếm
-          </NutBam>
+          <button type="submit" className="nut-loc-thong-bao">
+            Lọc
+          </button>
+        </div>
 
-          <NutBam type="button" bienThe="phu" onClick={xuLyDanhDauTatCa}>
-            <CheckCheck size={16} />
-            Đánh dấu tất cả đã đọc
-          </NutBam>
-        </form>
-      </div>
+        <button type="button" className="nut-doc-tat-ca" onClick={xuLyDanhDauTatCa}>
+          Đọc tất cả
+        </button>
+      </form>
 
       {dangTai && <DangTai noidung="Đang tải thông báo..." />}
 

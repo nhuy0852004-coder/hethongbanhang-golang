@@ -1,0 +1,494 @@
+/* ==================================================
+   ADMIN LAYOUT
+   Sidebar + Header + Main content
+================================================== */
+
+.bo-cuc-admin-moi {
+    min-height: 100vh;
+    background: var(--mau-nen);
+  }
+  
+  /* ================= Sidebar ================= */
+  
+  .sidebar-admin {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--do-rong-sidebar);
+    height: 100vh;
+    background: var(--mau-the);
+    border-right: 1px solid var(--mau-vien);
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+    transition: width 0.2s ease, transform 0.2s ease;
+  }
+  
+  .sidebar-header {
+    height: var(--cao-header);
+    padding: 0 16px;
+    border-bottom: 1px solid var(--mau-vien);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .thuong-hieu-admin {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  
+  .logo-admin {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--mau-chinh);
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+  
+  .chu-thuong-hieu {
+    min-width: 0;
+  }
+  
+  .chu-thuong-hieu strong {
+    display: block;
+    font-size: 15px;
+    color: var(--mau-chu);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .chu-thuong-hieu span {
+    display: block;
+    font-size: 12px;
+    color: var(--mau-phu);
+    margin-top: 2px;
+  }
+  
+  /* ================= Sidebar menu ================= */
+  
+  .sidebar-menu {
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .sidebar-link {
+    height: 42px;
+    border-radius: 10px;
+    padding: 0 12px;
+    color: var(--mau-chu-nhat);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-size: 14px;
+    transition: 0.15s ease;
+  }
+  
+  .sidebar-link:hover {
+    background: #f3f4f6;
+    color: var(--mau-chu);
+  }
+  
+  .sidebar-link.active {
+    background: var(--mau-xanh-nhat);
+    color: var(--mau-chinh-dam);
+    font-weight: 600;
+  }
+  
+  .sidebar-link svg {
+    flex: 0 0 auto;
+  }
+  
+  .sidebar-footer {
+    padding: 12px;
+    border-top: 1px solid var(--mau-vien);
+  }
+  
+  .nut-thu-gon-sidebar {
+    width: 100%;
+    height: 40px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    border-radius: 10px;
+    color: var(--mau-chu-nhat);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    font-size: 14px;
+  }
+  
+  .nut-thu-gon-sidebar:hover {
+    background: #f9fafb;
+  }
+  
+  /* ================= Collapsed sidebar ================= */
+  
+  .sidebar-thu-gon .sidebar-admin {
+    width: var(--do-rong-sidebar-thu-gon);
+  }
+  
+  .sidebar-thu-gon .chu-thuong-hieu,
+  .sidebar-thu-gon .sidebar-link span,
+  .sidebar-thu-gon .nut-thu-gon-sidebar span {
+    display: none;
+  }
+  
+  .sidebar-thu-gon .sidebar-link {
+    justify-content: center;
+    padding: 0;
+  }
+  
+  .sidebar-thu-gon .nut-thu-gon-sidebar svg {
+    transform: rotate(180deg);
+  }
+  
+  /* ================= Main content ================= */
+  
+  .noi-dung-admin-moi {
+    min-height: 100vh;
+    margin-left: var(--do-rong-sidebar);
+    background: var(--mau-nen);
+    transition: margin-left 0.2s ease;
+  }
+  
+  .sidebar-thu-gon .noi-dung-admin-moi {
+    margin-left: var(--do-rong-sidebar-thu-gon);
+  }
+  
+  .vung-noi-dung-admin {
+    padding: 24px;
+    background: var(--mau-nen);
+  }
+  
+  /* ================= Header ================= */
+  
+  .header-admin {
+    height: var(--cao-header);
+    background: var(--mau-the);
+    border-bottom: 1px solid var(--mau-vien);
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: minmax(220px, 320px) 1fr auto;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+  
+  .header-trai {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  
+  .tieu-de-header {
+    min-width: 0;
+  }
+  
+  .tieu-de-header h1 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--mau-chu);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .tieu-de-header p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--mau-phu);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .header-giua {
+    min-width: 0;
+  }
+  
+  .o-tim-kiem-header {
+    max-width: 520px;
+    height: 42px;
+    border: 1px solid var(--mau-vien);
+    background: #f9fafb;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 13px;
+    color: var(--mau-phu);
+  }
+  
+  .o-tim-kiem-header:focus-within {
+    background: #ffffff;
+    border-color: var(--mau-chinh);
+  }
+  
+  .o-tim-kiem-header input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    color: var(--mau-chu);
+  }
+  
+  .header-phai {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  /* ================= Header buttons ================= */
+  
+  .nut-menu-mobile,
+  .nut-dong-mobile {
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    color: var(--mau-chu-nhat);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: none;
+    place-items: center;
+  }
+  
+  .nut-chuong {
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    border-radius: 11px;
+    color: var(--mau-chu-nhat);
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+  
+  .nut-chuong:hover {
+    background: #f9fafb;
+  }
+  
+  .nut-chuong span {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 19px;
+    height: 19px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  
+  /* ================= Account ================= */
+  
+  .tai-khoan-admin {
+    height: 44px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 7px;
+  }
+  
+  .avatar-admin {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: var(--mau-xanh-nhat);
+    color: var(--mau-chinh-dam);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+  }
+  
+  .thong-tin-admin strong {
+    display: block;
+    font-size: 13px;
+    line-height: 1.1;
+    color: var(--mau-chu);
+  }
+  
+  .thong-tin-admin span {
+    display: block;
+    font-size: 12px;
+    color: var(--mau-phu);
+    margin-top: 3px;
+  }
+  
+  .nut-dang-xuat-admin {
+    width: 31px;
+    height: 31px;
+    border: 0;
+    border-radius: 9px;
+    background: #f3f4f6;
+    color: var(--mau-chu-nhat);
+    display: grid;
+    place-items: center;
+  }
+  
+  .nut-dang-xuat-admin:hover {
+    background: #fee2e2;
+    color: var(--mau-nguy-hiem);
+  }
+  
+  /* ================= Realtime status ================= */
+  
+  .trang-thai-realtime {
+    height: 30px;
+    border-radius: 999px;
+    padding: 0 11px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 800;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  
+  .trang-thai-realtime.ket-noi {
+    background: #ecfdf5;
+    color: #166534;
+    border-color: #bbf7d0;
+  }
+  
+  .trang-thai-realtime.mat-ket-noi {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+  }
+  
+  /* ================= Mobile overlay ================= */
+  
+  .nen-mo-mobile {
+    display: none;
+  }
+  
+  /* ================= Responsive ================= */
+  
+  @media (max-width: 1180px) {
+    .header-admin {
+      grid-template-columns: minmax(180px, 280px) 1fr auto;
+    }
+  
+    .thong-tin-admin {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .sidebar-admin {
+      transform: translateX(-100%);
+      width: 280px;
+    }
+  
+    .sidebar-admin.mo-mobile {
+      transform: translateX(0);
+    }
+  
+    .sidebar-thu-gon .sidebar-admin {
+      width: 280px;
+    }
+  
+    .sidebar-thu-gon .chu-thuong-hieu,
+    .sidebar-thu-gon .sidebar-link span,
+    .sidebar-thu-gon .nut-thu-gon-sidebar span {
+      display: block;
+    }
+  
+    .sidebar-thu-gon .sidebar-link {
+      justify-content: flex-start;
+      padding: 0 12px;
+    }
+  
+    .sidebar-thu-gon .nut-thu-gon-sidebar svg {
+      transform: none;
+    }
+  
+    .nut-thu-gon-sidebar {
+      display: none;
+    }
+  
+    .nut-dong-mobile,
+    .nut-menu-mobile {
+      display: grid;
+    }
+  
+    .noi-dung-admin-moi,
+    .sidebar-thu-gon .noi-dung-admin-moi {
+      margin-left: 0;
+    }
+  
+    .nen-mo-mobile.hien {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.45);
+      z-index: 40;
+    }
+  
+    .header-admin {
+      grid-template-columns: 1fr auto;
+    }
+  
+    .header-giua {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .header-admin {
+      height: auto;
+      min-height: var(--cao-header);
+      padding: 12px 14px;
+      gap: 10px;
+    }
+  
+    .vung-noi-dung-admin {
+      padding: 16px;
+    }
+  
+    .tieu-de-header h1 {
+      font-size: 16px;
+    }
+  
+    .tieu-de-header p {
+      display: none;
+    }
+  
+    .tai-khoan-admin {
+      padding: 0 6px;
+    }
+  
+    .avatar-admin {
+      width: 30px;
+      height: 30px;
+    }
+  
+    .nut-dang-xuat-admin {
+      display: none;
+    }
+  }

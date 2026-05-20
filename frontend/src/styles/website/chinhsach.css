@@ -1,0 +1,162 @@
+/* ==================================================
+   WEBSITE - CHÍNH SÁCH
+   Routes:
+   /chinh-sach-van-chuyen
+   /chinh-sach-doi-tra
+================================================== */
+
+.trang-chinh-sach-web {
+    padding-top: 30px;
+  }
+  
+  /* ==================================================
+     GRID CHÍNH SÁCH
+  ================================================== */
+  
+  .chinh-sach-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  
+  /* ==================================================
+     NỘI DUNG CHÍNH SÁCH
+  ================================================== */
+  
+  .noi-dung-chinh-sach {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 24px;
+  }
+  
+  .noi-dung-chinh-sach h2 {
+    margin: 0 0 14px;
+    font-size: 23px;
+    font-weight: 900;
+    color: #111827;
+    letter-spacing: -0.02em;
+  }
+  
+  .noi-dung-chinh-sach p {
+    color: #4b5563;
+    line-height: 1.8;
+    white-space: pre-line;
+    margin: 0;
+    font-size: 15px;
+  }
+  
+  /* ==================================================
+     CARD THÔNG TIN CỬA HÀNG
+  ================================================== */
+  
+  .thong-tin-cua-hang-box {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 18px;
+  }
+  
+  .thong-tin-cua-hang-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .thong-tin-cua-hang-brand .logo-website-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    background: #2563eb;
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    flex: 0 0 auto;
+  }
+  
+  .thong-tin-cua-hang-brand .logo-website-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .thong-tin-cua-hang-brand strong {
+    display: block;
+    color: #111827;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1.25;
+  }
+  
+  .thong-tin-cua-hang-brand span {
+    display: block;
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 2px;
+  }
+  
+  /* ==================================================
+     DANH SÁCH THÔNG TIN CỬA HÀNG
+  ================================================== */
+  
+  .ds-thong-tin-cua-hang {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .ds-thong-tin-cua-hang div {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .ds-thong-tin-cua-hang svg {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    color: #64748b;
+  }
+  
+  .ds-thong-tin-cua-hang span {
+    color: #4b5563;
+  }
+  
+  /* ==================================================
+     RESPONSIVE
+  ================================================== */
+  
+  @media (max-width: 900px) {
+    .chinh-sach-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .thong-tin-cua-hang-box {
+      order: -1;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .trang-chinh-sach-web {
+      padding-top: 22px;
+    }
+  
+    .noi-dung-chinh-sach,
+    .thong-tin-cua-hang-box {
+      padding: 16px;
+      border-radius: 16px;
+    }
+  
+    .noi-dung-chinh-sach h2 {
+      font-size: 20px;
+    }
+  
+    .noi-dung-chinh-sach p {
+      font-size: 14px;
+    }
+  }

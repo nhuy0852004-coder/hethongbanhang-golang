@@ -120,7 +120,7 @@ export default function CaiDatCuaHang() {
   }
 
   return (
-    <form className="cai-dat-grid" onSubmit={luuCaiDat}>
+    <form className="trang-cai-dat-admin cai-dat-grid" onSubmit={luuCaiDat}>
       <div className="khung-form-thanh-toan">
         <div className="tieu-de-form-thanh-toan">
           <Save size={22} />

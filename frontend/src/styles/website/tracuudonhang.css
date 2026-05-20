@@ -1,0 +1,388 @@
+/* ==================================================
+   WEBSITE - TRA CỨU ĐƠN HÀNG
+   Route: /tra-cuu-don-hang
+================================================== */
+
+.trang-tra-cuu-don-web {
+    padding-top: 30px;
+  }
+  
+  /* ==================================================
+     FORM TRA CỨU
+  ================================================== */
+  
+  .khung-tra-cuu-don {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 18px;
+  }
+  
+  .o-tra-cuu-don {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  
+  .o-tra-cuu-don label {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  
+  .o-tra-cuu-don input {
+    height: 42px;
+    border: 1px solid #e5e7eb;
+    border-radius: 11px;
+    background: #ffffff;
+    color: #111827;
+    padding: 0 12px;
+    outline: 0;
+    font-size: 14px;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .o-tra-cuu-don input:hover {
+    background: #fafafa;
+    border-color: #d1d5db;
+  }
+  
+  .o-tra-cuu-don input:focus {
+    background: #ffffff;
+    border-color: #93c5fd;
+  }
+  
+  .o-tra-cuu-don input::placeholder {
+    color: #9ca3af;
+  }
+  
+  .khung-tra-cuu-don button {
+    height: 42px;
+    border: 0;
+    border-radius: 11px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 900;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: 0.15s ease;
+  }
+  
+  .khung-tra-cuu-don button:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+  
+  .khung-tra-cuu-don button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  /* ==================================================
+     KẾT QUẢ TRA CỨU
+  ================================================== */
+  
+  .ket-qua-tra-cuu-don {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  /* Card trạng thái chính */
+  .the-trang-thai-don-web {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .icon-don-web {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+  
+  .the-trang-thai-don-web span {
+    color: #6b7280;
+    font-size: 13px;
+  }
+  
+  .the-trang-thai-don-web h2 {
+    margin: 4px 0 8px;
+    font-size: 24px;
+    color: #111827;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  
+  /* ==================================================
+     GRID THÔNG TIN ĐƠN
+  ================================================== */
+  
+  .tra-cuu-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 16px;
+  }
+  
+  .khung-thong-tin-tra-cuu,
+  .khung-san-pham-tra-cuu {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 18px;
+  }
+  
+  .khung-thong-tin-tra-cuu h3,
+  .khung-san-pham-tra-cuu h3 {
+    margin: 0 0 14px;
+    font-size: 19px;
+    font-weight: 900;
+    color: #111827;
+  }
+  
+  /* Dòng thông tin */
+  .dong-tra-cuu {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .dong-tra-cuu:last-child {
+    border-bottom: 0;
+  }
+  
+  .dong-tra-cuu span {
+    color: #6b7280;
+    font-size: 14px;
+  }
+  
+  .dong-tra-cuu strong {
+    text-align: right;
+    color: #111827;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.45;
+    max-width: 62%;
+    word-break: break-word;
+  }
+  
+  .dong-tra-cuu .the-trang-thai {
+    white-space: nowrap;
+  }
+  
+  .mau-tien {
+    color: #dc2626 !important;
+    font-weight: 900 !important;
+  }
+  
+  /* Ghi chú realtime */
+  .ghi-chu-realtime-don {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #ecfdf5;
+    color: #166534;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  
+  /* ==================================================
+     SẢN PHẨM TRONG ĐƠN
+  ================================================== */
+  
+  .khung-san-pham-tra-cuu {
+    overflow: hidden;
+  }
+  
+  .dong-san-pham-tra-cuu {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .dong-san-pham-tra-cuu:last-child {
+    border-bottom: 0;
+  }
+  
+  .dong-san-pham-tra-cuu img,
+  .anh-tra-cuu-trong {
+    width: 58px;
+    height: 58px;
+    border-radius: 13px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    object-fit: cover;
+  }
+  
+  .anh-tra-cuu-trong {
+    display: grid;
+    place-items: center;
+    color: #6b7280;
+    font-size: 12px;
+  }
+  
+  .dong-san-pham-tra-cuu strong {
+    display: block;
+    color: #111827;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .dong-san-pham-tra-cuu span {
+    display: block;
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  
+  .dong-san-pham-tra-cuu b {
+    color: #dc2626;
+    font-size: 14px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+  
+  /* ==================================================
+     RESPONSIVE
+  ================================================== */
+  
+  @media (max-width: 900px) {
+    .khung-tra-cuu-don,
+    .tra-cuu-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .khung-tra-cuu-don button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .the-trang-thai-don-web {
+      align-items: flex-start;
+    }
+  
+    .icon-don-web {
+      width: 52px;
+      height: 52px;
+    }
+  
+    .the-trang-thai-don-web h2 {
+      font-size: 20px;
+    }
+  
+    .khung-thong-tin-tra-cuu,
+    .khung-san-pham-tra-cuu {
+      padding: 16px;
+      border-radius: 16px;
+    }
+  
+    .dong-tra-cuu {
+      flex-direction: column;
+      gap: 4px;
+    }
+  
+    .dong-tra-cuu strong {
+      text-align: left;
+      max-width: 100%;
+    }
+  
+    .dong-san-pham-tra-cuu {
+      grid-template-columns: 54px minmax(0, 1fr);
+    }
+  
+    .dong-san-pham-tra-cuu b {
+      grid-column: 2;
+    }
+  
+    .dong-san-pham-tra-cuu img,
+    .anh-tra-cuu-trong {
+      width: 54px;
+      height: 54px;
+    }
+  }
+
+  /* ==================================================
+   TRA CỨU ĐƠN HÀNG - EMPTY STATE
+   Phần "Chưa có thông tin đơn hàng"
+================================================== */
+
+.trang-tra-cuu-don-web .trang-rong-moi {
+    background: #ffffff;
+    border: 1px dashed #d1d5db;
+    border-radius: 18px;
+    padding: 52px 24px;
+    text-align: center;
+    margin-top: 18px;
+  }
+  
+  .trang-tra-cuu-don-web .trang-rong-icon-moi {
+    width: 76px;
+    height: 76px;
+    border-radius: 20px;
+    background: #f8fafc;
+    color: #64748b;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 16px;
+  }
+  
+  .trang-tra-cuu-don-web .trang-rong-moi h3 {
+    margin: 0 0 8px;
+    color: #111827;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  
+  .trang-tra-cuu-don-web .trang-rong-moi p {
+    max-width: 460px;
+    margin: 0 auto;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  
+  /* Mobile */
+  @media (max-width: 640px) {
+    .trang-tra-cuu-don-web .trang-rong-moi {
+      padding: 38px 18px;
+      border-radius: 16px;
+    }
+  
+    .trang-tra-cuu-don-web .trang-rong-icon-moi {
+      width: 66px;
+      height: 66px;
+      border-radius: 18px;
+    }
+  
+    .trang-tra-cuu-don-web .trang-rong-moi h3 {
+      font-size: 19px;
+    }
+  }

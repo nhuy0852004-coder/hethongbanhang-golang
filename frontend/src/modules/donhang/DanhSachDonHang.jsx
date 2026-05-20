@@ -182,7 +182,7 @@ export default function DanhSachDonHang() {
   };
 
   return (
-    <div>
+    <div className="trang-don-hang-admin">
       <div className="thanh-cong-cu-trang">
         <form className="bo-loc-don-hang" onSubmit={timKiem}>
           <div className="o-tim-kiem-bang">

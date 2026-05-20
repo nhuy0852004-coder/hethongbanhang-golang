@@ -1,0 +1,613 @@
+/* ==================================================
+   WEBSITE - SẢN PHẨM
+   Routes: /sanpham, /sanpham/:id
+================================================== */
+
+/* ==================================================
+   TRANG DANH SÁCH SẢN PHẨM
+================================================== */
+
+.trang-danh-sach-san-pham-web {
+    padding-top: 30px;
+  }
+  
+  .dau-trang-web {
+    margin-bottom: 18px;
+  }
+  
+  .dau-trang-web h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 900;
+    color: #111827;
+    letter-spacing: -0.02em;
+  }
+  
+  .dau-trang-web p {
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  /* ================= Bộ lọc sản phẩm ================= */
+  
+  .khung-loc-web {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  .form-tim-san-pham-web {
+    display: flex;
+    gap: 10px;
+    min-width: 0;
+  }
+  
+  .o-tim-san-pham-web {
+    height: 42px;
+    border: 1px solid transparent;
+    background: #f9fafb;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    flex: 1;
+    min-width: 0;
+    color: #6b7280;
+    transition: 0.15s ease;
+  }
+  
+  .o-tim-san-pham-web:hover {
+    background: #ffffff;
+    border-color: #e5e7eb;
+  }
+  
+  .o-tim-san-pham-web:focus-within {
+    background: #ffffff;
+    border-color: #93c5fd;
+  }
+  
+  .o-tim-san-pham-web input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    flex: 1;
+    min-width: 0;
+    color: #111827;
+    font-size: 14px;
+  }
+  
+  .o-tim-san-pham-web input::placeholder {
+    color: #9ca3af;
+  }
+  
+  .form-tim-san-pham-web button {
+    height: 42px;
+    border-radius: 11px;
+    border: 1px solid #2563eb;
+    background: #2563eb;
+    color: #ffffff;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+    transition: 0.15s ease;
+  }
+  
+  .form-tim-san-pham-web button:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+  
+  /* Select danh mục */
+  .khung-loc-web select {
+    width: 100%;
+    height: 42px;
+    min-height: 42px;
+    border: 1px solid #e5e7eb;
+    border-radius: 11px;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 38px 0 13px;
+    outline: none;
+    cursor: pointer;
+    line-height: 42px;
+  
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.5 7.5L10 12L14.5 7.5' stroke='%236B7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+  }
+  
+  .khung-loc-web select:hover {
+    border-color: #d1d5db;
+    background-color: #fafafa;
+  }
+  
+  .khung-loc-web select:focus {
+    border-color: #93c5fd;
+    background-color: #ffffff;
+  }
+  
+  /* ==================================================
+     GRID SẢN PHẨM
+  ================================================== */
+  
+  .san-pham-web-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  
+  /* ==================================================
+     CARD SẢN PHẨM WEBSITE
+  ================================================== */
+  
+  .the-san-pham-website {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .the-san-pham-website:hover {
+    border-color: #bfdbfe;
+    background: #fbfdff;
+  }
+  
+  .anh-the-san-pham {
+    position: relative;
+    display: block;
+    aspect-ratio: 1 / 1;
+    background: #f9fafb;
+    color: #6b7280;
+    text-decoration: none;
+    overflow: hidden;
+  }
+  
+  .anh-the-san-pham img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .anh-san-pham-website-trong {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: #9ca3af;
+  }
+  
+  .nhan-giam-gia {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ef4444;
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 5px 9px;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  
+  .noi-dung-the-san-pham {
+    padding: 14px;
+  }
+  
+  .ten-san-pham-web {
+    display: block;
+    min-height: 42px;
+    color: #111827;
+    text-decoration: none;
+    font-weight: 800;
+    line-height: 1.4;
+    font-size: 14px;
+  }
+  
+  .ten-san-pham-web:hover {
+    color: #2563eb;
+  }
+  
+  .noi-dung-the-san-pham p {
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .gia-san-pham-web {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .gia-san-pham-web strong {
+    color: #dc2626;
+    font-size: 16px;
+    font-weight: 900;
+  }
+  
+  .gia-san-pham-web span {
+    color: #9ca3af;
+    text-decoration: line-through;
+    font-size: 13px;
+  }
+  
+  .chan-the-san-pham {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .chan-the-san-pham span {
+    color: #6b7280;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  
+  .chan-the-san-pham button {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: grid;
+    place-items: center;
+    transition: 0.15s ease;
+    flex: 0 0 auto;
+  }
+  
+  .chan-the-san-pham button:hover {
+    background: #dbeafe;
+  }
+  
+  /* ==================================================
+     PHÂN TRANG WEBSITE
+  ================================================== */
+  
+  .phan-trang-web {
+    margin-top: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .phan-trang-web button {
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    padding: 0 14px;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+    transition: 0.15s ease;
+  }
+  
+  .phan-trang-web button:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #d1d5db;
+  }
+  
+  .phan-trang-web button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .phan-trang-web span {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  
+  /* ==================================================
+     CHI TIẾT SẢN PHẨM
+  ================================================== */
+  
+  .trang-chi-tiet-san-pham-web {
+    padding-top: 30px;
+  }
+  
+  .link-quay-lai-web {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #374151;
+    text-decoration: none;
+    margin-bottom: 18px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  
+  .link-quay-lai-web:hover {
+    color: #2563eb;
+  }
+  
+  .chi-tiet-san-pham-grid {
+    display: grid;
+    grid-template-columns: 480px minmax(0, 1fr);
+    gap: 30px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 22px;
+  }
+  
+  /* Ảnh chi tiết */
+  .anh-chi-tiet-san-pham {
+    aspect-ratio: 1 / 1;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .anh-chi-tiet-san-pham img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .anh-chi-tiet-san-pham div {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: #6b7280;
+    text-align: center;
+  }
+  
+  /* Thông tin chi tiết */
+  .thong-tin-chi-tiet-san-pham {
+    min-width: 0;
+  }
+  
+  .breadcrumb-san-pham {
+    color: #2563eb;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  
+  .thong-tin-chi-tiet-san-pham h1 {
+    margin: 10px 0;
+    font-size: 32px;
+    line-height: 1.2;
+    color: #111827;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  
+  .ma-san-pham-web {
+    color: #6b7280;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  
+  .ma-san-pham-web strong {
+    color: #374151;
+  }
+  
+  /* Giá chi tiết */
+  .gia-chi-tiet-web {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  
+  .gia-chi-tiet-web strong {
+    color: #dc2626;
+    font-size: 30px;
+    font-weight: 900;
+  }
+  
+  .gia-chi-tiet-web span {
+    color: #9ca3af;
+    text-decoration: line-through;
+    font-size: 16px;
+  }
+  
+  /* Tồn kho */
+  .ton-kho-web {
+    color: #6b7280;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  
+  .ton-kho-web strong {
+    color: #111827;
+  }
+  
+  /* Mô tả */
+  .mo-ta-san-pham-web {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 18px;
+    margin-top: 18px;
+  }
+  
+  .mo-ta-san-pham-web h3 {
+    font-size: 17px;
+    font-weight: 900;
+    margin: 0 0 8px;
+    color: #111827;
+  }
+  
+  .mo-ta-san-pham-web p {
+    color: #4b5563;
+    line-height: 1.7;
+    margin: 0;
+  }
+  
+  /* Chọn số lượng */
+  .chon-so-luong-web {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  
+  .chon-so-luong-web span {
+    font-weight: 800;
+    color: #111827;
+  }
+  
+  .chon-so-luong-web div {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 11px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  
+  .chon-so-luong-web button {
+    width: 40px;
+    height: 38px;
+    border: 0;
+    background: #ffffff;
+    display: grid;
+    place-items: center;
+    color: #374151;
+    transition: 0.15s ease;
+  }
+  
+  .chon-so-luong-web button:hover {
+    background: #f9fafb;
+  }
+  
+  .chon-so-luong-web strong {
+    width: 42px;
+    text-align: center;
+    color: #111827;
+  }
+  
+  /* Nút thêm giỏ */
+  .nut-them-gio-web {
+    margin-top: 20px;
+    height: 46px;
+    border: 0;
+    border-radius: 12px;
+    background: #2563eb;
+    color: #ffffff;
+    padding: 0 20px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    transition: 0.15s ease;
+  }
+  
+  .nut-them-gio-web:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+  
+  .nut-them-gio-web:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* ==================================================
+     RESPONSIVE
+  ================================================== */
+  
+  @media (max-width: 1080px) {
+    .san-pham-web-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  
+    .chi-tiet-san-pham-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .anh-chi-tiet-san-pham {
+      max-width: 520px;
+    }
+  }
+  
+  @media (max-width: 860px) {
+    .san-pham-web-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  
+    .khung-loc-web {
+      grid-template-columns: 1fr;
+    }
+  
+    .form-tim-san-pham-web {
+      flex-direction: column;
+    }
+  
+    .form-tim-san-pham-web button {
+      width: 100%;
+    }
+  
+    .thong-tin-chi-tiet-san-pham h1 {
+      font-size: 28px;
+    }
+  
+    .gia-chi-tiet-web strong {
+      font-size: 26px;
+    }
+  }
+  
+  @media (max-width: 560px) {
+    .san-pham-web-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .chi-tiet-san-pham-grid {
+      padding: 16px;
+      border-radius: 16px;
+      gap: 20px;
+    }
+  
+    .thong-tin-chi-tiet-san-pham h1 {
+      font-size: 24px;
+    }
+  
+    .gia-chi-tiet-web strong {
+      font-size: 24px;
+    }
+  
+    .chon-so-luong-web {
+      justify-content: space-between;
+    }
+  
+    .nut-them-gio-web {
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .phan-trang-web {
+      gap: 8px;
+    }
+  
+    .phan-trang-web button {
+      flex: 1;
+    }
+  }

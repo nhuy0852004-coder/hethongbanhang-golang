@@ -1,0 +1,827 @@
+/* ==================================================
+   ADMIN - MODULE DANH MỤC
+   Scoped: .trang-danh-muc-admin
+================================================== */
+
+/* ================= Toolbar / Bộ lọc ================= */
+
+.trang-danh-muc-admin .thanh-danh-muc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .trang-danh-muc-admin .bo-loc-card-danh-muc {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .trang-danh-muc-admin .o-tim-danh-muc {
+    height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f9fafb;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 0 12px;
+    color: var(--mau-phu);
+    transition: 0.15s ease;
+  }
+  
+  .trang-danh-muc-admin .o-tim-danh-muc:hover {
+    background: #ffffff;
+    border-color: #e5e7eb;
+  }
+  
+  .trang-danh-muc-admin .o-tim-danh-muc:focus-within {
+    background: #ffffff;
+    border-color: #93c5fd;
+  }
+  
+  .trang-danh-muc-admin .o-tim-danh-muc input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--mau-chu);
+    font-size: 14px;
+  }
+  
+  .trang-danh-muc-admin .o-tim-danh-muc input::placeholder {
+    color: #9ca3af;
+  }
+  
+  .trang-danh-muc-admin .cum-loc-danh-muc {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+  
+  /* ================= Dropdown / Select ================= */
+  
+  .trang-danh-muc-admin .select-loc-wrap {
+    position: relative;
+    min-width: 175px;
+  }
+  
+  .trang-danh-muc-admin .select-loc-wrap select {
+    width: 100%;
+    height: 42px;
+    min-height: 42px;
+    border: 1px solid var(--mau-vien);
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 38px 0 13px;
+    outline: none;
+    cursor: pointer;
+    line-height: 42px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.5 7.5L10 12L14.5 7.5' stroke='%236B7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .trang-danh-muc-admin .select-loc-wrap select:hover {
+    border-color: #d1d5db;
+    background-color: #fafafa;
+  }
+  
+  .trang-danh-muc-admin .select-loc-wrap select:focus {
+    border-color: #93c5fd;
+    background-color: #ffffff;
+  }
+  
+  /* ================= Checkbox xóa mềm ================= */
+  
+  .trang-danh-muc-admin .checkbox-xoa-mem-moi {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    border-radius: 10px;
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.15s ease;
+  }
+  
+  .trang-danh-muc-admin .checkbox-xoa-mem-moi:hover {
+    background: #fafafa;
+    border-color: #d1d5db;
+  }
+  
+  .trang-danh-muc-admin .checkbox-xoa-mem-moi input {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--mau-chinh);
+    cursor: pointer;
+  }
+  
+  /* ================= Nút toolbar ================= */
+  
+  .trang-danh-muc-admin .nut-lam-moi-danh-muc,
+  .trang-danh-muc-admin .nut-them-danh-muc-moi {
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 14px;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: 0.15s ease;
+  }
+  
+  .trang-danh-muc-admin .nut-lam-moi-danh-muc {
+    background: #ffffff;
+    border-color: var(--mau-vien);
+    color: #374151;
+  }
+  
+  .trang-danh-muc-admin .nut-lam-moi-danh-muc:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+  }
+  
+  .trang-danh-muc-admin .nut-them-danh-muc-moi {
+    background: var(--mau-chinh);
+    color: #ffffff;
+  }
+  
+  .trang-danh-muc-admin .nut-them-danh-muc-moi:hover {
+    background: var(--mau-chinh-dam);
+  }
+  
+  /* ================= Khung bảng ================= */
+  
+  .trang-danh-muc-admin .khung-bang {
+    background: #ffffff;
+    border: 1px solid var(--mau-vien);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  
+  .trang-danh-muc-admin .bang-responsive {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+  }
+  
+  .trang-danh-muc-admin .bang-du-lieu {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: collapse;
+    background: #ffffff;
+  }
+  
+  .trang-danh-muc-admin .bang-du-lieu th,
+  .trang-danh-muc-admin .bang-du-lieu td {
+    white-space: nowrap;
+  }
+  
+  .trang-danh-muc-admin .bang-du-lieu thead {
+    background: #f9fafb;
+  }
+  
+  .trang-danh-muc-admin .bang-du-lieu thead th {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--mau-vien);
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    vertical-align: middle;
+  }
+  
+  .trang-danh-muc-admin .bang-du-lieu tbody td {
+    padding: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--mau-chu);
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  
+  .trang-danh-muc-admin .bang-du-lieu tbody tr {
+    transition: background-color 0.15s ease;
+  }
+  
+  .trang-danh-muc-admin .bang-du-lieu tbody tr:hover {
+    background: #fafafa;
+  }
+  
+  .trang-danh-muc-admin .bang-du-lieu tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  
+  /* ================= Nội dung bảng ================= */
+  
+  .trang-danh-muc-admin .o-ten-danh-muc {
+    max-width: 300px;
+  }
+  
+  .trang-danh-muc-admin .o-ten-danh-muc strong {
+    display: block;
+    color: var(--mau-chu);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .trang-danh-muc-admin .meta-danh-muc {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+  
+  .trang-danh-muc-admin .meta-danh-muc span {
+    color: var(--mau-phu);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .trang-danh-muc-admin .duong-dan-chip {
+    display: inline-flex;
+    align-items: center;
+    color: var(--mau-chinh);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  
+  .trang-danh-muc-admin .so-lieu-text {
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  
+  /* ================= Trạng thái switch ================= */
+  
+  .trang-danh-muc-admin .trang-thai-col {
+    text-align: center;
+  }
+  
+  .trang-danh-muc-admin .nut-toggle-trang-thai {
+    width: 46px;
+    height: 24px;
+    border: 0;
+    border-radius: 999px;
+    padding: 0;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: background-color 0.18s ease;
+    flex-shrink: 0;
+  }
+  
+  .trang-danh-muc-admin .nut-toggle-trang-thai.bat {
+    background: #6477b7;
+  }
+  
+  .trang-danh-muc-admin .nut-toggle-trang-thai.tat {
+    background: #cbd5e1;
+  }
+  
+  .trang-danh-muc-admin .nut-toggle-trang-thai .toggle-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #ffffff;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: left 0.18s ease;
+  }
+  
+  .trang-danh-muc-admin .nut-toggle-trang-thai.bat .toggle-thumb {
+    left: 25px;
+  }
+  
+  .trang-danh-muc-admin .nut-toggle-trang-thai:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  
+  /* ================= Xóa mềm ================= */
+  
+  .trang-danh-muc-admin .chu-xoa-mem {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    min-height: auto;
+    border-radius: 0;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: none;
+  }
+  
+  .trang-danh-muc-admin .chu-xoa-mem.dang-dung {
+    color: #16a34a;
+  }
+  
+  .trang-danh-muc-admin .chu-xoa-mem.da-xoa {
+    color: #dc2626;
+  }
+  
+  /* ================= Thao tác icon ================= */
+  
+  .trang-danh-muc-admin .nhom-thao-tac-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  
+  .trang-danh-muc-admin .nut-icon-tron {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--mau-vien);
+    border-radius: 8px;
+    background: #ffffff;
+    color: #475569;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.15s ease;
+  }
+  
+  .trang-danh-muc-admin .nut-icon-tron:hover:not(:disabled) {
+    background: #f8fafc;
+    color: #111827;
+    border-color: #d1d5db;
+  }
+  
+  .trang-danh-muc-admin .nut-icon-tron.nguy-hiem {
+    color: var(--mau-nguy-hiem);
+  }
+  
+  .trang-danh-muc-admin .nut-icon-tron.nguy-hiem:hover:not(:disabled) {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+  }
+  
+  .trang-danh-muc-admin .nut-icon-tron:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  
+  /* ================= Phân trang ================= */
+  
+  .trang-danh-muc-admin .phan-trang {
+    background: #ffffff;
+    border-top: 1px solid var(--mau-vien);
+    padding: 12px 14px;
+    color: var(--mau-phu);
+    font-size: 14px;
+  }
+  
+  .trang-danh-muc-admin .nut-phan-trang button {
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    color: #374151;
+  }
+  
+  .trang-danh-muc-admin .nut-phan-trang button:hover:not(:disabled) {
+    background: #f9fafb;
+  }
+  
+  .trang-danh-muc-admin .nut-phan-trang button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* ================= Modal trạng thái danh mục ================= */
+  
+  .trang-danh-muc-admin .dong-toggle-modal {
+    min-height: 54px;
+    border: 1px solid var(--mau-vien);
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .trang-danh-muc-admin .dong-toggle-modal .nut-toggle-trang-thai {
+    flex: 0 0 auto;
+  }
+  
+  .trang-danh-muc-admin .dong-toggle-modal strong {
+    display: block;
+    color: var(--mau-chu);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  
+  .trang-danh-muc-admin .dong-toggle-modal span {
+    display: block;
+    color: var(--mau-phu);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  /* ================= Validate form danh mục ================= */
+  
+  .trang-danh-muc-admin .input-loi {
+    border-color: var(--mau-nguy-hiem) !important;
+    background: #fffafa !important;
+  }
+  
+  .trang-danh-muc-admin .loi-form {
+    margin-top: 6px;
+    color: var(--mau-nguy-hiem);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  /* ================= Loading / Empty trong danh mục ================= */
+  
+  .trang-danh-muc-admin .bang-loading {
+    overflow: hidden;
+  }
+  
+  .trang-danh-muc-admin .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: #e2e8f0;
+    border-radius: 8px;
+  }
+  
+  .trang-danh-muc-admin .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    );
+    animation: danhmuc-skeleton-loading 1.3s infinite;
+  }
+  
+  .trang-danh-muc-admin .skeleton-text {
+    width: 100%;
+    height: 16px;
+  }
+  
+  @keyframes danhmuc-skeleton-loading {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  
+  .trang-danh-muc-admin .bang-trong {
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 46px 24px;
+    text-align: center;
+  }
+  
+  .trang-danh-muc-admin .bang-trong-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 999px;
+    background: #f8fafc;
+    color: #64748b;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 16px;
+  }
+  
+  .trang-danh-muc-admin .bang-trong h3 {
+    margin: 0 0 8px;
+    color: var(--mau-chu);
+    font-size: 20px;
+  }
+  
+  .trang-danh-muc-admin .bang-trong p {
+    margin: 0;
+    color: var(--mau-phu);
+    line-height: 1.6;
+  }
+  
+  /* ================= Responsive ================= */
+  
+  @media (max-width: 1180px) {
+    .trang-danh-muc-admin .thanh-danh-muc {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-danh-muc-admin .nut-them-danh-muc-moi {
+      width: fit-content;
+      justify-self: end;
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .trang-danh-muc-admin .bo-loc-card-danh-muc {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-danh-muc-admin .cum-loc-danh-muc {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  
+    .trang-danh-muc-admin .nut-lam-moi-danh-muc {
+      grid-column: 1 / -1;
+    }
+  
+    .trang-danh-muc-admin .select-loc-wrap {
+      min-width: 0;
+    }
+  
+    .trang-danh-muc-admin .bang-du-lieu {
+      min-width: 1080px;
+    }
+  }
+  
+  @media (max-width: 560px) {
+    .trang-danh-muc-admin .cum-loc-danh-muc {
+      grid-template-columns: 1fr;
+    }
+  
+    .trang-danh-muc-admin .checkbox-xoa-mem-moi,
+    .trang-danh-muc-admin .nut-lam-moi-danh-muc,
+    .trang-danh-muc-admin .nut-them-danh-muc-moi {
+      width: 100%;
+    }
+  
+    .trang-danh-muc-admin .nut-them-danh-muc-moi {
+      justify-self: stretch;
+    }
+  
+    .trang-danh-muc-admin .bang-du-lieu {
+      min-width: 980px;
+    }
+  }
+
+  /* ==================================================
+   DANH MỤC - BỘ LỌC
+================================================== */
+
+.trang-danh-muc-admin .thanh-danh-muc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.trang-danh-muc-admin .bo-loc-card-danh-muc {
+  background: #ffffff;
+  border: 1px solid var(--mau-vien);
+  border-radius: 14px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.trang-danh-muc-admin .o-tim-danh-muc {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9fafb;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 0 12px;
+  color: var(--mau-phu);
+  transition: 0.15s ease;
+}
+
+.trang-danh-muc-admin .o-tim-danh-muc:hover {
+  background: #ffffff;
+  border-color: #e5e7eb;
+}
+
+.trang-danh-muc-admin .o-tim-danh-muc:focus-within {
+  background: #ffffff;
+  border-color: #93c5fd;
+}
+
+.trang-danh-muc-admin .o-tim-danh-muc input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--mau-chu);
+  font-size: 14px;
+}
+
+.trang-danh-muc-admin .o-tim-danh-muc input::placeholder {
+  color: #9ca3af;
+}
+
+.trang-danh-muc-admin .cum-loc-danh-muc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+/* Dropdown trong bộ lọc danh mục */
+.trang-danh-muc-admin .select-loc-wrap {
+  position: relative;
+  min-width: 175px;
+}
+
+.trang-danh-muc-admin .select-loc-wrap select {
+  width: 100%;
+  height: 42px;
+  min-height: 42px;
+  border: 1px solid var(--mau-vien);
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0 38px 0 13px;
+  outline: none;
+  cursor: pointer;
+  line-height: 42px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.5 7.5L10 12L14.5 7.5' stroke='%236B7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px 16px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.trang-danh-muc-admin .select-loc-wrap select:hover {
+  border-color: #d1d5db;
+  background-color: #fafafa;
+}
+
+.trang-danh-muc-admin .select-loc-wrap select:focus {
+  border-color: #93c5fd;
+  background-color: #ffffff;
+}
+
+/* Checkbox xóa mềm */
+.trang-danh-muc-admin .checkbox-xoa-mem-moi {
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--mau-vien);
+  background: #ffffff;
+  border-radius: 10px;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.trang-danh-muc-admin .checkbox-xoa-mem-moi:hover {
+  background: #fafafa;
+  border-color: #d1d5db;
+}
+
+.trang-danh-muc-admin .checkbox-xoa-mem-moi input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--mau-chinh);
+  cursor: pointer;
+}
+
+/* Nút làm mới + thêm */
+.trang-danh-muc-admin .nut-lam-moi-danh-muc,
+.trang-danh-muc-admin .nut-them-danh-muc-moi {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: 0.15s ease;
+}
+
+.trang-danh-muc-admin .nut-lam-moi-danh-muc {
+  background: #ffffff;
+  border-color: var(--mau-vien);
+  color: #374151;
+}
+
+.trang-danh-muc-admin .nut-lam-moi-danh-muc:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.trang-danh-muc-admin .nut-them-danh-muc-moi {
+  background: var(--mau-chinh);
+  color: #ffffff;
+}
+
+.trang-danh-muc-admin .nut-them-danh-muc-moi:hover {
+  background: var(--mau-chinh-dam);
+}
+
+/* Responsive bộ lọc */
+@media (max-width: 1180px) {
+  .trang-danh-muc-admin .thanh-danh-muc {
+    grid-template-columns: 1fr;
+  }
+
+  .trang-danh-muc-admin .nut-them-danh-muc-moi {
+    width: fit-content;
+    justify-self: end;
+  }
+}
+
+@media (max-width: 900px) {
+  .trang-danh-muc-admin .bo-loc-card-danh-muc {
+    grid-template-columns: 1fr;
+  }
+
+  .trang-danh-muc-admin .cum-loc-danh-muc {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .trang-danh-muc-admin .nut-lam-moi-danh-muc {
+    grid-column: 1 / -1;
+  }
+
+  .trang-danh-muc-admin .select-loc-wrap {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .trang-danh-muc-admin .cum-loc-danh-muc {
+    grid-template-columns: 1fr;
+  }
+
+  .trang-danh-muc-admin .checkbox-xoa-mem-moi,
+  .trang-danh-muc-admin .nut-lam-moi-danh-muc,
+  .trang-danh-muc-admin .nut-them-danh-muc-moi {
+    width: 100%;
+  }
+
+  .trang-danh-muc-admin .nut-them-danh-muc-moi {
+    justify-self: stretch;
+  }
+}

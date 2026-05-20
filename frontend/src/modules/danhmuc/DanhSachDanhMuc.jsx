@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Pencil, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import useGiaoDienStore from "../../stores/giaodienStore";
 import NutBam from "../../components/ui/NutBam";
-import TheTrangThai from "../../components/ui/TheTrangThai";
-import DanhMucModal from "./DanhMucModal";
 import BangDangTai from "../../components/ui/BangDangTai";
 import BangTrong from "../../components/ui/BangTrong";
+import XacNhanModal from "../../components/ui/XacNhanModal";
+import DanhMucModal from "./DanhMucModal";
 import {
   capNhatDanhMuc,
   capNhatTrangThaiDanhMuc,
@@ -42,6 +42,8 @@ export default function DanhSachDanhMuc() {
   const [modalMo, setModalMo] = useState(false);
   const [cheDoModal, setCheDoModal] = useState("them");
   const [duLieuSua, setDuLieuSua] = useState(null);
+  const [modalXoaMo, setModalXoaMo] = useState(false);
+  const [danhMucDangXoa, setDanhMucDangXoa] = useState(null);
 
   useEffect(() => {
     capNhatTieuDeTrang(
@@ -54,14 +56,27 @@ export default function DanhSachDanhMuc() {
     taiDanhSach();
   }, [boLoc.trang, boLoc.trangthai, boLoc.hienthixoa]);
 
-  const taiDanhSach = async () => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      taiDanhSach({
+        ...boLoc,
+        trang: 1,
+      });
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [boLoc.timkiem, boLoc.trangthai, boLoc.hienthixoa]);
+
+  const taiDanhSach = async (thamSo = boLoc) => {
     try {
       setDangTai(true);
 
-      const ketQua = await layDanhSachDanhMuc({
-        ...boLoc,
-        hienthixoa: boLoc.hienthixoa ? 1 : 0,
-      });
+      const params = {
+        ...thamSo,
+        hienthixoa: thamSo.hienthixoa ? 1 : 0,
+      };
+
+      const ketQua = await layDanhSachDanhMuc(params);
 
       setDanhSach(ketQua.dulieu.danhsach || []);
       setPhanTrang(ketQua.dulieu.phantrang);
@@ -81,20 +96,8 @@ export default function DanhSachDanhMuc() {
     setBoLoc((cu) => ({
       ...cu,
       [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const timKiem = (event) => {
-    event.preventDefault();
-
-    setBoLoc((cu) => ({
-      ...cu,
       trang: 1,
     }));
-
-    setTimeout(() => {
-      taiDanhSach();
-    }, 0);
   };
 
   const moThem = () => {
@@ -171,24 +174,43 @@ export default function DanhSachDanhMuc() {
     }
   };
 
-  const xoa = async (item) => {
-    const dongY = window.confirm(
-      `Bạn có chắc muốn xóa danh mục "${item.tendanhmuc}" không?\n\n` +
-        `Sản phẩm đang thuộc danh mục: ${item.sosanpham}\n` +
-        `Danh mục con: ${item.sodanhmuccon}\n\n` +
-        `Nếu danh mục còn sản phẩm hoặc danh mục con, hệ thống sẽ không cho xóa.`
-    );
+  const moXoa = (item) => {
+    setDanhMucDangXoa(item);
+    setModalXoaMo(true);
+  };
 
-    if (!dongY) return;
+  const dongModalXoa = () => {
+    if (dangXuLy) return;
+
+    setDanhMucDangXoa(null);
+    setModalXoaMo(false);
+  };
+
+  const xacNhanXoa = async () => {
+    if (!danhMucDangXoa) return;
 
     try {
-      await xoaDanhMuc(item.id);
+      setDangXuLy(true);
+
+      await xoaDanhMuc(danhMucDangXoa.id);
+
       toast.success("Xóa danh mục thành công");
+
+      dongModalXoa();
       await taiDanhSach();
     } catch (loi) {
-      const thongBao = loi?.response?.data?.thongbao || "Không xóa được danh mục";
+      const thongBao =
+        loi?.response?.data?.thongbao || "Không xóa được danh mục";
+
       toast.error(thongBao);
+    } finally {
+      setDangXuLy(false);
     }
+  };
+
+  const lamMoiDuLieu = async () => {
+    await taiDanhSach();
+    toast.success("Đã làm mới dữ liệu danh mục");
   };
 
   const chuyenTrang = (trangMoi) => {
@@ -201,10 +223,10 @@ export default function DanhSachDanhMuc() {
   };
 
   return (
-    <div>
-      <div className="thanh-cong-cu-trang">
-        <form className="bo-loc-danh-muc" onSubmit={timKiem}>
-          <div className="o-tim-kiem-bang">
+    <div className="trang-danh-muc-admin">
+      <div className="thanh-danh-muc">
+        <div className="bo-loc-card-danh-muc">
+          <div className="o-tim-danh-muc">
             <Search size={18} />
             <input
               name="timkiem"
@@ -214,34 +236,48 @@ export default function DanhSachDanhMuc() {
             />
           </div>
 
-          <select
-            name="trangthai"
-            value={boLoc.trangthai}
-            onChange={capNhatBoLoc}
-          >
-            <option value="">Tất cả trạng thái</option>
-            <option value="hien_thi">Hiển thị</option>
-            <option value="an">Đang ẩn</option>
-          </select>
+          <div className="cum-loc-danh-muc">
+            <div className="select-loc-wrap">
+              <select
+                name="trangthai"
+                value={boLoc.trangthai}
+                onChange={capNhatBoLoc}
+              >
+                <option value="">Tất cả trạng thái</option>
+                <option value="hien_thi">Hiển thị</option>
+                <option value="an">Đang ẩn</option>
+              </select>
+            </div>
 
-          <label className="checkbox-hien-xoa">
-            <input
-              type="checkbox"
-              name="hienthixoa"
-              checked={boLoc.hienthixoa}
-              onChange={capNhatBoLoc}
-            />
-            Hiển thị danh mục đã xóa mềm
-          </label>
+            <label className="checkbox-xoa-mem-moi">
+              <input
+                type="checkbox"
+                name="hienthixoa"
+                checked={boLoc.hienthixoa}
+                onChange={capNhatBoLoc}
+              />
+              <span>Hiển thị đã xóa</span>
+            </label>
 
-          <NutBam type="submit" bienThe="phu">
-            Tìm kiếm
-          </NutBam>
-        </form>
+            <button
+              type="button"
+              className="nut-lam-moi-danh-muc"
+              onClick={lamMoiDuLieu}
+            >
+              <RefreshCw size={16} />
+              <span>Làm mới</span>
+            </button>
+          </div>
+        </div>
 
-        <NutBam icon={Plus} onClick={moThem}>
-          Thêm danh mục
-        </NutBam>
+        <button
+          type="button"
+          className="nut-them-danh-muc-moi"
+          onClick={moThem}
+        >
+          <Plus size={18} />
+          <span>Thêm danh mục</span>
+        </button>
       </div>
 
       {dangTai ? (
@@ -324,17 +360,19 @@ export default function DanhSachDanhMuc() {
                   </td>
 
                   <td>
-                    <button
-                      type="button"
-                      className={`nut-toggle-trang-thai ${
-                        item.trangthai === "hien_thi" ? "bat" : "tat"
-                      }`}
-                      title={item.trangthai === "hien_thi" ? "Đang hiển thị" : "Đang ẩn"}
-                      disabled={item.daxoa}
-                      onClick={() => doiTrangThai(item)}
-                    >
-                      <span className="toggle-thumb"></span>
-                    </button>
+                    <div className="can-giua-o-bang">
+                      <button
+                        type="button"
+                        className={`nut-toggle-trang-thai ${
+                          item.trangthai === "hien_thi" ? "bat" : "tat"
+                        }`}
+                        title={item.trangthai === "hien_thi" ? "Đang hiển thị" : "Đang ẩn"}
+                        disabled={item.daxoa}
+                        onClick={() => doiTrangThai(item)}
+                      >
+                        <span className="toggle-thumb"></span>
+                      </button>
+                    </div>
                   </td>
 
                   <td>
@@ -360,7 +398,7 @@ export default function DanhSachDanhMuc() {
                         className="nut-icon-tron nguy-hiem"
                         title="Xóa danh mục"
                         disabled={item.daxoa}
-                        onClick={() => xoa(item)}
+                        onClick={() => moXoa(item)}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -381,6 +419,23 @@ export default function DanhSachDanhMuc() {
         dangXuLy={dangXuLy}
         onDong={dongModal}
         onLuu={luuDanhMuc}
+      />
+
+      <XacNhanModal
+        mo={modalXoaMo}
+        tieuDe="Xóa danh mục"
+        moTa={`Bạn có chắc muốn xóa danh mục "${
+          danhMucDangXoa?.tendanhmuc || ""
+        }" không?`}
+        noiDung={
+          danhMucDangXoa
+            ? `Danh mục này hiện có ${danhMucDangXoa.sosanpham} sản phẩm và ${danhMucDangXoa.sodanhmuccon} danh mục con. Nếu còn dữ liệu liên quan, hệ thống sẽ không cho xóa.`
+            : ""
+        }
+        tenNutXacNhan="Xóa danh mục"
+        dangXuLy={dangXuLy}
+        onDong={dongModalXoa}
+        onXacNhan={xacNhanXoa}
       />
     </div>
   );

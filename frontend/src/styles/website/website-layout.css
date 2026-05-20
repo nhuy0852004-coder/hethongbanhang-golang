@@ -1,0 +1,364 @@
+/* ==================================================
+   WEBSITE LAYOUT
+   Header + Footer + Container + Responsive
+================================================== */
+
+.bo-cuc-website {
+    min-height: 100vh;
+    background: #f8fafc;
+    color: #111827;
+  }
+  
+  .noi-dung-website {
+    min-height: 60vh;
+  }
+  
+  .container-website {
+    width: min(1180px, calc(100% - 32px));
+    margin: 0 auto;
+  }
+  
+  /* ==================================================
+     HEADER WEBSITE
+  ================================================== */
+  
+  .header-website {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .header-website-inner {
+    height: 74px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  
+  /* ==================================================
+     LOGO WEBSITE
+  ================================================== */
+  
+  .logo-website {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: #111827;
+    text-decoration: none;
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+  
+  .logo-website:hover {
+    color: #111827;
+  }
+  
+  .logo-website-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #2563eb;
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    flex: 0 0 auto;
+  }
+  
+  .logo-website-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .logo-website strong {
+    display: block;
+    font-size: 16px;
+    font-weight: 800;
+    color: #111827;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .logo-website span {
+    display: block;
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+  
+  /* ==================================================
+     MENU WEBSITE
+  ================================================== */
+  
+  .menu-website {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .menu-website a {
+    color: #374151;
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: color 0.15s ease;
+  }
+  
+  .menu-website a:hover,
+  .menu-website a.active {
+    color: #2563eb;
+  }
+  
+  /* ==================================================
+     HEADER ACTIONS
+  ================================================== */
+  
+  .hanh-dong-website {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+  
+  .tim-kiem-website {
+    width: 250px;
+    height: 40px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    color: #6b7280;
+    transition: 0.15s ease;
+  }
+  
+  .tim-kiem-website:hover {
+    background: #ffffff;
+    border-color: #d1d5db;
+  }
+  
+  .tim-kiem-website:focus-within {
+    background: #ffffff;
+    border-color: #93c5fd;
+  }
+  
+  .tim-kiem-website input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    min-width: 0;
+    flex: 1;
+    font-size: 14px;
+    color: #111827;
+  }
+  
+  .tim-kiem-website input::placeholder {
+    color: #9ca3af;
+  }
+  
+  /* ==================================================
+     CART BUTTON
+  ================================================== */
+  
+  .nut-gio-hang-website {
+    width: 42px;
+    height: 42px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    border-radius: 11px;
+    color: #111827;
+    display: grid;
+    place-items: center;
+    position: relative;
+    text-decoration: none;
+    transition: 0.15s ease;
+  }
+  
+  .nut-gio-hang-website:hover {
+    color: #111827;
+    background: #f9fafb;
+    border-color: #d1d5db;
+  }
+  
+  .nut-gio-hang-website span {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 19px;
+    height: 19px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    font-size: 11px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    line-height: 1;
+  }
+  
+  /* ==================================================
+     FOOTER WEBSITE
+  ================================================== */
+  
+  .footer-website {
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 40px;
+  }
+  
+  .footer-website-grid {
+    padding: 34px 0;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 24px;
+  }
+  
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .footer-brand strong {
+    color: #111827;
+    font-size: 16px;
+    font-weight: 800;
+  }
+  
+  .footer-website p {
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 14px 0 0;
+    font-size: 14px;
+  }
+  
+  .footer-website h4 {
+    font-size: 15px;
+    font-weight: 800;
+    margin: 0 0 12px;
+    color: #111827;
+  }
+  
+  .footer-website ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-website li {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 9px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.45;
+  }
+  
+  .footer-website a {
+    color: #6b7280;
+    text-decoration: none;
+  }
+  
+  .footer-website a:hover {
+    color: #2563eb;
+  }
+  
+  .footer-copy {
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    color: #6b7280;
+    padding: 14px;
+    font-size: 13px;
+  }
+  
+  /* ==================================================
+     RESPONSIVE
+  ================================================== */
+  
+  @media (max-width: 1080px) {
+    .header-website-inner {
+      gap: 18px;
+    }
+  
+    .menu-website {
+      gap: 14px;
+    }
+  
+    .tim-kiem-website {
+      width: 210px;
+    }
+  }
+  
+  @media (max-width: 860px) {
+    .header-website-inner {
+      height: auto;
+      min-height: 74px;
+      padding: 14px 0;
+      flex-wrap: wrap;
+    }
+  
+    .logo-website {
+      flex: 1;
+    }
+  
+    .menu-website {
+      order: 3;
+      width: 100%;
+      flex: 0 0 100%;
+      overflow-x: auto;
+      gap: 16px;
+      padding-bottom: 2px;
+    }
+  
+    .menu-website::-webkit-scrollbar {
+      height: 0;
+    }
+  
+    .tim-kiem-website {
+      display: none;
+    }
+  
+    .footer-website-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  @media (max-width: 560px) {
+    .container-website {
+      width: min(100% - 24px, 1180px);
+    }
+  
+    .header-website-inner {
+      gap: 12px;
+    }
+  
+    .logo-website strong {
+      max-width: 190px;
+    }
+  
+    .menu-website {
+      gap: 14px;
+    }
+  
+    .footer-website-grid {
+      grid-template-columns: 1fr;
+      padding: 28px 0;
+    }
+  
+    .footer-copy {
+      font-size: 12px;
+    }
+  }

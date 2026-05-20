@@ -344,10 +344,6 @@ export default function ThanhToanWebsite() {
               <Phone size={16} />
               <span>Cửa hàng sẽ liên hệ xác nhận đơn hàng sau khi bạn đặt.</span>
             </div>
-
-            <div className="mt-3">
-              <ThongTinCuaHang />
-            </div>
           </div>
         </aside>
       </form>
