@@ -8,6 +8,7 @@ import DangNhap from "../modules/taikhoan/DangNhap";
 import DanhSachDanhMuc from "../modules/danhmuc/DanhSachDanhMuc";
 import DanhSachSanPham from "../modules/sanpham/DanhSachSanPham";
 import DanhSachDonHang from "../modules/donhang/DanhSachDonHang";
+import DanhSachKhachHang from "../modules/khachhang/DanhSachKhachHang";
 import DanhSachThongBao from "../modules/thongbao/DanhSachThongBao";
 import TrangChuWebsite from "../modules/website/trangchu/TrangChuWebsite";
 import DanhSachSanPhamWebsite from "../modules/website/sanpham/DanhSachSanPhamWebsite";
@@ -80,12 +81,7 @@ const router = createBrowserRouter([
           },
           {
             path: "khachhang",
-            element: (
-              <TrangRong
-                tieude="Module khách hàng"
-                mota="Sẽ làm chi tiết ở Ngày 13."
-              />
-            ),
+            element: <DanhSachKhachHang />,
           },
           {
             path: "thongbao",

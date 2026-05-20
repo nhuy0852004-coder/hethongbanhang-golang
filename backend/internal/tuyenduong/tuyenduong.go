@@ -8,6 +8,7 @@ import (
 	"hethongbanhang/backend/internal/caidat"
 	"hethongbanhang/backend/internal/modules/danhmuc"
 	"hethongbanhang/backend/internal/modules/donhang"
+	"hethongbanhang/backend/internal/modules/khachhang"
 	"hethongbanhang/backend/internal/modules/sanpham"
 	"hethongbanhang/backend/internal/modules/taikhoan"
 	"hethongbanhang/backend/internal/modules/thongbao"
@@ -57,6 +58,10 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	tongquanService := tongquan.TaoTongQuanService(tongquanRepository)
 	tongquanHandler := tongquan.TaoTongQuanHandler(tongquanService)
 
+	khachhangRepository := khachhang.TaoKhachHangRepository(db)
+	khachhangService := khachhang.TaoKhachHangService(khachhangRepository)
+	khachhangHandler := khachhang.TaoKhachHangHandler(khachhangService)
+
 	thongbaoRepository := thongbao.TaoThongBaoRepository(db)
 	thongbaoService := thongbao.TaoThongBaoService(thongbaoRepository)
 	thongbaoHandler := thongbao.TaoThongBaoHandler(thongbaoService)
@@ -87,6 +92,9 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	nhomQuanTriGoc.Use(trunggian.ChiQuanTri())
 	{
 		nhomQuanTriGoc.GET("/tongquan", tongquanHandler.LayTongQuan)
+		nhomQuanTriGoc.GET("/khachhang", khachhangHandler.DanhSach)
+		nhomQuanTriGoc.GET("/khachhang/:id", khachhangHandler.ChiTiet)
+		nhomQuanTriGoc.GET("/khachhang/:id/donhang", khachhangHandler.DonHangCuaKhachHang)
 
 		nhomQuanTriGoc.POST("/danhmuc", danhmucHandler.Tao)
 		nhomQuanTriGoc.PUT("/danhmuc/:id", danhmucHandler.CapNhat)
