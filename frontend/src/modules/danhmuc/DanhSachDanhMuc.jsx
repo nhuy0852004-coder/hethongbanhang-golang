@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { Edit, Plus, Power, Search, Trash2 } from "lucide-react";
+import { Pencil, Plus, Search, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import useGiaoDienStore from "../../stores/giaodienStore";
-import DangTai from "../../components/DangTai";
-import TrangRong from "../../components/TrangRong";
 import NutBam from "../../components/ui/NutBam";
 import TheTrangThai from "../../components/ui/TheTrangThai";
 import DanhMucModal from "./DanhMucModal";
+import BangDangTai from "../../components/ui/BangDangTai";
+import BangTrong from "../../components/ui/BangTrong";
 import {
   capNhatDanhMuc,
   capNhatTrangThaiDanhMuc,
@@ -146,20 +146,22 @@ export default function DanhSachDanhMuc() {
   };
 
   const doiTrangThai = async (item) => {
+    if (item.daxoa) {
+      toast.error("Danh mục đã xóa mềm, không thể đổi trạng thái");
+      return;
+    }
+
     const trangThaiMoi = item.trangthai === "hien_thi" ? "an" : "hien_thi";
-
-    let noiDungXacNhan =
-      trangThaiMoi === "an"
-        ? `Ẩn danh mục "${item.tendanhmuc}"?\n\nNếu danh mục này có danh mục con, hệ thống sẽ ẩn luôn các danh mục con.`
-        : `Hiển thị lại danh mục "${item.tendanhmuc}"?\n\nNếu danh mục cha đang ẩn, hệ thống sẽ không cho bật.`;
-
-    const dongY = window.confirm(noiDungXacNhan);
-
-    if (!dongY) return;
 
     try {
       await capNhatTrangThaiDanhMuc(item.id, trangThaiMoi);
-      toast.success("Cập nhật trạng thái thành công");
+
+      toast.success(
+        trangThaiMoi === "hien_thi"
+          ? "Đã bật hiển thị danh mục"
+          : "Đã ẩn danh mục"
+      );
+
       await taiDanhSach();
     } catch (loi) {
       const thongBao =
@@ -242,140 +244,132 @@ export default function DanhSachDanhMuc() {
         </NutBam>
       </div>
 
-      {dangTai && <DangTai noidung="Đang tải danh sách danh mục..." />}
-
-      {!dangTai && danhSach.length === 0 && (
-        <TrangRong
-          tieude="Chưa có danh mục"
-          mota="Hãy thêm danh mục đầu tiên để bắt đầu quản lý sản phẩm."
-          nut="Thêm danh mục"
-          onClick={moThem}
+      {dangTai ? (
+        <BangDangTai soCot={9} soDong={6} />
+      ) : danhSach.length === 0 ? (
+        <BangTrong
+          tieuDe="Chưa có danh mục nào"
+          moTa="Hãy tạo danh mục đầu tiên cho hệ thống bán hàng."
         />
-      )}
+      ) : (
+        <div className="bang-responsive">
+          <table className="bang-du-lieu">
+            <thead>
+              <tr>
+                <th style={{ width: 50 }}>
+                  <input type="checkbox" />
+                </th>
 
-      {!dangTai && danhSach.length > 0 && (
-        <div className="khung-bang">
-          <div className="bang-responsive">
-            <table className="bang-du-lieu">
-              <thead>
-                <tr>
-                  <th style={{ width: 70 }}>ID</th>
-                  <th>Tên danh mục</th>
-                  <th>Danh mục cha</th>
-                  <th style={{ width: 120 }}>Sản phẩm</th>
-                  <th style={{ width: 130 }}>Trạng thái</th>
-                  <th style={{ width: 130 }}>Xóa mềm</th>
-                  <th style={{ width: 90 }}>Thứ tự</th>
-                  <th style={{ width: 160 }}>Thao tác</th>
+                <th>Tên danh mục</th>
+
+                <th style={{ width: 170 }}>Đường dẫn</th>
+
+                <th style={{ width: 130 }}>Danh mục cha</th>
+
+                <th style={{ width: 100 }}>Sản phẩm</th>
+
+                <th style={{ width: 100 }}>Danh mục con</th>
+
+                <th style={{ width: 120 }}>Trạng thái</th>
+
+                <th style={{ width: 130 }}>Xóa mềm</th>
+
+                <th style={{ width: 180 }}>Thao tác</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {danhSach.map((item) => (
+                <tr key={item.id}>
+                  <td>
+                    <input type="checkbox" />
+                  </td>
+
+                  <td>
+                    <div className="o-ten-danh-muc">
+                      <strong>{item.tendanhmuc}</strong>
+
+                      <div className="meta-danh-muc">
+                        <span>Thứ tự: {item.thutu}</span>
+
+                        {item.created_at && (
+                          <span>
+                            Tạo: {new Date(item.created_at).toLocaleDateString("vi-VN")}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <code className="duong-dan-chip">/{item.duongdan}</code>
+                  </td>
+
+                  <td>
+                    {item.tendanhmuccha || (
+                      <span className="text-muted">Danh mục gốc</span>
+                    )}
+                  </td>
+
+                  <td>
+                    <span className="so-lieu-text">
+                      {item.sosanpham} sản phẩm
+                    </span>
+                  </td>
+
+                  <td>
+                    <span className="so-lieu-text">
+                      {item.sodanhmuccon} mục con
+                    </span>
+                  </td>
+
+                  <td>
+                    <button
+                      type="button"
+                      className={`nut-toggle-trang-thai ${
+                        item.trangthai === "hien_thi" ? "bat" : "tat"
+                      }`}
+                      title={item.trangthai === "hien_thi" ? "Đang hiển thị" : "Đang ẩn"}
+                      disabled={item.daxoa}
+                      onClick={() => doiTrangThai(item)}
+                    >
+                      <span className="toggle-thumb"></span>
+                    </button>
+                  </td>
+
+                  <td>
+                  <span className={item.daxoa ? "chu-xoa-mem da-xoa" : "chu-xoa-mem dang-dung"}>
+                    {item.daxoa ? "Đã xóa" : "Đang dùng"}
+                  </span>
+                  </td>
+
+                  <td>
+                    <div className="nhom-thao-tac-icon">
+                      <button
+                        type="button"
+                        className="nut-icon-tron"
+                        title="Sửa danh mục"
+                        disabled={item.daxoa}
+                        onClick={() => moSua(item)}
+                      >
+                        <Pencil size={16} />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="nut-icon-tron nguy-hiem"
+                        title="Xóa danh mục"
+                        disabled={item.daxoa}
+                        onClick={() => xoa(item)}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-
-              <tbody>
-                {danhSach.map((item) => (
-                  <tr key={item.id}>
-                    <td>#{item.id}</td>
-
-                    <td>
-                      <div className="cot-ten-danh-muc">
-                        <strong>{item.tendanhmuc}</strong>
-                        <span>{item.duongdan}</span>
-                      </div>
-                    </td>
-
-                    <td>
-                      {item.tendanhmuccha ? (
-                        item.tendanhmuccha
-                      ) : (
-                        <span className="chu-phu">Danh mục gốc</span>
-                      )}
-                    </td>
-
-                    <td>
-                      <div className="so-luong-nho">
-                        <strong>{item.sosanpham}</strong>
-                        <span>sản phẩm</span>
-                      </div>
-                    </td>
-
-                    <td>
-                      <TheTrangThai trangthai={item.trangthai} />
-                    </td>
-
-                    <td>
-                      {item.daxoa ? (
-                        <span className="nhan-da-xoa">Đã xóa</span>
-                      ) : (
-                        <span className="nhan-chua-xoa">Đang dùng</span>
-                      )}
-                    </td>
-
-                    <td>{item.thutu}</td>
-
-                    <td>
-                      <div className="nhom-nut-thao-tac">
-                        <button
-                          type="button"
-                          className="nut-icon"
-                          title="Bật/tắt trạng thái"
-                          disabled={item.daxoa}
-                          onClick={() => doiTrangThai(item)}
-                        >
-                          <Power size={16} />
-                        </button>
-
-                        <button
-                          type="button"
-                          className="nut-icon"
-                          title="Sửa danh mục"
-                          disabled={item.daxoa}
-                          onClick={() => moSua(item)}
-                        >
-                          <Edit size={16} />
-                        </button>
-
-                        <button
-                          type="button"
-                          className="nut-icon nguy-hiem"
-                          title="Xóa danh mục"
-                          disabled={item.daxoa}
-                          onClick={() => xoa(item)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="phan-trang">
-            <div>
-              Hiển thị <strong>{danhSach.length}</strong> trên{" "}
-              <strong>{phanTrang.tongsodong}</strong> danh mục
-            </div>
-
-            <div className="nut-phan-trang">
-              <button
-                disabled={phanTrang.trang <= 1}
-                onClick={() => chuyenTrang(phanTrang.trang - 1)}
-              >
-                Trước
-              </button>
-
-              <span>
-                Trang {phanTrang.trang} / {phanTrang.tongsotrang}
-              </span>
-
-              <button
-                disabled={phanTrang.trang >= phanTrang.tongsotrang}
-                onClick={() => chuyenTrang(phanTrang.trang + 1)}
-              >
-                Sau
-              </button>
-            </div>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
