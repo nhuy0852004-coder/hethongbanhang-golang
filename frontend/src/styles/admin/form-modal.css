@@ -491,3 +491,74 @@
       min-width: 0;
     }
   }
+
+  /* ==================================================
+   ADMIN FORM FOCUS - VIỀN XANH + RING NGOÀI
+   Dùng chung cho input, textarea, select trong modal/form
+================================================== */
+
+/* Trạng thái mặc định */
+.nhom-form input,
+.nhom-form textarea,
+.nhom-form select {
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #111827;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+/* Hover nhẹ, không đổi màu quá nhiều */
+.nhom-form input:hover,
+.nhom-form textarea:hover,
+.nhom-form select:hover {
+  border-color: #cbd5e1;
+  background-color: #ffffff;
+}
+
+/* Focus đúng kiểu: nền trắng, viền xanh, ring ngoài */
+.nhom-form input:focus,
+.nhom-form textarea:focus,
+.nhom-form select:focus {
+  outline: none !important;
+  border-color: #93c5fd !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.35) !important;
+}
+
+/* Placeholder */
+.nhom-form input::placeholder,
+.nhom-form textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Khi trường lỗi */
+.nhom-form input.input-loi,
+.nhom-form textarea.input-loi,
+.nhom-form select.input-loi {
+  border-color: #f87171 !important;
+  background-color: #ffffff !important;
+}
+
+/* Khi trường lỗi đang focus */
+.nhom-form input.input-loi:focus,
+.nhom-form textarea.input-loi:focus,
+.nhom-form select.input-loi:focus {
+  outline: none !important;
+  border-color: #f87171 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.22) !important;
+}
+
+/* Dropdown/select giữ nền trắng khi active */
+select:focus {
+  outline: none !important;
+  background-color: #ffffff !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.35) !important;
+}
+  
+
+

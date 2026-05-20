@@ -35,3 +35,20 @@ export async function capNhatTrangThaiDanhMuc(id, trangthai) {
 
   return phanHoi.data;
 }
+
+export async function bulkCapNhatTrangThaiDanhMuc(ids, trangthai) {
+  const phanHoi = await ketNoiApi.patch("/danhmuc/bulk-trangthai", {
+    ids,
+    trangthai,
+  });
+
+  return phanHoi.data;
+}
+
+export async function bulkXoaDanhMuc(ids) {
+  const phanHoi = await ketNoiApi.post("/danhmuc/bulk-xoa", {
+    ids,
+  });
+
+  return phanHoi.data;
+}

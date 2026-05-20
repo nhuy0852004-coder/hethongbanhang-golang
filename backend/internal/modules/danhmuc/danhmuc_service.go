@@ -166,25 +166,21 @@ func (s *DanhMucService) Xoa(id uint64) error {
 		return loi
 	}
 
-	soSanPham, loi := s.repository.DemSanPham(id)
+	danhSachID, loi := s.repository.LayTatCaIDCon(id)
+	if loi != nil {
+		return loi
+	}
+
+	soSanPham, loi := s.repository.DemSanPhamTrongDanhMucVaCon(danhSachID)
 	if loi != nil {
 		return loi
 	}
 
 	if soSanPham > 0 {
-		return fmt.Errorf("không thể xóa danh mục %s vì đang có %d sản phẩm", item.TenDanhMuc, soSanPham)
+		return fmt.Errorf("không thể xóa danh mục %s vì đang có %d sản phẩm trong danh mục hoặc danh mục con", item.TenDanhMuc, soSanPham)
 	}
 
-	soDanhMucCon, loi := s.repository.DemDanhMucCon(id)
-	if loi != nil {
-		return loi
-	}
-
-	if soDanhMucCon > 0 {
-		return fmt.Errorf("không thể xóa danh mục %s vì đang có %d danh mục con", item.TenDanhMuc, soDanhMucCon)
-	}
-
-	return s.repository.Xoa(id)
+	return s.repository.XoaNhieuID(danhSachID)
 }
 
 func (s *DanhMucService) CapNhatTrangThai(id uint64, request CapNhatTrangThaiRequest) (*DanhMuc, error) {
@@ -282,4 +278,74 @@ func taoDuongDan(chuoi string) string {
 	}
 
 	return chuoi
+}
+
+func (s *DanhMucService) BulkCapNhatTrangThai(request BulkCapNhatTrangThaiRequest) (*BulkKetQuaResponse, error) {
+	if loi := request.KiemTra(); loi != nil {
+		return nil, loi
+	}
+
+	response := &BulkKetQuaResponse{
+		TongSo: len(request.IDs),
+		KetQua: []BulkKetQuaItem{},
+	}
+
+	for _, id := range request.IDs {
+		_, loi := s.CapNhatTrangThai(id, CapNhatTrangThaiRequest{
+			TrangThai: request.TrangThai,
+		})
+
+		if loi != nil {
+			response.ThatBai++
+			response.KetQua = append(response.KetQua, BulkKetQuaItem{
+				ID:       id,
+				ThanhCong: false,
+				ThongBao:  loi.Error(),
+			})
+			continue
+		}
+
+		response.ThanhCong++
+		response.KetQua = append(response.KetQua, BulkKetQuaItem{
+			ID:       id,
+			ThanhCong: true,
+			ThongBao:  "Cập nhật trạng thái thành công",
+		})
+	}
+
+	return response, nil
+}
+
+func (s *DanhMucService) BulkXoa(request BulkXoaDanhMucRequest) (*BulkKetQuaResponse, error) {
+	if loi := request.KiemTra(); loi != nil {
+		return nil, loi
+	}
+
+	response := &BulkKetQuaResponse{
+		TongSo: len(request.IDs),
+		KetQua: []BulkKetQuaItem{},
+	}
+
+	for _, id := range request.IDs {
+		loi := s.Xoa(id)
+
+		if loi != nil {
+			response.ThatBai++
+			response.KetQua = append(response.KetQua, BulkKetQuaItem{
+				ID:       id,
+				ThanhCong: false,
+				ThongBao:  loi.Error(),
+			})
+			continue
+		}
+
+		response.ThanhCong++
+		response.KetQua = append(response.KetQua, BulkKetQuaItem{
+			ID:       id,
+			ThanhCong: true,
+			ThongBao:  "Xóa danh mục thành công",
+		})
+	}
+
+	return response, nil
 }

@@ -120,6 +120,9 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 		nhomQuanTriGoc.PUT("/caidat", caidatHandler.CapNhat)
 		nhomQuanTriGoc.POST("/caidat/upload-logo", caidatHandler.UploadLogo)
 
+		nhomQuanTriGoc.PATCH("/danhmuc/bulk-trangthai", danhmucHandler.BulkCapNhatTrangThai)
+		nhomQuanTriGoc.POST("/danhmuc/bulk-xoa", danhmucHandler.BulkXoa)
+
 		nhomQuanTriGoc.POST("/danhmuc", danhmucHandler.Tao)
 		nhomQuanTriGoc.PUT("/danhmuc/:id", danhmucHandler.CapNhat)
 		nhomQuanTriGoc.DELETE("/danhmuc/:id", danhmucHandler.Xoa)

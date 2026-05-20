@@ -33,3 +33,16 @@ func ChuyenSangResponse(item *DanhMuc) *DanhMucResponse {
 		SoDanhMucCon:  item.SoDanhMucCon,
 	}
 }
+
+type BulkKetQuaItem struct {
+	ID       uint64 `json:"id"`
+	ThanhCong bool   `json:"thanhcong"`
+	ThongBao  string `json:"thongbao"`
+}
+
+type BulkKetQuaResponse struct {
+	TongSo    int              `json:"tongso"`
+	ThanhCong int             `json:"thanhcong"`
+	ThatBai   int             `json:"thatbai"`
+	KetQua    []BulkKetQuaItem `json:"ketqua"`
+}

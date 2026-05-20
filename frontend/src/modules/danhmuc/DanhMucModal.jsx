@@ -5,7 +5,7 @@ import NutBam from "../../components/ui/NutBam";
 const formMacDinh = {
   tendanhmuc: "",
   mota: "",
-  thutu: 0,
+  thutu: "",
   trangthai: "hien_thi",
   danhmuccha_id: null,
 };
@@ -29,7 +29,7 @@ export default function DanhMucModal({
       setForm({
         tendanhmuc: duLieuSua.tendanhmuc || "",
         mota: duLieuSua.mota || "",
-        thutu: duLieuSua.thutu || 0,
+        thutu: duLieuSua.thutu ?? "",
         trangthai: duLieuSua.trangthai || "hien_thi",
         danhmuccha_id: duLieuSua.danhmuccha_id || null,
       });
@@ -129,23 +129,24 @@ export default function DanhMucModal({
 
   const capNhatForm = (event) => {
     const { name, value } = event.target;
-
-    const giaTriMoi =
-      name === "thutu"
-        ? Number(value || 0)
-        : name === "danhmuccha_id"
-        ? value
-          ? Number(value)
-          : null
-        : value;
-
+  
+    let giaTriMoi = value;
+  
+    if (name === "thutu") {
+      giaTriMoi = value === "" ? "" : Number(value);
+    }
+  
+    if (name === "danhmuccha_id") {
+      giaTriMoi = value ? Number(value) : null;
+    }
+  
     const formMoi = {
       ...form,
       [name]: giaTriMoi,
     };
-
+  
     setForm(formMoi);
-
+  
     setLoiForm((loiCu) => ({
       ...loiCu,
       [name]: kiemTraTungTruong(name, giaTriMoi, formMoi),
@@ -274,7 +275,9 @@ export default function DanhMucModal({
                 value={form.thutu}
                 onChange={capNhatForm}
                 onBlur={xuLyBlur}
+                onFocus={(event) => event.target.select()}
                 className={loiForm.thutu ? "input-loi" : ""}
+                placeholder="0"
               />
 
               {loiForm.thutu && <div className="loi-form">{loiForm.thutu}</div>}

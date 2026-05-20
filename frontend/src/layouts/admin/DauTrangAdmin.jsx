@@ -9,14 +9,13 @@ import useThongBaoStore from "../../stores/thongbaoStore";
 
 export default function DauTrangAdmin() {
   const navigate = useNavigate();
+
   const [moThongBao, setMoThongBao] = useState(false);
 
   const taikhoan = useTaiKhoanStore((state) => state.taikhoan);
   const dangXuat = useTaiKhoanStore((state) => state.dangXuat);
 
   const moSidebarMobile = useGiaoDienStore((state) => state.moSidebarMobile);
-  const tieuDeTrang = useGiaoDienStore((state) => state.tieuDeTrang);
-  const moTaTrang = useGiaoDienStore((state) => state.moTaTrang);
 
   const danhsachThongBao = useThongBaoStore((state) => state.danhsach);
   const soChuaDoc = useThongBaoStore((state) => state.soChuaDoc);
@@ -24,7 +23,9 @@ export default function DauTrangAdmin() {
   const taiSoChuaDoc = useThongBaoStore((state) => state.taiSoChuaDoc);
   const themThongBaoMoi = useThongBaoStore((state) => state.themThongBaoMoi);
   const capNhatDaDoc = useThongBaoStore((state) => state.capNhatDaDoc);
-  const danhDauTatCaDaDoc = useThongBaoStore((state) => state.danhDauTatCaDaDoc);
+  const danhDauTatCaDaDoc = useThongBaoStore(
+    (state) => state.danhDauTatCaDaDoc
+  );
 
   useEffect(() => {
     if (taikhoan) {
@@ -37,7 +38,6 @@ export default function DauTrangAdmin() {
     bat: Boolean(taikhoan),
     onThongBaoMoi: (thongbao) => {
       themThongBaoMoi(thongbao);
-      taiSoChuaDoc();
     },
   });
 
@@ -53,6 +53,7 @@ export default function DauTrangAdmin() {
     }
 
     const donhangID = item.dulieu?.donhang_id;
+
     if (donhangID) {
       navigate("/admin/donhang");
       setMoThongBao(false);
@@ -70,11 +71,6 @@ export default function DauTrangAdmin() {
         <button className="nut-menu-mobile" onClick={moSidebarMobile}>
           <Menu size={21} />
         </button>
-
-        <div className="tieu-de-header">
-          <h1>{tieuDeTrang}</h1>
-          {moTaTrang && <p>{moTaTrang}</p>}
-        </div>
       </div>
 
       <div className="header-giua">
@@ -85,12 +81,21 @@ export default function DauTrangAdmin() {
       </div>
 
       <div className="header-phai">
-        <div className={daKetNoi ? "trang-thai-realtime ket-noi" : "trang-thai-realtime mat-ket-noi"}>
+        <div
+          className={
+            daKetNoi
+              ? "trang-thai-realtime ket-noi"
+              : "trang-thai-realtime mat-ket-noi"
+          }
+        >
           {daKetNoi ? "Realtime" : "Mất kết nối"}
         </div>
 
         <div className="cum-thong-bao-header">
-          <button className="nut-chuong" onClick={() => setMoThongBao((cu) => !cu)}>
+          <button
+            className="nut-chuong"
+            onClick={() => setMoThongBao((cu) => !cu)}
+          >
             <Bell size={19} />
             <span>{soChuaDoc > 99 ? "99+" : soChuaDoc}</span>
           </button>
@@ -113,7 +118,11 @@ export default function DauTrangAdmin() {
                   danhsachThongBao.map((item) => (
                     <button
                       key={item.id}
-                      className={item.dadoc ? "item-thong-bao" : "item-thong-bao chua-doc"}
+                      className={
+                        item.dadoc
+                          ? "item-thong-bao"
+                          : "item-thong-bao chua-doc"
+                      }
                       onClick={() => xuLyDocThongBao(item)}
                     >
                       <strong>{item.tieude}</strong>
@@ -135,11 +144,17 @@ export default function DauTrangAdmin() {
         </div>
 
         <div className="tai-khoan-admin">
-          <div className="avatar-admin">{(taikhoan?.hoten || "Q").charAt(0).toUpperCase()}</div>
+          <div className="avatar-admin">
+            {(taikhoan?.hoten || "Q").charAt(0).toUpperCase()}
+          </div>
+
           <div className="thong-tin-admin">
             <strong>{taikhoan?.hoten || "Quản trị viên"}</strong>
-            <span>{taikhoan?.vaitro === "quantri" ? "Quản trị" : "Nhân viên"}</span>
+            <span>
+              {taikhoan?.vaitro === "quantri" ? "Quản trị" : "Nhân viên"}
+            </span>
           </div>
+
           <button className="nut-dang-xuat-admin" onClick={xuLyDangXuat}>
             <LogOut size={17} />
           </button>

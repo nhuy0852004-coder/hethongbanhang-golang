@@ -825,3 +825,210 @@
     justify-self: stretch;
   }
 }
+
+/* ==================================================
+   DANH MỤC - HEADER TRANG
+================================================== */
+
+.trang-danh-muc-admin .dau-trang-danh-muc {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.trang-danh-muc-admin .dau-trang-danh-muc h1 {
+  margin: 0;
+  color: var(--mau-chu);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.trang-danh-muc-admin .dau-trang-danh-muc p {
+  margin: 6px 0 0;
+  color: var(--mau-phu);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.trang-danh-muc-admin .hanh-dong-dau-trang-danh-muc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.trang-danh-muc-admin .nut-chinh-danh-muc,
+.trang-danh-muc-admin .nut-phu-danh-muc {
+  height: 40px;
+  border-radius: 10px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  transition: 0.15s ease;
+}
+
+.trang-danh-muc-admin .nut-chinh-danh-muc {
+  border: 1px solid var(--mau-chinh);
+  background: var(--mau-chinh);
+  color: #ffffff;
+}
+
+.trang-danh-muc-admin .nut-chinh-danh-muc:hover {
+  background: var(--mau-chinh-dam);
+  border-color: var(--mau-chinh-dam);
+}
+
+.trang-danh-muc-admin .nut-phu-danh-muc {
+  border: 1px solid var(--mau-vien);
+  background: #ffffff;
+  color: #374151;
+}
+
+.trang-danh-muc-admin .nut-phu-danh-muc:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+@media (max-width: 768px) {
+  .trang-danh-muc-admin .dau-trang-danh-muc {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .trang-danh-muc-admin .hanh-dong-dau-trang-danh-muc {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .trang-danh-muc-admin .nut-chinh-danh-muc,
+  .trang-danh-muc-admin .nut-phu-danh-muc {
+    width: 100%;
+  }
+}
+
+/* Không nháy màn hình khi bật/tắt trạng thái */
+.trang-danh-muc-admin .nut-toggle-trang-thai {
+  transition: background-color 0.18s ease;
+}
+
+.trang-danh-muc-admin .nut-toggle-trang-thai .toggle-thumb {
+  transition: left 0.18s ease;
+}
+
+.trang-danh-muc-admin .nut-toggle-trang-thai.dang-doi {
+  opacity: 0.75;
+  cursor: wait;
+}
+
+.trang-danh-muc-admin .nut-toggle-trang-thai.dang-doi .toggle-thumb {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
+}
+
+/* ==================================================
+   DANH MỤC - BULK ACTION
+================================================== */
+
+.trang-danh-muc-admin .thanh-bulk-danh-muc {
+  background: #ffffff;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.trang-danh-muc-admin .thanh-bulk-danh-muc strong {
+  color: #2563eb;
+  font-weight: 900;
+}
+
+.trang-danh-muc-admin .hanh-dong-bulk-danh-muc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.trang-danh-muc-admin .nut-bulk {
+  height: 34px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #374151;
+  border-radius: 9px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: 0.15s ease;
+}
+
+.trang-danh-muc-admin .nut-bulk:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.trang-danh-muc-admin .nut-bulk.nguy-hiem {
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.trang-danh-muc-admin .nut-bulk.nguy-hiem:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.trang-danh-muc-admin .nut-bulk.phu {
+  color: #6b7280;
+}
+
+.trang-danh-muc-admin .nut-bulk:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Checkbox bảng */
+.trang-danh-muc-admin .bang-du-lieu input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.trang-danh-muc-admin .bang-du-lieu input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* Dòng đang chọn */
+.trang-danh-muc-admin .bang-du-lieu tr:has(input[type="checkbox"]:checked) {
+  background: #f8fbff;
+}
+
+@media (max-width: 768px) {
+  .trang-danh-muc-admin .thanh-bulk-danh-muc {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .trang-danh-muc-admin .hanh-dong-bulk-danh-muc {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .trang-danh-muc-admin .nut-bulk {
+    width: 100%;
+  }
+}

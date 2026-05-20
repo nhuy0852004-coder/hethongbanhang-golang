@@ -137,3 +137,41 @@ func (h *DanhMucHandler) CapNhatTrangThai(c *gin.Context) {
 
 	phanhoi.ThanhCong(c, http.StatusOK, "Cập nhật trạng thái danh mục thành công", duLieu)
 }
+
+func (h *DanhMucHandler) BulkCapNhatTrangThai(c *gin.Context) {
+	var request BulkCapNhatTrangThaiRequest
+
+	if loi := c.ShouldBindJSON(&request); loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "Dữ liệu bulk trạng thái không hợp lệ", gin.H{
+			"chitiet": loi.Error(),
+		})
+		return
+	}
+
+	duLieu, loi := h.service.BulkCapNhatTrangThai(request)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
+		return
+	}
+
+	phanhoi.ThanhCong(c, http.StatusOK, "Cập nhật trạng thái hàng loạt thành công", duLieu)
+}
+
+func (h *DanhMucHandler) BulkXoa(c *gin.Context) {
+	var request BulkXoaDanhMucRequest
+
+	if loi := c.ShouldBindJSON(&request); loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "Dữ liệu bulk xóa không hợp lệ", gin.H{
+			"chitiet": loi.Error(),
+		})
+		return
+	}
+
+	duLieu, loi := h.service.BulkXoa(request)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
+		return
+	}
+
+	phanhoi.ThanhCong(c, http.StatusOK, "Xóa danh mục hàng loạt thành công", duLieu)
+}

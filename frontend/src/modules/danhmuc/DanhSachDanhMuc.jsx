@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Pencil, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
-import useGiaoDienStore from "../../stores/giaodienStore";
 import NutBam from "../../components/ui/NutBam";
 import BangDangTai from "../../components/ui/BangDangTai";
 import BangTrong from "../../components/ui/BangTrong";
 import XacNhanModal from "../../components/ui/XacNhanModal";
 import DanhMucModal from "./DanhMucModal";
 import {
+  bulkCapNhatTrangThaiDanhMuc,
+  bulkXoaDanhMuc,
   capNhatDanhMuc,
   capNhatTrangThaiDanhMuc,
   layDanhSachDanhMuc,
@@ -16,12 +17,9 @@ import {
 } from "../../api/danhmucApi";
 
 export default function DanhSachDanhMuc() {
-  const capNhatTieuDeTrang = useGiaoDienStore(
-    (state) => state.capNhatTieuDeTrang
-  );
-
   const [dangTai, setDangTai] = useState(false);
   const [dangXuLy, setDangXuLy] = useState(false);
+  const [dangDoiTrangThaiId, setDangDoiTrangThaiId] = useState(null);
 
   const [danhSach, setDanhSach] = useState([]);
   const [phanTrang, setPhanTrang] = useState({
@@ -44,13 +42,8 @@ export default function DanhSachDanhMuc() {
   const [duLieuSua, setDuLieuSua] = useState(null);
   const [modalXoaMo, setModalXoaMo] = useState(false);
   const [danhMucDangXoa, setDanhMucDangXoa] = useState(null);
-
-  useEffect(() => {
-    capNhatTieuDeTrang(
-      "Quản lý danh mục",
-      "Quản lý nhóm sản phẩm, trạng thái hiển thị và thứ tự sắp xếp"
-    );
-  }, [capNhatTieuDeTrang]);
+  const [idsDangChon, setIdsDangChon] = useState([]);
+  const [modalBulkXoaMo, setModalBulkXoaMo] = useState(false);
 
   useEffect(() => {
     taiDanhSach();
@@ -67,16 +60,16 @@ export default function DanhSachDanhMuc() {
     return () => clearTimeout(timer);
   }, [boLoc.timkiem, boLoc.trangthai, boLoc.hienthixoa]);
 
-  const taiDanhSach = async (thamSo = boLoc) => {
+  const taiDanhSach = async (thamSo = boLoc, tuyChon = { hienLoading: true }) => {
     try {
-      setDangTai(true);
+      if (tuyChon.hienLoading) {
+        setDangTai(true);
+      }
 
-      const params = {
+      const ketQua = await layDanhSachDanhMuc({
         ...thamSo,
         hienthixoa: thamSo.hienthixoa ? 1 : 0,
-      };
-
-      const ketQua = await layDanhSachDanhMuc(params);
+      });
 
       setDanhSach(ketQua.dulieu.danhsach || []);
       setPhanTrang(ketQua.dulieu.phantrang);
@@ -86,7 +79,9 @@ export default function DanhSachDanhMuc() {
 
       toast.error(thongBao);
     } finally {
-      setDangTai(false);
+      if (tuyChon.hienLoading) {
+        setDangTai(false);
+      }
     }
   };
 
@@ -154,23 +149,70 @@ export default function DanhSachDanhMuc() {
       return;
     }
 
+    if (dangDoiTrangThaiId === item.id) {
+      return;
+    }
+
+    const trangThaiCu = item.trangthai;
     const trangThaiMoi = item.trangthai === "hien_thi" ? "an" : "hien_thi";
 
     try {
-      await capNhatTrangThaiDanhMuc(item.id, trangThaiMoi);
+      setDangDoiTrangThaiId(item.id);
+
+      // Đổi trước trên UI để switch nhảy ngay
+      setDanhSach((danhSachCu) =>
+        danhSachCu.map((dm) =>
+          dm.id === item.id
+            ? {
+                ...dm,
+                trangthai: trangThaiMoi,
+              }
+            : dm
+        )
+      );
+
+      const ketQua = await capNhatTrangThaiDanhMuc(item.id, trangThaiMoi);
+
+      const duLieuMoi = ketQua?.dulieu;
+
+      // Lấy trạng thái thật backend trả về để set lại cho chắc
+      if (duLieuMoi?.id) {
+        setDanhSach((danhSachCu) =>
+          danhSachCu.map((dm) =>
+            dm.id === duLieuMoi.id
+              ? {
+                  ...dm,
+                  ...duLieuMoi,
+                }
+              : dm
+          )
+        );
+      }
 
       toast.success(
-        trangThaiMoi === "hien_thi"
+        (duLieuMoi?.trangthai || trangThaiMoi) === "hien_thi"
           ? "Đã bật hiển thị danh mục"
           : "Đã ẩn danh mục"
       );
-
-      await taiDanhSach();
     } catch (loi) {
+      // Nếu lỗi thì trả về trạng thái cũ
+      setDanhSach((danhSachCu) =>
+        danhSachCu.map((dm) =>
+          dm.id === item.id
+            ? {
+                ...dm,
+                trangthai: trangThaiCu,
+              }
+            : dm
+        )
+      );
+
       const thongBao =
         loi?.response?.data?.thongbao || "Không cập nhật được trạng thái";
 
       toast.error(thongBao);
+    } finally {
+      setDangDoiTrangThaiId(null);
     }
   };
 
@@ -222,8 +264,105 @@ export default function DanhSachDanhMuc() {
     }));
   };
 
+  const boChonTatCa = () => {
+    setIdsDangChon([]);
+  };
+
+  const bulkDoiTrangThai = async (trangthai) => {
+    if (idsDangChon.length === 0) {
+      toast.error("Vui lòng chọn ít nhất một danh mục");
+      return;
+    }
+
+    try {
+      setDangXuLy(true);
+
+      const ketQua = await bulkCapNhatTrangThaiDanhMuc(idsDangChon, trangthai);
+
+      toast.success(
+        trangthai === "hien_thi"
+          ? `Đã bật hiển thị ${ketQua.dulieu.thanhcong} danh mục`
+          : `Đã ẩn ${ketQua.dulieu.thanhcong} danh mục`
+      );
+
+      setIdsDangChon([]);
+      await taiDanhSach(boLoc);
+    } catch (loi) {
+      const thongBao =
+        loi?.response?.data?.thongbao || "Không cập nhật được danh mục đã chọn";
+
+      toast.error(thongBao);
+    } finally {
+      setDangXuLy(false);
+    }
+  };
+
+  const xacNhanBulkXoa = async () => {
+    if (idsDangChon.length === 0) {
+      toast.error("Vui lòng chọn ít nhất một danh mục");
+      return;
+    }
+
+    try {
+      setDangXuLy(true);
+
+      const ketQua = await bulkXoaDanhMuc(idsDangChon);
+
+      if (ketQua.dulieu.thatbai > 0) {
+        toast.error(
+          `Xóa thành công ${ketQua.dulieu.thanhcong}, thất bại ${ketQua.dulieu.thatbai}`
+        );
+      } else {
+        toast.success(`Đã xóa ${ketQua.dulieu.thanhcong} danh mục`);
+      }
+
+      setIdsDangChon([]);
+      setModalBulkXoaMo(false);
+
+      await taiDanhSach(boLoc);
+    } catch (loi) {
+      const thongBao =
+        loi?.response?.data?.thongbao || "Không xóa được danh mục đã chọn";
+
+      toast.error(thongBao);
+    } finally {
+      setDangXuLy(false);
+    }
+  };
+
+  const idsCoTheChon = danhSach
+    .filter((item) => !item.daxoa)
+    .map((item) => item.id);
+
+  const daChonTatCa =
+    idsCoTheChon.length > 0 &&
+    idsCoTheChon.every((id) => idsDangChon.includes(id));
+
+  const batTatChonTatCa = () => {
+    if (daChonTatCa) {
+      setIdsDangChon((cu) => cu.filter((id) => !idsCoTheChon.includes(id)));
+      return;
+    }
+
+    setIdsDangChon((cu) => Array.from(new Set([...cu, ...idsCoTheChon])));
+  };
+
+  const batTatChonMotDong = (itemId) => {
+    setIdsDangChon((cu) =>
+      cu.includes(itemId)
+        ? cu.filter((id) => id !== itemId)
+        : [...cu, itemId]
+    );
+  };
+
   return (
     <div className="trang-danh-muc-admin">
+      <div className="dau-trang-danh-muc">
+        <div>
+          <h1>Quản lý danh mục</h1>
+          <p>Quản lý nhóm sản phẩm, trạng thái và thứ tự sản phẩm</p>
+        </div>
+      </div>
       <div className="thanh-danh-muc">
         <div className="bo-loc-card-danh-muc">
           <div className="o-tim-danh-muc">
@@ -280,6 +419,52 @@ export default function DanhSachDanhMuc() {
         </button>
       </div>
 
+      {idsDangChon.length > 0 && (
+        <div className="thanh-bulk-danh-muc">
+          <div>
+            Đã chọn <strong>{idsDangChon.length}</strong> danh mục
+          </div>
+
+          <div className="hanh-dong-bulk-danh-muc">
+            <button
+              type="button"
+              className="nut-bulk"
+              disabled={dangXuLy}
+              onClick={() => bulkDoiTrangThai("hien_thi")}
+            >
+              Bật hiển thị
+            </button>
+
+            <button
+              type="button"
+              className="nut-bulk"
+              disabled={dangXuLy}
+              onClick={() => bulkDoiTrangThai("an")}
+            >
+              Ẩn danh mục
+            </button>
+
+            <button
+              type="button"
+              className="nut-bulk nguy-hiem"
+              disabled={dangXuLy}
+              onClick={() => setModalBulkXoaMo(true)}
+            >
+              Xóa đã chọn
+            </button>
+
+            <button
+              type="button"
+              className="nut-bulk phu"
+              disabled={dangXuLy}
+              onClick={boChonTatCa}
+            >
+              Bỏ chọn
+            </button>
+          </div>
+        </div>
+      )}
+
       {dangTai ? (
         <BangDangTai soCot={9} soDong={6} />
       ) : danhSach.length === 0 ? (
@@ -292,25 +477,24 @@ export default function DanhSachDanhMuc() {
           <table className="bang-du-lieu">
             <thead>
               <tr>
-                <th style={{ width: 50 }}>
-                  <input type="checkbox" />
+                <th style={{ width: 48 }}>
+                  <input
+                    type="checkbox"
+                    checked={daChonTatCa}
+                    onChange={batTatChonTatCa}
+                  />
                 </th>
 
                 <th>Tên danh mục</th>
-
                 <th style={{ width: 170 }}>Đường dẫn</th>
-
-                <th style={{ width: 130 }}>Danh mục cha</th>
-
-                <th style={{ width: 100 }}>Sản phẩm</th>
-
-                <th style={{ width: 100 }}>Danh mục con</th>
-
-                <th style={{ width: 120 }}>Trạng thái</th>
-
-                <th style={{ width: 130 }}>Xóa mềm</th>
-
-                <th style={{ width: 180 }}>Thao tác</th>
+                <th style={{ width: 150 }}>Danh mục cha</th>
+                <th style={{ width: 130 }}>Sản phẩm</th>
+                <th style={{ width: 130 }}>Mục con</th>
+                <th className="trang-thai-col" style={{ width: 110 }}>
+                  Trạng thái
+                </th>
+                <th style={{ width: 110 }}>Xóa mềm</th>
+                <th style={{ width: 100 }}>Thao tác</th>
               </tr>
             </thead>
 
@@ -318,7 +502,12 @@ export default function DanhSachDanhMuc() {
               {danhSach.map((item) => (
                 <tr key={item.id}>
                   <td>
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      disabled={item.daxoa}
+                      checked={idsDangChon.includes(item.id)}
+                      onChange={() => batTatChonMotDong(item.id)}
+                    />
                   </td>
 
                   <td>
@@ -365,9 +554,13 @@ export default function DanhSachDanhMuc() {
                         type="button"
                         className={`nut-toggle-trang-thai ${
                           item.trangthai === "hien_thi" ? "bat" : "tat"
-                        }`}
-                        title={item.trangthai === "hien_thi" ? "Đang hiển thị" : "Đang ẩn"}
-                        disabled={item.daxoa}
+                        } ${dangDoiTrangThaiId === item.id ? "dang-doi" : ""}`}
+                        title={
+                          item.trangthai === "hien_thi"
+                            ? "Đang hiển thị"
+                            : "Đang ẩn"
+                        }
+                        disabled={item.daxoa || dangDoiTrangThaiId === item.id}
                         onClick={() => doiTrangThai(item)}
                       >
                         <span className="toggle-thumb"></span>
@@ -437,6 +630,17 @@ export default function DanhSachDanhMuc() {
         onDong={dongModalXoa}
         onXacNhan={xacNhanXoa}
       />
+
+       <XacNhanModal
+        mo={modalBulkXoaMo}
+        tieuDe="Xóa nhiều danh mục"
+        moTa={`Bạn có chắc muốn xóa ${idsDangChon.length} danh mục đã chọn không?`}
+        noiDung="Nếu danh mục đang có sản phẩm hoặc danh mục con, hệ thống sẽ không cho xóa danh mục đó."
+        tenNutXacNhan="Xóa đã chọn"
+        dangXuLy={dangXuLy}
+        onDong={() => setModalBulkXoaMo(false)}
+        onXacNhan={xacNhanBulkXoa}
+       />
     </div>
   );
 }

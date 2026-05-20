@@ -1,6 +1,9 @@
 package danhmuc
 
-import "errors"
+import (
+	"errors"
+	"strings"
+)
 
 type TaoDanhMucRequest struct {
 	TenDanhMuc   string  `json:"tendanhmuc"`
@@ -71,4 +74,47 @@ type PhanTrangResponse struct {
 type DanhSachDanhMucResponse struct {
 	DanhSach  []DanhMuc         `json:"danhsach"`
 	PhanTrang PhanTrangResponse `json:"phantrang"`
+}
+
+type BulkCapNhatTrangThaiRequest struct {
+	IDs       []uint64 `json:"ids"`
+	TrangThai string   `json:"trangthai"`
+}
+
+type BulkXoaDanhMucRequest struct {
+	IDs []uint64 `json:"ids"`
+}
+
+func (r *BulkCapNhatTrangThaiRequest) KiemTra() error {
+	if len(r.IDs) == 0 {
+		return errors.New("vui lòng chọn ít nhất một danh mục")
+	}
+
+	r.TrangThai = strings.TrimSpace(r.TrangThai)
+
+	if r.TrangThai != "hien_thi" && r.TrangThai != "an" {
+		return errors.New("trạng thái danh mục không hợp lệ")
+	}
+
+	for _, id := range r.IDs {
+		if id == 0 {
+			return errors.New("id danh mục không hợp lệ")
+		}
+	}
+
+	return nil
+}
+
+func (r *BulkXoaDanhMucRequest) KiemTra() error {
+	if len(r.IDs) == 0 {
+		return errors.New("vui lòng chọn ít nhất một danh mục")
+	}
+
+	for _, id := range r.IDs {
+		if id == 0 {
+			return errors.New("id danh mục không hợp lệ")
+		}
+	}
+
+	return nil
 }

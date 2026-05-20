@@ -387,6 +387,29 @@ func (r *DanhMucRepository) DemSanPham(id uint64) (int, error) {
 	return soLuong, loi
 }
 
+func (r *DanhMucRepository) DemSanPhamTrongDanhMucVaCon(ids []uint64) (int, error) {
+	if len(ids) == 0 {
+		return 0, nil
+	}
+
+	placeholder := strings.TrimRight(strings.Repeat("?,", len(ids)), ",")
+	cauLenh := fmt.Sprintf(`
+		SELECT COUNT(*)
+		FROM sanpham
+		WHERE danhmuc_id IN (%s)
+		AND deleted_at IS NULL
+	`, placeholder)
+
+	thamSo := make([]interface{}, len(ids))
+	for i, id := range ids {
+		thamSo[i] = id
+	}
+
+	var soLuong int
+	loi := r.db.QueryRow(cauLenh, thamSo...).Scan(&soLuong)
+	return soLuong, loi
+}
+
 func (r *DanhMucRepository) DemDanhMucCon(id uint64) (int, error) {
 	var soLuong int
 
@@ -398,6 +421,37 @@ func (r *DanhMucRepository) DemDanhMucCon(id uint64) (int, error) {
 	`, id).Scan(&soLuong)
 
 	return soLuong, loi
+}
+
+func (r *DanhMucRepository) XoaNhieuID(ids []uint64) error {
+	if len(ids) == 0 {
+		return nil
+	}
+
+	placeholder := strings.TrimRight(strings.Repeat("?,", len(ids)), ",")
+	cauLenh := fmt.Sprintf(`
+		UPDATE danhmuc
+		SET deleted_at = NOW(), trangthai = 'an'
+		WHERE id IN (%s)
+		AND deleted_at IS NULL
+	`, placeholder)
+
+	thamSo := make([]interface{}, len(ids))
+	for i, id := range ids {
+		thamSo[i] = id
+	}
+
+	ketQua, loi := r.db.Exec(cauLenh, thamSo...)
+	if loi != nil {
+		return loi
+	}
+
+	soDong, _ := ketQua.RowsAffected()
+	if soDong == 0 {
+		return errors.New("danh mục không tồn tại hoặc đã bị xóa")
+	}
+
+	return nil
 }
 
 func (r *DanhMucRepository) LayTrangThai(id uint64) (string, error) {
