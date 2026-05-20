@@ -49,6 +49,7 @@ export default function ThanhBenAdmin() {
               <NavLink
                 key={item.duongdan}
                 to={item.duongdan}
+                end={item.duongdan === "/admin"}
                 className={({ isActive }) =>
                   clsx("sidebar-link", isActive && "active")
                 }
