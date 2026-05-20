@@ -34,6 +34,7 @@ export default function DanhSachDanhMuc() {
   const [boLoc, setBoLoc] = useState({
     timkiem: "",
     trangthai: "",
+    hienthixoa: false,
     trang: 1,
     gioihan: 10,
   });
@@ -51,13 +52,16 @@ export default function DanhSachDanhMuc() {
 
   useEffect(() => {
     taiDanhSach();
-  }, [boLoc.trang, boLoc.trangthai]);
+  }, [boLoc.trang, boLoc.trangthai, boLoc.hienthixoa]);
 
   const taiDanhSach = async () => {
     try {
       setDangTai(true);
 
-      const ketQua = await layDanhSachDanhMuc(boLoc);
+      const ketQua = await layDanhSachDanhMuc({
+        ...boLoc,
+        hienthixoa: boLoc.hienthixoa ? 1 : 0,
+      });
 
       setDanhSach(ketQua.dulieu.danhsach || []);
       setPhanTrang(ketQua.dulieu.phantrang);
@@ -72,11 +76,11 @@ export default function DanhSachDanhMuc() {
   };
 
   const capNhatBoLoc = (event) => {
-    const { name, value } = event.target;
+    const { name, value, type, checked } = event.target;
 
     setBoLoc((cu) => ({
       ...cu,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -144,6 +148,15 @@ export default function DanhSachDanhMuc() {
   const doiTrangThai = async (item) => {
     const trangThaiMoi = item.trangthai === "hien_thi" ? "an" : "hien_thi";
 
+    let noiDungXacNhan =
+      trangThaiMoi === "an"
+        ? `Ẩn danh mục "${item.tendanhmuc}"?\n\nNếu danh mục này có danh mục con, hệ thống sẽ ẩn luôn các danh mục con.`
+        : `Hiển thị lại danh mục "${item.tendanhmuc}"?\n\nNếu danh mục cha đang ẩn, hệ thống sẽ không cho bật.`;
+
+    const dongY = window.confirm(noiDungXacNhan);
+
+    if (!dongY) return;
+
     try {
       await capNhatTrangThaiDanhMuc(item.id, trangThaiMoi);
       toast.success("Cập nhật trạng thái thành công");
@@ -158,7 +171,10 @@ export default function DanhSachDanhMuc() {
 
   const xoa = async (item) => {
     const dongY = window.confirm(
-      `Bạn có chắc muốn xóa danh mục "${item.tendanhmuc}" không?`
+      `Bạn có chắc muốn xóa danh mục "${item.tendanhmuc}" không?\n\n` +
+        `Sản phẩm đang thuộc danh mục: ${item.sosanpham}\n` +
+        `Danh mục con: ${item.sodanhmuccon}\n\n` +
+        `Nếu danh mục còn sản phẩm hoặc danh mục con, hệ thống sẽ không cho xóa.`
     );
 
     if (!dongY) return;
@@ -169,7 +185,6 @@ export default function DanhSachDanhMuc() {
       await taiDanhSach();
     } catch (loi) {
       const thongBao = loi?.response?.data?.thongbao || "Không xóa được danh mục";
-
       toast.error(thongBao);
     }
   };
@@ -207,6 +222,16 @@ export default function DanhSachDanhMuc() {
             <option value="an">Đang ẩn</option>
           </select>
 
+          <label className="checkbox-hien-xoa">
+            <input
+              type="checkbox"
+              name="hienthixoa"
+              checked={boLoc.hienthixoa}
+              onChange={capNhatBoLoc}
+            />
+            Hiển thị danh mục đã xóa mềm
+          </label>
+
           <NutBam type="submit" bienThe="phu">
             Tìm kiếm
           </NutBam>
@@ -239,6 +264,7 @@ export default function DanhSachDanhMuc() {
                   <th>Danh mục cha</th>
                   <th style={{ width: 120 }}>Sản phẩm</th>
                   <th style={{ width: 130 }}>Trạng thái</th>
+                  <th style={{ width: 130 }}>Xóa mềm</th>
                   <th style={{ width: 90 }}>Thứ tự</th>
                   <th style={{ width: 160 }}>Thao tác</th>
                 </tr>
@@ -275,29 +301,43 @@ export default function DanhSachDanhMuc() {
                       <TheTrangThai trangthai={item.trangthai} />
                     </td>
 
+                    <td>
+                      {item.daxoa ? (
+                        <span className="nhan-da-xoa">Đã xóa</span>
+                      ) : (
+                        <span className="nhan-chua-xoa">Đang dùng</span>
+                      )}
+                    </td>
+
                     <td>{item.thutu}</td>
 
                     <td>
                       <div className="nhom-nut-thao-tac">
                         <button
+                          type="button"
                           className="nut-icon"
                           title="Bật/tắt trạng thái"
+                          disabled={item.daxoa}
                           onClick={() => doiTrangThai(item)}
                         >
                           <Power size={16} />
                         </button>
 
                         <button
+                          type="button"
                           className="nut-icon"
                           title="Sửa danh mục"
+                          disabled={item.daxoa}
                           onClick={() => moSua(item)}
                         >
                           <Edit size={16} />
                         </button>
 
                         <button
+                          type="button"
                           className="nut-icon nguy-hiem"
                           title="Xóa danh mục"
+                          disabled={item.daxoa}
                           onClick={() => xoa(item)}
                         >
                           <Trash2 size={16} />

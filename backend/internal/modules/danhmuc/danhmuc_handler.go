@@ -22,11 +22,12 @@ func TaoDanhMucHandler(service *DanhMucService) *DanhMucHandler {
 func (h *DanhMucHandler) DanhSach(c *gin.Context) {
 	timkiem := c.Query("timkiem")
 	trangthai := c.Query("trangthai")
+	hienthixoa := c.Query("hienthixoa") == "1" || c.Query("hienthixoa") == "true"
 
 	trang, _ := strconv.Atoi(c.DefaultQuery("trang", "1"))
 	gioihan, _ := strconv.Atoi(c.DefaultQuery("gioihan", "10"))
 
-	duLieu, loi := h.service.DanhSach(timkiem, trangthai, trang, gioihan)
+	duLieu, loi := h.service.DanhSach(timkiem, trangthai, hienthixoa, trang, gioihan)
 	if loi != nil {
 		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
 		return

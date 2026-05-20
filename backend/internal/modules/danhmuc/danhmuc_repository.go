@@ -17,11 +17,13 @@ func TaoDanhMucRepository(db *sql.DB) *DanhMucRepository {
 	}
 }
 
-func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, trang int, gioihan int) ([]DanhMuc, int64, error) {
-	dieuKien := []string{
-		"d.deleted_at IS NULL",
-	}
+func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, hienthixoa bool, trang int, gioihan int) ([]DanhMuc, int64, error) {
+	dieuKien := []string{"1 = 1"}
 	thamSo := []interface{}{}
+
+	if !hienthixoa {
+		dieuKien = append(dieuKien, "d.deleted_at IS NULL")
+	}
 
 	if strings.TrimSpace(timkiem) != "" {
 		dieuKien = append(dieuKien, "(d.tendanhmuc LIKE ? OR d.duongdan LIKE ?)")
@@ -63,6 +65,8 @@ func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, trang int
 			d.trangthai,
 			d.created_at,
 			d.updated_at,
+			IF(d.deleted_at IS NULL, 0, 1) AS daxoa,
+			COALESCE(DATE_FORMAT(d.deleted_at, '%%d/%%m/%%Y %%H:%%i'), '') AS deleted_at,
 			(
 				SELECT COUNT(*)
 				FROM sanpham sp
@@ -78,7 +82,7 @@ func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, trang int
 		FROM danhmuc d
 		LEFT JOIN danhmuc dmcha ON dmcha.id = d.danhmuccha_id
 		WHERE %s
-		ORDER BY d.thutu ASC, d.id DESC
+		ORDER BY d.deleted_at IS NOT NULL ASC, d.thutu ASC, d.id DESC
 		LIMIT ? OFFSET ?
 	`, chuoiDieuKien)
 
@@ -95,6 +99,7 @@ func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, trang int
 	for rows.Next() {
 		var item DanhMuc
 		var danhMucChaID sql.NullInt64
+		var daXoa int
 
 		loi := rows.Scan(
 			&item.ID,
@@ -108,6 +113,8 @@ func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, trang int
 			&item.TrangThai,
 			&item.CreatedAt,
 			&item.UpdatedAt,
+			&daXoa,
+			&item.DeletedAt,
 			&item.SoSanPham,
 			&item.SoDanhMucCon,
 		)
@@ -121,14 +128,21 @@ func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, trang int
 			item.DanhMucChaID = &id
 		}
 
+		item.DaXoa = daXoa == 1
+
 		danhSach = append(danhSach, item)
 	}
 
 	return danhSach, tongSoDong, nil
 }
 
-func (r *DanhMucRepository) ChiTiet(id uint64) (*DanhMuc, error) {
-	cauLenh := `
+func (r *DanhMucRepository) ChiTiet(id uint64, baoGomDaXoa bool) (*DanhMuc, error) {
+	dieuKienXoa := "AND d.deleted_at IS NULL"
+	if baoGomDaXoa {
+		dieuKienXoa = ""
+	}
+
+	cauLenh := fmt.Sprintf(`
 		SELECT
 			d.id,
 			d.tendanhmuc,
@@ -141,6 +155,8 @@ func (r *DanhMucRepository) ChiTiet(id uint64) (*DanhMuc, error) {
 			d.trangthai,
 			d.created_at,
 			d.updated_at,
+			IF(d.deleted_at IS NULL, 0, 1) AS daxoa,
+			COALESCE(DATE_FORMAT(d.deleted_at, '%%d/%%m/%%Y %%H:%%i'), '') AS deleted_at,
 			(
 				SELECT COUNT(*)
 				FROM sanpham sp
@@ -156,12 +172,13 @@ func (r *DanhMucRepository) ChiTiet(id uint64) (*DanhMuc, error) {
 		FROM danhmuc d
 		LEFT JOIN danhmuc dmcha ON dmcha.id = d.danhmuccha_id
 		WHERE d.id = ?
-		AND d.deleted_at IS NULL
+		%s
 		LIMIT 1
-	`
+	`, dieuKienXoa)
 
 	var item DanhMuc
 	var danhMucChaID sql.NullInt64
+	var daXoa int
 
 	loi := r.db.QueryRow(cauLenh, id).Scan(
 		&item.ID,
@@ -175,6 +192,8 @@ func (r *DanhMucRepository) ChiTiet(id uint64) (*DanhMuc, error) {
 		&item.TrangThai,
 		&item.CreatedAt,
 		&item.UpdatedAt,
+		&daXoa,
+		&item.DeletedAt,
 		&item.SoSanPham,
 		&item.SoDanhMucCon,
 	)
@@ -192,11 +211,13 @@ func (r *DanhMucRepository) ChiTiet(id uint64) (*DanhMuc, error) {
 		item.DanhMucChaID = &idCha
 	}
 
+	item.DaXoa = daXoa == 1
+
 	return &item, nil
 }
 
 func (r *DanhMucRepository) Tao(request TaoDanhMucRequest, duongdan string) (uint64, error) {
-	cauLenh := `
+	ketQua, loi := r.db.Exec(`
 		INSERT INTO danhmuc (
 			tendanhmuc,
 			duongdan,
@@ -206,10 +227,7 @@ func (r *DanhMucRepository) Tao(request TaoDanhMucRequest, duongdan string) (uin
 			trangthai
 		)
 		VALUES (?, ?, ?, ?, ?, ?)
-	`
-
-	ketQua, loi := r.db.Exec(
-		cauLenh,
+	`,
 		request.TenDanhMuc,
 		duongdan,
 		request.MoTa,
@@ -231,7 +249,7 @@ func (r *DanhMucRepository) Tao(request TaoDanhMucRequest, duongdan string) (uin
 }
 
 func (r *DanhMucRepository) CapNhat(id uint64, request CapNhatDanhMucRequest, duongdan string) error {
-	cauLenh := `
+	ketQua, loi := r.db.Exec(`
 		UPDATE danhmuc
 		SET
 			tendanhmuc = ?,
@@ -242,10 +260,7 @@ func (r *DanhMucRepository) CapNhat(id uint64, request CapNhatDanhMucRequest, du
 			trangthai = ?
 		WHERE id = ?
 		AND deleted_at IS NULL
-	`
-
-	ketQua, loi := r.db.Exec(
-		cauLenh,
+	`,
 		request.TenDanhMuc,
 		duongdan,
 		request.MoTa,
@@ -261,66 +276,98 @@ func (r *DanhMucRepository) CapNhat(id uint64, request CapNhatDanhMucRequest, du
 
 	soDong, _ := ketQua.RowsAffected()
 	if soDong == 0 {
-		return errors.New("danh mục không tồn tại")
+		return errors.New("danh mục không tồn tại hoặc đã bị xóa")
 	}
 
 	return nil
 }
 
 func (r *DanhMucRepository) Xoa(id uint64) error {
-	cauLenh := `
+	ketQua, loi := r.db.Exec(`
 		UPDATE danhmuc
-		SET deleted_at = NOW()
+		SET deleted_at = NOW(), trangthai = 'an'
 		WHERE id = ?
 		AND deleted_at IS NULL
-	`
+	`, id)
 
-	ketQua, loi := r.db.Exec(cauLenh, id)
 	if loi != nil {
 		return loi
 	}
 
 	soDong, _ := ketQua.RowsAffected()
 	if soDong == 0 {
-		return errors.New("danh mục không tồn tại")
+		return errors.New("danh mục không tồn tại hoặc đã bị xóa")
 	}
 
 	return nil
 }
 
 func (r *DanhMucRepository) CapNhatTrangThai(id uint64, trangthai string) error {
-	cauLenh := `
+	_, loi := r.db.Exec(`
 		UPDATE danhmuc
 		SET trangthai = ?
 		WHERE id = ?
 		AND deleted_at IS NULL
-	`
+	`, trangthai, id)
 
-	ketQua, loi := r.db.Exec(cauLenh, trangthai, id)
+	return loi
+}
+
+func (r *DanhMucRepository) CapNhatTrangThaiNhieuID(ids []uint64, trangthai string) error {
+	if len(ids) == 0 {
+		return nil
+	}
+
+	placeholder := strings.TrimRight(strings.Repeat("?,", len(ids)), ",")
+
+	cauLenh := fmt.Sprintf(`
+		UPDATE danhmuc
+		SET trangthai = ?
+		WHERE id IN (%s)
+		AND deleted_at IS NULL
+	`, placeholder)
+
+	thamSo := []interface{}{trangthai}
+
+	for _, id := range ids {
+		thamSo = append(thamSo, id)
+	}
+
+	_, loi := r.db.Exec(cauLenh, thamSo...)
+
+	return loi
+}
+
+func (r *DanhMucRepository) TenDaTonTai(tendanhmuc string, boQuaID uint64) (bool, error) {
+	var soLuong int
+
+	loi := r.db.QueryRow(`
+		SELECT COUNT(*)
+		FROM danhmuc
+		WHERE LOWER(TRIM(tendanhmuc)) = LOWER(TRIM(?))
+		AND deleted_at IS NULL
+		AND id != ?
+	`, tendanhmuc, boQuaID).Scan(&soLuong)
+
 	if loi != nil {
-		return loi
+		return false, loi
 	}
 
-	soDong, _ := ketQua.RowsAffected()
-	if soDong == 0 {
-		return errors.New("danh mục không tồn tại")
-	}
-
-	return nil
+	return soLuong > 0, nil
 }
 
 func (r *DanhMucRepository) DuongDanDaTonTai(duongdan string, boQuaID uint64) (bool, error) {
-	cauLenh := `
+	var soLuong int
+
+	loi := r.db.QueryRow(`
 		SELECT COUNT(*)
 		FROM danhmuc
 		WHERE duongdan = ?
 		AND deleted_at IS NULL
 		AND id != ?
-	`
+	`, duongdan, boQuaID).Scan(&soLuong)
 
-	var soLuong int
-
-	if loi := r.db.QueryRow(cauLenh, duongdan, boQuaID).Scan(&soLuong); loi != nil {
+	if loi != nil {
 		return false, loi
 	}
 
@@ -351,4 +398,115 @@ func (r *DanhMucRepository) DemDanhMucCon(id uint64) (int, error) {
 	`, id).Scan(&soLuong)
 
 	return soLuong, loi
+}
+
+func (r *DanhMucRepository) LayTrangThai(id uint64) (string, error) {
+	var trangthai string
+
+	loi := r.db.QueryRow(`
+		SELECT trangthai
+		FROM danhmuc
+		WHERE id = ?
+		AND deleted_at IS NULL
+		LIMIT 1
+	`, id).Scan(&trangthai)
+
+	if loi != nil {
+		if errors.Is(loi, sql.ErrNoRows) {
+			return "", errors.New("danh mục cha không tồn tại hoặc đã bị xóa")
+		}
+
+		return "", loi
+	}
+
+	return trangthai, nil
+}
+
+func (r *DanhMucRepository) KiemTraVongLap(id uint64, danhMucChaID *uint64) (bool, error) {
+	if danhMucChaID == nil {
+		return false, nil
+	}
+
+	idHienTai := *danhMucChaID
+
+	for idHienTai > 0 {
+		if idHienTai == id {
+			return true, nil
+		}
+
+		var idCha sql.NullInt64
+
+		loi := r.db.QueryRow(`
+			SELECT danhmuccha_id
+			FROM danhmuc
+			WHERE id = ?
+			AND deleted_at IS NULL
+			LIMIT 1
+		`, idHienTai).Scan(&idCha)
+
+		if loi != nil {
+			if errors.Is(loi, sql.ErrNoRows) {
+				return false, errors.New("danh mục cha không tồn tại hoặc đã bị xóa")
+			}
+
+			return false, loi
+		}
+
+		if !idCha.Valid {
+			break
+		}
+
+		idHienTai = uint64(idCha.Int64)
+	}
+
+	return false, nil
+}
+
+func (r *DanhMucRepository) LayIDConTrucTiep(id uint64) ([]uint64, error) {
+	rows, loi := r.db.Query(`
+		SELECT id
+		FROM danhmuc
+		WHERE danhmuccha_id = ?
+		AND deleted_at IS NULL
+	`, id)
+
+	if loi != nil {
+		return nil, loi
+	}
+	defer rows.Close()
+
+	danhSach := []uint64{}
+
+	for rows.Next() {
+		var idCon uint64
+
+		if loi := rows.Scan(&idCon); loi != nil {
+			return nil, loi
+		}
+
+		danhSach = append(danhSach, idCon)
+	}
+
+	return danhSach, nil
+}
+
+func (r *DanhMucRepository) LayTatCaIDCon(id uint64) ([]uint64, error) {
+	danhSachTatCa := []uint64{}
+	hàngĐợi := []uint64{id}
+
+	for len(hàngĐợi) > 0 {
+		idHienTai := hàngĐợi[0]
+		hàngĐợi = hàngĐợi[1:]
+
+		danhSachTatCa = append(danhSachTatCa, idHienTai)
+
+		danhSachCon, loi := r.LayIDConTrucTiep(idHienTai)
+		if loi != nil {
+			return nil, loi
+		}
+
+		hàngĐợi = append(hàngĐợi, danhSachCon...)
+	}
+
+	return danhSachTatCa, nil
 }
