@@ -4,11 +4,13 @@ import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import TrangRong from "../../../components/TrangRong";
 import TheTrangThai from "../../../components/ui/TheTrangThai";
+import useTieuDeTrang from "../../../hooks/useTieuDeTrang";
 import { formatTienVietNam } from "../../../utils/dinhtien";
 import { traCuuDonHang } from "../../../api/donhangApi";
 import useRealtimeDonHang from "../../../hooks/useRealtimeDonHang";
 
 export default function TraCuuDonHangWebsite() {
+  useTieuDeTrang("Tra cứu đơn hàng");
   const [searchParams] = useSearchParams();
 
   const [dangTai, setDangTai] = useState(false);

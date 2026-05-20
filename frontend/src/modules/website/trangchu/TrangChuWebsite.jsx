@@ -4,11 +4,13 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import DangTai from "../../../components/DangTai";
 import TrangRong from "../../../components/TrangRong";
+import useTieuDeTrang from "../../../hooks/useTieuDeTrang";
 import { layDanhSachSanPham } from "../../../api/sanphamApi";
 import { layDanhSachDanhMuc } from "../../../api/danhmucApi";
 import TheSanPhamWebsite from "../sanpham/TheSanPhamWebsite";
 
 export default function TrangChuWebsite() {
+  useTieuDeTrang("Trang chủ");
   const [dangTai, setDangTai] = useState(true);
   const [sanPhamMoi, setSanPhamMoi] = useState([]);
   const [danhMuc, setDanhMuc] = useState([]);

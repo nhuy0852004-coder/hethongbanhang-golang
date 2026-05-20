@@ -1,4 +1,5 @@
 import { Globe, Mail, MapPin, Phone, Store } from "lucide-react";
+import { Link } from "react-router-dom";
 import useCaiDatStore from "../../stores/caidatStore";
 
 export default function ChanTrangWebsite() {
@@ -9,10 +10,6 @@ export default function ChanTrangWebsite() {
   const sodienthoai = caidat?.sodienthoai || "0901234567";
   const email = caidat?.email || "cuahang@example.com";
   const diachi = caidat?.diachi || "Việt Nam";
-  const chinhsachvanchuyen =
-    caidat?.chinhsachvanchuyen || "Giao hàng toàn quốc.";
-  const chinhsachdoitra =
-    caidat?.chinhsachdoitra || "Đổi trả trong 7 ngày nếu sản phẩm lỗi.";
 
   return (
     <footer className="footer-website">
@@ -59,8 +56,12 @@ export default function ChanTrangWebsite() {
           <h4>Chính sách</h4>
 
           <ul>
-            <li>{chinhsachvanchuyen}</li>
-            <li>{chinhsachdoitra}</li>
+            <li>
+              <Link to="/chinh-sach-van-chuyen">Chính sách vận chuyển</Link>
+            </li>
+            <li>
+              <Link to="/chinh-sach-doi-tra">Chính sách đổi trả</Link>
+            </li>
             <li>Hướng dẫn mua hàng</li>
           </ul>
         </div>

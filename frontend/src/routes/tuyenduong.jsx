@@ -11,6 +11,8 @@ import DanhSachKhachHang from "../modules/khachhang/DanhSachKhachHang";
 import DanhSachThongBao from "../modules/thongbao/DanhSachThongBao";
 import BaoCaoDoanhThu from "../modules/doanhthu/BaoCaoDoanhThu";
 import CaiDatCuaHang from "../modules/caidat/CaiDatCuaHang";
+import ChinhSachVanChuyen from "../modules/website/chinhsach/ChinhSachVanChuyen";
+import ChinhSachDoiTra from "../modules/website/chinhsach/ChinhSachDoiTra";
 import TraCuuDonHangWebsite from "../modules/website/donhang/TraCuuDonHangWebsite";
 import TrangChuWebsite from "../modules/website/trangchu/TrangChuWebsite";
 import DanhSachSanPhamWebsite from "../modules/website/sanpham/DanhSachSanPhamWebsite";
@@ -46,6 +48,18 @@ const router = createBrowserRouter([
       {
         path: "thanhtoan",
         element: <ThanhToanWebsite />,
+      },
+      {
+        path: "tra-cuu-don-hang",
+        element: <TraCuuDonHangWebsite />,
+      },
+      {
+        path: "chinh-sach-van-chuyen",
+        element: <ChinhSachVanChuyen />,
+      },
+      {
+        path: "chinh-sach-doi-tra",
+        element: <ChinhSachDoiTra />,
       },
     ],
   },

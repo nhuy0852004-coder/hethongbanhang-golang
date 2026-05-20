@@ -3,6 +3,8 @@ import { CheckCircle2, CreditCard, MapPin, Phone, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import TrangRong from "../../../components/TrangRong";
+import ThongTinCuaHang from "../../../components/website/ThongTinCuaHang";
+import useTieuDeTrang from "../../../hooks/useTieuDeTrang";
 import useGioHangStore from "../../../stores/giohangStore";
 import { formatTienVietNam } from "../../../utils/dinhtien";
 import { taoDonHang } from "../../../api/donhangApi";
@@ -16,6 +18,7 @@ const formMacDinh = {
 };
 
 export default function ThanhToanWebsite() {
+  useTieuDeTrang("Thanh toán");
   const navigate = useNavigate();
 
   const danhSach = useGioHangStore((state) => state.danhsach);
@@ -316,6 +319,10 @@ export default function ThanhToanWebsite() {
             <div className="ghi-chu-thanh-toan">
               <Phone size={16} />
               <span>Cửa hàng sẽ liên hệ xác nhận đơn hàng sau khi bạn đặt.</span>
+            </div>
+
+            <div className="mt-3">
+              <ThongTinCuaHang />
             </div>
           </div>
         </aside>

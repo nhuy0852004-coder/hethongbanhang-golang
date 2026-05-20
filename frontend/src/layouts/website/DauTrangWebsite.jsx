@@ -37,6 +37,8 @@ export default function DauTrangWebsite() {
           <NavLink to="/">Trang chủ</NavLink>
           <NavLink to="/sanpham">Sản phẩm</NavLink>
           <NavLink to="/tra-cuu-don-hang">Tra cứu đơn</NavLink>
+          <NavLink to="/chinh-sach-van-chuyen">Vận chuyển</NavLink>
+          <NavLink to="/chinh-sach-doi-tra">Đổi trả</NavLink>
           <NavLink to="/admin">Admin</NavLink>
         </nav>
 

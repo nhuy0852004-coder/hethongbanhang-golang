@@ -4,9 +4,10 @@ import { layCaiDat } from "../api/caidatApi";
 const useCaiDatStore = create((set, get) => ({
   caidat: null,
   dangTai: false,
+  daTai: false,
 
   taiCaiDat: async () => {
-    if (get().dangTai) return;
+    if (get().dangTai) return get().caidat;
 
     try {
       set({ dangTai: true });
@@ -15,6 +16,7 @@ const useCaiDatStore = create((set, get) => ({
 
       set({
         caidat: ketQua.dulieu,
+        daTai: true,
       });
 
       return ketQua.dulieu;
@@ -26,6 +28,7 @@ const useCaiDatStore = create((set, get) => ({
   capNhatCaiDatLocal: (duLieu) => {
     set({
       caidat: duLieu,
+      daTai: true,
     });
   },
 }));
