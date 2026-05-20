@@ -5,6 +5,14 @@ export async function taoDonHang(duLieu) {
   return phanHoi.data;
 }
 
+export async function traCuuDonHang(params = {}) {
+  const phanHoi = await ketNoiApi.get("/donhang/tracuu", {
+    params,
+  });
+
+  return phanHoi.data;
+}
+
 export async function layDanhSachDonHang(params = {}) {
   const phanHoi = await ketNoiApi.get("/donhang", {
     params,

@@ -1,7 +1,6 @@
 ﻿import { createBrowserRouter } from "react-router-dom";
 import BocCucAdmin from "../layouts/admin/BocCucAdmin";
 import BocCucWebsite from "../layouts/website/BocCucWebsite";
-import TrangRong from "../components/TrangRong";
 import DashboardAdmin from "../modules/tongquan/DashboardAdmin";
 import BaoVeDangNhap from "../components/BaoVeDangNhap";
 import DangNhap from "../modules/taikhoan/DangNhap";
@@ -12,6 +11,7 @@ import DanhSachKhachHang from "../modules/khachhang/DanhSachKhachHang";
 import DanhSachThongBao from "../modules/thongbao/DanhSachThongBao";
 import BaoCaoDoanhThu from "../modules/doanhthu/BaoCaoDoanhThu";
 import CaiDatCuaHang from "../modules/caidat/CaiDatCuaHang";
+import TraCuuDonHangWebsite from "../modules/website/donhang/TraCuuDonHangWebsite";
 import TrangChuWebsite from "../modules/website/trangchu/TrangChuWebsite";
 import DanhSachSanPhamWebsite from "../modules/website/sanpham/DanhSachSanPhamWebsite";
 import ChiTietSanPhamWebsite from "../modules/website/sanpham/ChiTietSanPhamWebsite";
@@ -41,12 +41,7 @@ const router = createBrowserRouter([
       },
       {
         path: "tra-cuu-don-hang",
-        element: (
-          <TrangRong
-            tieude="Tra cứu đơn hàng"
-            mota="Chức năng tra cứu đơn hàng sẽ được làm sau phần đặt hàng."
-          />
-        ),
+        element: <TraCuuDonHangWebsite />,
       },
       {
         path: "thanhtoan",

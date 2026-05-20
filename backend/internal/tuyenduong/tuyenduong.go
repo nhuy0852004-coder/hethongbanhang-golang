@@ -91,6 +91,7 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	api.GET("/caidat", caidatHandler.LayCaiDat)
 
 	api.POST("/donhang", donhangHandler.TaoDonHang)
+	api.GET("/donhang/tracuu", donhangHandler.TraCuu)
 
 	nhomDaDangNhap := api.Group("")
 	nhomDaDangNhap.Use(trunggian.KiemTraJWT(cauhinh.JWTBiMat))

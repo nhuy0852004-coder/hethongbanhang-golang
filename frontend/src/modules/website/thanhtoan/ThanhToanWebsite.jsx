@@ -155,7 +155,9 @@ export default function ThanhToanWebsite() {
 
             <button
               className="nut-web-chinh"
-              onClick={() => navigate("/tra-cuu-don-hang")}
+              onClick={() => 
+                navigate('/tra-cuu-don-hang?madonhang=${donHangThanhCong.madonhang}')
+              }
             >
               Tra cứu đơn hàng
             </button>
