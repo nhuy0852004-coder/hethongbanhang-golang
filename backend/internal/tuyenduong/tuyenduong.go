@@ -6,9 +6,11 @@ import (
 	"time"
 
 	"hethongbanhang/backend/internal/caidat"
+	"hethongbanhang/backend/internal/modules/baocao"
 	"hethongbanhang/backend/internal/modules/danhmuc"
 	"hethongbanhang/backend/internal/modules/donhang"
 	"hethongbanhang/backend/internal/modules/khachhang"
+	caidatmodule "hethongbanhang/backend/internal/modules/caidat"
 	"hethongbanhang/backend/internal/modules/sanpham"
 	"hethongbanhang/backend/internal/modules/taikhoan"
 	"hethongbanhang/backend/internal/modules/thongbao"
@@ -54,14 +56,6 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	sanphamService := sanpham.TaoSanPhamService(sanphamRepository)
 	sanphamHandler := sanpham.TaoSanPhamHandler(sanphamService)
 
-	tongquanRepository := tongquan.TaoTongQuanRepository(db)
-	tongquanService := tongquan.TaoTongQuanService(tongquanRepository)
-	tongquanHandler := tongquan.TaoTongQuanHandler(tongquanService)
-
-	khachhangRepository := khachhang.TaoKhachHangRepository(db)
-	khachhangService := khachhang.TaoKhachHangService(khachhangRepository)
-	khachhangHandler := khachhang.TaoKhachHangHandler(khachhangService)
-
 	thongbaoRepository := thongbao.TaoThongBaoRepository(db)
 	thongbaoService := thongbao.TaoThongBaoService(thongbaoRepository)
 	thongbaoHandler := thongbao.TaoThongBaoHandler(thongbaoService)
@@ -70,6 +64,22 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	donhangService := donhang.TaoDonHangService(donhangRepository, realtime, thongbaoService)
 	donhangHandler := donhang.TaoDonHangHandler(donhangService)
 
+	tongquanRepository := tongquan.TaoTongQuanRepository(db)
+	tongquanService := tongquan.TaoTongQuanService(tongquanRepository)
+	tongquanHandler := tongquan.TaoTongQuanHandler(tongquanService)
+
+	khachhangRepository := khachhang.TaoKhachHangRepository(db)
+	khachhangService := khachhang.TaoKhachHangService(khachhangRepository)
+	khachhangHandler := khachhang.TaoKhachHangHandler(khachhangService)
+
+	baocaoRepository := baocao.TaoBaoCaoRepository(db)
+	baocaoService := baocao.TaoBaoCaoService(baocaoRepository)
+	baocaoHandler := baocao.TaoBaoCaoHandler(baocaoService)
+
+	caidatRepository := caidatmodule.TaoCaiDatRepository(db)
+	caidatService := caidatmodule.TaoCaiDatService(caidatRepository)
+	caidatHandler := caidatmodule.TaoCaiDatHandler(caidatService)
+
 	api.POST("/dangnhap", taikhoanHandler.DangNhap)
 
 	api.GET("/danhmuc", danhmucHandler.DanhSach)
@@ -77,6 +87,8 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 
 	api.GET("/sanpham", sanphamHandler.DanhSach)
 	api.GET("/sanpham/:id", sanphamHandler.ChiTiet)
+
+	api.GET("/caidat", caidatHandler.LayCaiDat)
 
 	api.POST("/donhang", donhangHandler.TaoDonHang)
 
@@ -92,9 +104,13 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	nhomQuanTriGoc.Use(trunggian.ChiQuanTri())
 	{
 		nhomQuanTriGoc.GET("/tongquan", tongquanHandler.LayTongQuan)
-		nhomQuanTriGoc.GET("/khachhang", khachhangHandler.DanhSach)
-		nhomQuanTriGoc.GET("/khachhang/:id", khachhangHandler.ChiTiet)
-		nhomQuanTriGoc.GET("/khachhang/:id/donhang", khachhangHandler.DonHangCuaKhachHang)
+
+		nhomQuanTriGoc.GET("/baocao/doanhthu", baocaoHandler.DoanhThu)
+		nhomQuanTriGoc.GET("/baocao/top-sanpham", baocaoHandler.TopSanPham)
+		nhomQuanTriGoc.GET("/baocao/donhang", baocaoHandler.DonHang)
+
+		nhomQuanTriGoc.PUT("/caidat", caidatHandler.CapNhat)
+		nhomQuanTriGoc.POST("/caidat/upload-logo", caidatHandler.UploadLogo)
 
 		nhomQuanTriGoc.POST("/danhmuc", danhmucHandler.Tao)
 		nhomQuanTriGoc.PUT("/danhmuc/:id", danhmucHandler.CapNhat)
@@ -111,6 +127,10 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 		nhomQuanTriGoc.GET("/donhang/:id", donhangHandler.ChiTiet)
 		nhomQuanTriGoc.PATCH("/donhang/:id/trangthai", donhangHandler.CapNhatTrangThai)
 		nhomQuanTriGoc.DELETE("/donhang/:id", donhangHandler.Xoa)
+
+		nhomQuanTriGoc.GET("/khachhang", khachhangHandler.DanhSach)
+		nhomQuanTriGoc.GET("/khachhang/:id", khachhangHandler.ChiTiet)
+		nhomQuanTriGoc.GET("/khachhang/:id/donhang", khachhangHandler.DonHangCuaKhachHang)
 
 		nhomQuanTriGoc.GET("/thongbao", thongbaoHandler.DanhSach)
 		nhomQuanTriGoc.GET("/thongbao/dem-chua-doc", thongbaoHandler.DemChuaDoc)

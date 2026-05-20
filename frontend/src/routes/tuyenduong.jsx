@@ -10,6 +10,8 @@ import DanhSachSanPham from "../modules/sanpham/DanhSachSanPham";
 import DanhSachDonHang from "../modules/donhang/DanhSachDonHang";
 import DanhSachKhachHang from "../modules/khachhang/DanhSachKhachHang";
 import DanhSachThongBao from "../modules/thongbao/DanhSachThongBao";
+import BaoCaoDoanhThu from "../modules/doanhthu/BaoCaoDoanhThu";
+import CaiDatCuaHang from "../modules/caidat/CaiDatCuaHang";
 import TrangChuWebsite from "../modules/website/trangchu/TrangChuWebsite";
 import DanhSachSanPhamWebsite from "../modules/website/sanpham/DanhSachSanPhamWebsite";
 import ChiTietSanPhamWebsite from "../modules/website/sanpham/ChiTietSanPhamWebsite";
@@ -89,21 +91,11 @@ const router = createBrowserRouter([
           },
           {
             path: "doanhthu",
-            element: (
-              <TrangRong
-                tieude="Module doanh thu"
-                mota="Sẽ làm chi tiết ở Ngày 12 và 14."
-              />
-            ),
+            element: <BaoCaoDoanhThu />,
           },
           {
             path: "caidat",
-            element: (
-              <TrangRong
-                tieude="Cài đặt cửa hàng"
-                mota="Sẽ làm chi tiết ở Ngày 14."
-              />
-            ),
+            element: <CaiDatCuaHang />,
           },
         ],
       },

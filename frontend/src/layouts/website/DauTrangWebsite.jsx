@@ -1,21 +1,34 @@
 import { Link, NavLink } from "react-router-dom";
 import { Search, ShoppingCart, Store } from "lucide-react";
 import useGioHangStore from "../../stores/giohangStore";
+import useCaiDatStore from "../../stores/caidatStore";
 
 export default function DauTrangWebsite() {
   const danhSach = useGioHangStore((state) => state.danhsach);
-  const tongSoLuong = danhSach.reduce((tong, item) => tong + Number(item.soluong || 0), 0);
+  const caidat = useCaiDatStore((state) => state.caidat);
+
+  const tongSoLuong = danhSach.reduce(
+    (tong, item) => tong + Number(item.soluong || 0),
+    0
+  );
+
+  const tenCuaHang = caidat?.tencuahang || "Cửa Hàng Việt";
+  const logo = caidat?.logo || "";
 
   return (
     <header className="header-website">
       <div className="container-website header-website-inner">
         <Link to="/" className="logo-website">
           <div className="logo-website-icon">
-            <Store size={22} />
+            {logo ? (
+              <img src={`http://localhost:8080${logo}`} alt={tenCuaHang} />
+            ) : (
+              <Store size={22} />
+            )}
           </div>
 
           <div>
-            <strong>Cửa Hàng Việt</strong>
+            <strong>{tenCuaHang}</strong>
             <span>Bán hàng chất lượng</span>
           </div>
         </Link>
