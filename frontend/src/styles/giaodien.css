@@ -3971,3 +3971,25 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+.nut-cap-nhat-gio {
+  height: 40px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
+  border-radius: 11px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.nut-cap-nhat-gio:hover {
+  background: #dbeafe;
+}
+
+.nut-cap-nhat-gio:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

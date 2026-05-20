@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { kiemTraGioHang } from "../api/giohangApi";
 
 const TEN_LUU_GIO_HANG = "gio_hang_cua_hang";
 
@@ -105,6 +106,58 @@ const useGioHangStore = create((set, get) => ({
     set({
       danhsach: danhSachMoi,
     });
+  },
+
+  dongBoVoiServer: async () => {
+    const danhSach = get().danhsach;
+
+    if (danhSach.length === 0) {
+      return {
+        hople: false,
+        thongbao: "Giỏ hàng đang trống",
+        danhsach: [],
+        tongtien: 0,
+        cothaydoi: false,
+      };
+    }
+
+    const duLieuGui = {
+      sanpham: danhSach.map((item) => {
+        const gia = item.giakhuyenmai && item.giakhuyenmai > 0 ? item.giakhuyenmai : item.giaban;
+
+        return {
+          sanpham_id: item.id,
+          soluong: item.soluong,
+          giaban: gia,
+        };
+      }),
+    };
+
+    const ketQua = await kiemTraGioHang(duLieuGui);
+    const duLieu = ketQua.dulieu;
+
+    const danhSachMoi = (duLieu.danhsach || [])
+      .filter((item) => item.hople && item.soluong > 0)
+      .map((item) => ({
+        id: item.id,
+        madinhdanh: item.madinhdanh,
+        tensanpham: item.tensanpham,
+        hinhanh: item.hinhanh,
+        giaban: item.giaban,
+        giakhuyenmai: item.giakhuyenmai,
+        soluongton: item.soluongton,
+        tendanhmuc: item.tendanhmuc,
+        trangthai: item.trangthai,
+        soluong: item.soluong,
+      }));
+
+    luuGioHangVaoLocal(danhSachMoi);
+
+    set({
+      danhsach: danhSachMoi,
+    });
+
+    return duLieu;
   },
 
   xoaTatCa: () => {

@@ -9,6 +9,7 @@ import (
 	"hethongbanhang/backend/internal/modules/baocao"
 	"hethongbanhang/backend/internal/modules/danhmuc"
 	"hethongbanhang/backend/internal/modules/donhang"
+	"hethongbanhang/backend/internal/modules/giohang"
 	"hethongbanhang/backend/internal/modules/khachhang"
 	caidatmodule "hethongbanhang/backend/internal/modules/caidat"
 	"hethongbanhang/backend/internal/modules/sanpham"
@@ -64,6 +65,10 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	donhangService := donhang.TaoDonHangService(donhangRepository, realtime, thongbaoService)
 	donhangHandler := donhang.TaoDonHangHandler(donhangService)
 
+	giohangRepository := giohang.TaoGioHangRepository(db)
+	giohangService := giohang.TaoGioHangService(giohangRepository)
+	giohangHandler := giohang.TaoGioHangHandler(giohangService)
+
 	tongquanRepository := tongquan.TaoTongQuanRepository(db)
 	tongquanService := tongquan.TaoTongQuanService(tongquanRepository)
 	tongquanHandler := tongquan.TaoTongQuanHandler(tongquanService)
@@ -89,6 +94,8 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	api.GET("/sanpham/:id", sanphamHandler.ChiTiet)
 
 	api.GET("/caidat", caidatHandler.LayCaiDat)
+
+	api.POST("/giohang/kiemtra", giohangHandler.KiemTra)
 
 	api.POST("/donhang", donhangHandler.TaoDonHang)
 	api.GET("/donhang/tracuu", donhangHandler.TraCuu)

@@ -23,6 +23,7 @@ export default function ThanhToanWebsite() {
 
   const danhSach = useGioHangStore((state) => state.danhsach);
   const xoaTatCa = useGioHangStore((state) => state.xoaTatCa);
+  const dongBoVoiServer = useGioHangStore((state) => state.dongBoVoiServer);
   const tongTien = useGioHangStore((state) => state.tongTien);
 
   const [form, setForm] = useState(formMacDinh);
@@ -82,16 +83,39 @@ export default function ThanhToanWebsite() {
       return;
     }
 
+    let ketQuaKiemTra;
+
+    try {
+      ketQuaKiemTra = await dongBoVoiServer();
+    } catch (loi) {
+      const thongBao =
+        loi?.response?.data?.thongbao || "Không kiểm tra được giỏ hàng trước khi thanh toán";
+
+      toast.error(thongBao);
+      return;
+    }
+
+    if (!ketQuaKiemTra.hople) {
+      toast.error(ketQuaKiemTra.thongbao || "Giỏ hàng có sản phẩm không hợp lệ");
+      return;
+    }
+
+    if (ketQuaKiemTra.cothaydoi) {
+      toast.success("Giỏ hàng đã được cập nhật theo giá và tồn kho mới nhất");
+    }
+
     const duLieuGui = {
       hoten: form.hoten.trim(),
       sodienthoai: form.sodienthoai.trim(),
       email: form.email.trim(),
       diachi: form.diachi.trim(),
       ghichu: form.ghichu.trim(),
-      sanpham: danhSach.map((item) => ({
-        sanpham_id: item.id,
-        soluong: item.soluong,
-      })),
+      sanpham: ketQuaKiemTra.danhsach
+        .filter((item) => item.hople && item.soluong > 0)
+        .map((item) => ({
+          sanpham_id: item.id,
+          soluong: item.soluong,
+        })),
     };
 
     try {

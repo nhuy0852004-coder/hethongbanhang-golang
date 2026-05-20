@@ -1,4 +1,5 @@
-import { ImageOff, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { ImageOff, Minus, Plus, RefreshCw, ShoppingBag, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import TrangRong from "../../../components/TrangRong";
@@ -10,7 +11,10 @@ export default function GioHangWebsite() {
   const capNhatSoLuong = useGioHangStore((state) => state.capNhatSoLuong);
   const xoaKhoiGio = useGioHangStore((state) => state.xoaKhoiGio);
   const xoaTatCa = useGioHangStore((state) => state.xoaTatCa);
+  const dongBoVoiServer = useGioHangStore((state) => state.dongBoVoiServer);
   const tongTien = useGioHangStore((state) => state.tongTien);
+
+  const [dangDongBo, setDangDongBo] = useState(false);
 
   const xuLyGiam = (item) => {
     if (item.soluong <= 1) {
@@ -61,6 +65,27 @@ export default function GioHangWebsite() {
     toast.success("Đã xóa toàn bộ giỏ hàng");
   };
 
+  const xuLyDongBo = async () => {
+    try {
+      setDangDongBo(true);
+
+      const ketQua = await dongBoVoiServer();
+
+      if (ketQua.cothaydoi) {
+        toast.success("Giỏ hàng đã được cập nhật theo dữ liệu mới nhất");
+      } else {
+        toast.success("Giỏ hàng đang là dữ liệu mới nhất");
+      }
+    } catch (loi) {
+      const thongBao =
+        loi?.response?.data?.thongbao || "Không kiểm tra được giỏ hàng";
+
+      toast.error(thongBao);
+    } finally {
+      setDangDongBo(false);
+    }
+  };
+
   if (danhSach.length === 0) {
     return (
       <div className="container-website trang-gio-hang-web">
@@ -84,10 +109,17 @@ export default function GioHangWebsite() {
           <p>Kiểm tra sản phẩm, số lượng và tổng tiền trước khi thanh toán</p>
         </div>
 
-        <button className="nut-xoa-gio" onClick={xuLyXoaTatCa}>
-          <Trash2 size={17} />
-          Xóa tất cả
-        </button>
+        <div className="nhom-nut-gio-hang">
+          <button className="nut-cap-nhat-gio" onClick={xuLyDongBo} disabled={dangDongBo}>
+            <RefreshCw size={17} />
+            {dangDongBo ? "Đang cập nhật..." : "Cập nhật giỏ hàng"}
+          </button>
+
+          <button className="nut-xoa-gio" onClick={xuLyXoaTatCa}>
+            <Trash2 size={17} />
+            Xóa tất cả
+          </button>
+        </div>
       </div>
 
       <div className="gio-hang-grid">
