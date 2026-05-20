@@ -516,3 +516,86 @@
       max-width: 220px;
     }
   }
+
+  /* ==================================================
+   SẢN PHẨM - EMPTY STATE
+   "Chưa có sản phẩm"
+================================================== */
+
+.trang-san-pham-admin .trang-rong-moi {
+  background: #ffffff;
+  border: 1px dashed #d1d5db;
+  border-radius: 18px;
+  padding: 54px 24px;
+  text-align: center;
+}
+
+.trang-san-pham-admin .trang-rong-icon-moi {
+  width: 76px;
+  height: 76px;
+  border-radius: 20px;
+  background: #f8fafc;
+  color: #64748b;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 16px;
+}
+
+.trang-san-pham-admin .trang-rong-moi h3 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.trang-san-pham-admin .trang-rong-moi p {
+  max-width: 460px;
+  margin: 0 auto 18px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Button trong empty state */
+.trang-san-pham-admin .trang-rong-moi .nut-bam {
+  height: 40px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  border: 1px solid #2563eb;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.trang-san-pham-admin .trang-rong-moi .nut-bam:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .trang-san-pham-admin .trang-rong-moi {
+    padding: 40px 18px;
+    border-radius: 16px;
+  }
+
+  .trang-san-pham-admin .trang-rong-icon-moi {
+    width: 66px;
+    height: 66px;
+    border-radius: 18px;
+  }
+
+  .trang-san-pham-admin .trang-rong-moi h3 {
+    font-size: 19px;
+  }
+
+  .trang-san-pham-admin .trang-rong-moi .nut-bam {
+    width: 100%;
+  }
+}

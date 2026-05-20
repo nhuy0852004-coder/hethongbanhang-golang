@@ -591,3 +591,60 @@
     justify-self: stretch;
   }
 }
+
+/* ==================================================
+   THÔNG BÁO - EMPTY STATE
+   "Chưa có thông báo"
+================================================== */
+
+.trang-thong-bao-admin .trang-rong-moi {
+  background: #ffffff;
+  border: 1px dashed #d1d5db;
+  border-radius: 18px;
+  padding: 54px 24px;
+  text-align: center;
+}
+
+.trang-thong-bao-admin .trang-rong-icon-moi {
+  width: 76px;
+  height: 76px;
+  border-radius: 20px;
+  background: #f8fafc;
+  color: #64748b;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 16px;
+}
+
+.trang-thong-bao-admin .trang-rong-moi h3 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.trang-thong-bao-admin .trang-rong-moi p {
+  max-width: 520px;
+  margin: 0 auto;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .trang-thong-bao-admin .trang-rong-moi {
+    padding: 40px 18px;
+    border-radius: 16px;
+  }
+
+  .trang-thong-bao-admin .trang-rong-icon-moi {
+    width: 66px;
+    height: 66px;
+    border-radius: 18px;
+  }
+
+  .trang-thong-bao-admin .trang-rong-moi h3 {
+    font-size: 19px;
+  }
+}

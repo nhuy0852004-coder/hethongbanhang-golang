@@ -1032,3 +1032,50 @@
     width: 100%;
   }
 }
+
+/* ==================================================
+   DANH MỤC - CỘT BẢNG CHUẨN
+================================================== */
+
+.trang-danh-muc-admin .bang-du-lieu {
+  min-width: 1120px;
+}
+
+.trang-danh-muc-admin .bang-du-lieu th,
+.trang-danh-muc-admin .bang-du-lieu td {
+  white-space: nowrap;
+}
+
+.trang-danh-muc-admin .bang-du-lieu th:nth-child(1),
+.trang-danh-muc-admin .bang-du-lieu td:nth-child(1) {
+  text-align: center;
+}
+
+.trang-danh-muc-admin .bang-du-lieu th:nth-child(2),
+.trang-danh-muc-admin .bang-du-lieu td:nth-child(2) {
+  text-align: left;
+}
+
+.trang-danh-muc-admin .trang-thai-col {
+  text-align: center;
+}
+
+.trang-danh-muc-admin .o-ten-danh-muc {
+  max-width: 300px;
+}
+
+.trang-danh-muc-admin .meta-danh-muc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.trang-danh-muc-admin .so-lieu-text {
+  white-space: nowrap;
+}
+
+.trang-danh-muc-admin .nhom-thao-tac-icon {
+  justify-content: flex-start;
+}
+

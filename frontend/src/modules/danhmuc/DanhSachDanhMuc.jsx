@@ -485,15 +485,15 @@ export default function DanhSachDanhMuc() {
                   />
                 </th>
 
+                <th style={{ width: 80 }}>ID</th>
                 <th>Tên danh mục</th>
-                <th style={{ width: 170 }}>Đường dẫn</th>
-                <th style={{ width: 150 }}>Danh mục cha</th>
+                <th style={{ width: 180 }}>Đường dẫn</th>
+                <th style={{ width: 170 }}>Danh mục cha</th>
                 <th style={{ width: 130 }}>Sản phẩm</th>
-                <th style={{ width: 130 }}>Mục con</th>
-                <th className="trang-thai-col" style={{ width: 110 }}>
+                <th className="trang-thai-col" style={{ width: 120 }}>
                   Trạng thái
                 </th>
-                <th style={{ width: 110 }}>Xóa mềm</th>
+                <th style={{ width: 90 }}>Thứ tự</th>
                 <th style={{ width: 100 }}>Thao tác</th>
               </tr>
             </thead>
@@ -511,15 +511,24 @@ export default function DanhSachDanhMuc() {
                   </td>
 
                   <td>
+                    <strong>#{item.id}</strong>
+                  </td>
+
+                  <td>
                     <div className="o-ten-danh-muc">
                       <strong>{item.tendanhmuc}</strong>
 
                       <div className="meta-danh-muc">
-                        <span>Thứ tự: {item.thutu}</span>
+                        {item.daxoa ? (
+                          <span className="chu-xoa-mem da-xoa">Đã xóa mềm</span>
+                        ) : (
+                          <span className="chu-xoa-mem dang-dung">Đang dùng</span>
+                        )}
 
                         {item.created_at && (
                           <span>
-                            Tạo: {new Date(item.created_at).toLocaleDateString("vi-VN")}
+                            Tạo: {" "}
+                            {new Date(item.created_at).toLocaleDateString("vi-VN")}
                           </span>
                         )}
                       </div>
@@ -531,8 +540,10 @@ export default function DanhSachDanhMuc() {
                   </td>
 
                   <td>
-                    {item.tendanhmuccha || (
-                      <span className="text-muted">Danh mục gốc</span>
+                    {item.tendanhmuccha ? (
+                      item.tendanhmuccha
+                    ) : (
+                      <span className="chu-phu">Danh mục gốc</span>
                     )}
                   </td>
 
@@ -542,37 +553,21 @@ export default function DanhSachDanhMuc() {
                     </span>
                   </td>
 
-                  <td>
-                    <span className="so-lieu-text">
-                      {item.sodanhmuccon} mục con
-                    </span>
+                  <td className="trang-thai-col">
+                    <button
+                      type="button"
+                      className={`nut-toggle-trang-thai ${
+                        item.trangthai === "hien_thi" ? "bat" : "tat"
+                      } ${dangDoiTrangThaiId === item.id ? "dang-doi" : ""}`}
+                      title={item.trangthai === "hien_thi" ? "Đang hiển thị" : "Đang ẩn"}
+                      disabled={item.daxoa || dangDoiTrangThaiId === item.id}
+                      onClick={() => doiTrangThai(item)}
+                    >
+                      <span className="toggle-thumb"></span>
+                    </button>
                   </td>
 
-                  <td>
-                    <div className="can-giua-o-bang">
-                      <button
-                        type="button"
-                        className={`nut-toggle-trang-thai ${
-                          item.trangthai === "hien_thi" ? "bat" : "tat"
-                        } ${dangDoiTrangThaiId === item.id ? "dang-doi" : ""}`}
-                        title={
-                          item.trangthai === "hien_thi"
-                            ? "Đang hiển thị"
-                            : "Đang ẩn"
-                        }
-                        disabled={item.daxoa || dangDoiTrangThaiId === item.id}
-                        onClick={() => doiTrangThai(item)}
-                      >
-                        <span className="toggle-thumb"></span>
-                      </button>
-                    </div>
-                  </td>
-
-                  <td>
-                  <span className={item.daxoa ? "chu-xoa-mem da-xoa" : "chu-xoa-mem dang-dung"}>
-                    {item.daxoa ? "Đã xóa" : "Đang dùng"}
-                  </span>
-                  </td>
+                  <td>{item.thutu}</td>
 
                   <td>
                     <div className="nhom-thao-tac-icon">
