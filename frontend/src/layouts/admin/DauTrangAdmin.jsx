@@ -28,10 +28,25 @@ export default function DauTrangAdmin() {
   );
 
   useEffect(() => {
-    if (taikhoan) {
-      taiThongBao({ trang: 1, gioihan: 8 });
-      taiSoChuaDoc();
+    if (!taikhoan) return;
+
+    let daHuy = false;
+
+    async function taiDuLieuThongBao() {
+      if (daHuy) return;
+
+      await taiThongBao({ trang: 1, gioihan: 8 });
+
+      if (daHuy) return;
+
+      await taiSoChuaDoc();
     }
+
+    taiDuLieuThongBao();
+
+    return () => {
+      daHuy = true;
+    };
   }, [taikhoan, taiThongBao, taiSoChuaDoc]);
 
   const { daKetNoi } = useRealtimeAdmin({

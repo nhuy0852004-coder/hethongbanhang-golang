@@ -195,7 +195,7 @@ export default function DashboardAdmin() {
         </div>
       </div>
 
-      <div className="dashboard-box mt-3">
+      <div className="dashboard-box dashboard-don-hang-moi mt-3">
         <div className="dashboard-box-title">
           <div>
             <h2>Đơn hàng mới nhất</h2>

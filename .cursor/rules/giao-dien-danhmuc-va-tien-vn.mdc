@@ -1,0 +1,13 @@
+---
+description: Luật làm việc theo giao diện danh mục và định dạng tiền VN
+alwaysApply: true
+---
+
+# Quy tắc giao diện và tiền tệ
+
+- Khi làm giao diện cho module mới hoặc chỉnh sửa module cũ, phải nhìn và bám theo giao diện của `danhmuc` để giữ sự đồng bộ về bố cục, spacing, button, table, card, trạng thái rỗng và màu sắc.
+- Nếu có phần nào khác với danh mục thì ưu tiên chỉnh cho giống danh mục trước khi thêm style mới.
+- Mọi trường tiền tệ phải hiển thị theo định dạng tiền Việt Nam.
+- Khi nhập tiền, phải đảm bảo giá trị đúng kiểu số trước khi lưu hoặc gửi API.
+- Không dùng định dạng thô như `1000000`; phải format theo chuẩn VN mà dự án đang dùng.
+- Khi tạo mới UI, luôn kiểm tra lại component danh mục liên quan để giữ consistency.

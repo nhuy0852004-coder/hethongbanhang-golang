@@ -529,3 +529,140 @@
     padding: 12px;
   }
 }
+
+/* ==================================================
+   DASHBOARD - EMPTY STATE ĐƠN HÀNG MỚI NHẤT
+================================================== */
+
+.dashboard-don-hang-moi {
+  background: #ffffff;
+  border: 1px solid var(--mau-vien);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.dashboard-don-hang-moi .dashboard-box-title {
+  margin-bottom: 16px;
+}
+
+.dashboard-don-hang-moi .dashboard-box-title h2 {
+  margin: 0;
+  color: var(--mau-chu);
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.dashboard-don-hang-moi .dashboard-box-title p {
+  margin: 5px 0 0;
+  color: var(--mau-phu);
+  font-size: 13px;
+}
+
+/* Empty state bên trong dashboard */
+.dashboard-don-hang-moi .trang-rong-moi {
+  background: #ffffff;
+  border: 1px dashed #d1d5db;
+  border-radius: 16px;
+  padding: 46px 20px;
+  text-align: center;
+}
+
+.dashboard-don-hang-moi .trang-rong-icon-moi {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: #f8fafc;
+  color: #64748b;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 16px;
+}
+
+.dashboard-don-hang-moi .trang-rong-moi h3 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.dashboard-don-hang-moi .trang-rong-moi p {
+  max-width: 480px;
+  margin: 0 auto;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Khi có bảng đơn hàng */
+.dashboard-don-hang-moi .bang-responsive {
+  border: 1px solid #eef2f7;
+  border-radius: 14px;
+  overflow-x: auto;
+  background: #ffffff;
+}
+
+.dashboard-don-hang-moi .bang-dashboard-don {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+}
+
+.dashboard-don-hang-moi .bang-dashboard-don thead {
+  background: #f9fafb;
+}
+
+.dashboard-don-hang-moi .bang-dashboard-don th {
+  padding: 13px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.dashboard-don-hang-moi .bang-dashboard-don td {
+  padding: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #111827;
+  font-size: 14px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.dashboard-don-hang-moi .bang-dashboard-don tbody tr:hover {
+  background: #fafafa;
+}
+
+.dashboard-don-hang-moi .bang-dashboard-don tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .dashboard-don-hang-moi {
+    padding: 15px;
+    border-radius: 14px;
+  }
+
+  .dashboard-don-hang-moi .trang-rong-moi {
+    padding: 38px 18px;
+    border-radius: 14px;
+  }
+
+  .dashboard-don-hang-moi .trang-rong-icon-moi {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+  }
+
+  .dashboard-don-hang-moi .trang-rong-moi h3 {
+    font-size: 18px;
+  }
+
+  .dashboard-don-hang-moi .trang-rong-moi p {
+    font-size: 13px;
+  }
+}
