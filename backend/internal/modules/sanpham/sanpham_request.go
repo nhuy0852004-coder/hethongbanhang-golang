@@ -88,3 +88,16 @@ func kiemTraChung(maDinhDanh string, tenSanPham string, giaBan uint64, giaKhuyen
 
 	return nil
 }
+
+type LocSanPhamRequest struct {
+	TimKiem   string
+	TrangThai string
+	TonKho    string
+	SanPham   string
+	SapXep    string
+	DanhMucID uint64
+	GiaTu     uint64
+	GiaDen    uint64
+	Trang     int
+	GioiHan   int
+}

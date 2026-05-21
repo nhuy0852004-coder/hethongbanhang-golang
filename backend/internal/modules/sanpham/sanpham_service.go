@@ -16,33 +16,44 @@ func TaoSanPhamService(repository *SanPhamRepository) *SanPhamService {
 	return &SanPhamService{repository: repository}
 }
 
-func (s *SanPhamService) DanhSach(timkiem string, trangthai string, danhmucID uint64, trang int, gioihan int) (*DanhSachSanPhamResponse, error) {
-	if trang < 1 {
-		trang = 1
+func (s *SanPhamService) DanhSach(loc LocSanPhamRequest) (*DanhSachSanPhamResponse, error) {
+	if loc.Trang < 1 {
+		loc.Trang = 1
 	}
-	if gioihan < 1 {
-		gioihan = 10
+
+	if loc.GioiHan < 1 {
+		loc.GioiHan = 10
 	}
-	if gioihan > 100 {
-		gioihan = 100
+
+	if loc.GioiHan > 100 {
+		loc.GioiHan = 100
 	}
-	if trangthai != "" && trangthai != "hien_thi" && trangthai != "an" && trangthai != "het_hang" {
+
+	if loc.TrangThai != "" &&
+		loc.TrangThai != "hien_thi" &&
+		loc.TrangThai != "an" &&
+		loc.TrangThai != "het_hang" {
 		return nil, errors.New("trạng thái lọc không hợp lệ")
 	}
 
-	danhSach, tongSoDong, loi := s.repository.DanhSach(timkiem, trangthai, danhmucID, trang, gioihan)
+	danhSach, tongSoDong, loi := s.repository.DanhSach(loc)
 	if loi != nil {
 		return nil, loi
 	}
 
-	tongSoTrang := int(math.Ceil(float64(tongSoDong) / float64(gioihan)))
+	tongSoTrang := int(math.Ceil(float64(tongSoDong) / float64(loc.GioiHan)))
 	if tongSoTrang < 1 {
 		tongSoTrang = 1
 	}
 
 	return &DanhSachSanPhamResponse{
 		DanhSach: danhSach,
-		PhanTrang: PhanTrangResponse{Trang: trang, GioiHan: gioihan, TongSoDong: tongSoDong, TongSoTrang: tongSoTrang},
+		PhanTrang: PhanTrangResponse{
+			Trang:       loc.Trang,
+			GioiHan:     loc.GioiHan,
+			TongSoDong:  tongSoDong,
+			TongSoTrang: tongSoTrang,
+		},
 	}, nil
 }
 

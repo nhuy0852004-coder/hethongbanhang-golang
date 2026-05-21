@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
-import { Edit, ImageOff, Plus, Power, Search, Trash2 } from "lucide-react";
+import {
+  ImageOff,
+  Pencil,
+  Plus,
+  Search,
+  SlidersHorizontal,
+  Trash2,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import DangTai from "../../components/DangTai";
 import TrangRong from "../../components/TrangRong";
 import NutBam from "../../components/ui/NutBam";
-import TheTrangThai from "../../components/ui/TheTrangThai";
 import useGiaoDienStore from "../../stores/giaodienStore";
 import { formatTienVietNam } from "../../utils/dinhtien";
 import { layDanhSachDanhMuc } from "../../api/danhmucApi";
@@ -15,17 +21,60 @@ export default function DanhSachSanPham() {
   const capNhatTieuDeTrang = useGiaoDienStore((state) => state.capNhatTieuDeTrang);
   const [dangTai, setDangTai] = useState(false);
   const [dangXuLy, setDangXuLy] = useState(false);
+  const [dangDoiTrangThaiId, setDangDoiTrangThaiId] = useState(null);
   const [danhSach, setDanhSach] = useState([]);
   const [danhSachDanhMuc, setDanhSachDanhMuc] = useState([]);
   const [phanTrang, setPhanTrang] = useState({ trang: 1, gioihan: 10, tongsodong: 0, tongsotrang: 1 });
-  const [boLoc, setBoLoc] = useState({ timkiem: "", trangthai: "", danhmuc_id: "", trang: 1, gioihan: 10 });
+  const [boLoc, setBoLoc] = useState({
+    timkiem: "",
+    trangthai: "",
+    danhmuc_id: "",
+    tonkho: "",
+    sanpham: "",
+    giatu: "",
+    giaden: "",
+    sapxep: "moi_nhat",
+    trang: 1,
+    gioihan: 10,
+  });
+  const [moLocNangCao, setMoLocNangCao] = useState(false);
   const [modalMo, setModalMo] = useState(false);
   const [cheDoModal, setCheDoModal] = useState("them");
   const [duLieuSua, setDuLieuSua] = useState(null);
 
-  useEffect(() => { capNhatTieuDeTrang("Quản lý sản phẩm", "Quản lý sản phẩm, giá bán, tồn kho, ảnh và trạng thái hiển thị"); }, [capNhatTieuDeTrang]);
+  useEffect(() => {
+    capNhatTieuDeTrang(
+      "Quản lý sản phẩm",
+      "Quản lý sản phẩm, giá bán, tồn kho, ảnh và trạng thái hiển thị"
+    );
+  }, [capNhatTieuDeTrang]);
   useEffect(() => { taiDanhMuc(); }, []);
-  useEffect(() => { taiDanhSach(boLoc); }, [boLoc.trang, boLoc.trangthai, boLoc.danhmuc_id]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      taiDanhSach(
+        {
+          ...boLoc,
+          trang: 1,
+        },
+        { hienLoading: true }
+      );
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [
+    boLoc.timkiem,
+    boLoc.trangthai,
+    boLoc.danhmuc_id,
+    boLoc.tonkho,
+    boLoc.sanpham,
+    boLoc.giatu,
+    boLoc.giaden,
+    boLoc.sapxep,
+  ]);
+
+  useEffect(() => {
+    taiDanhSach(boLoc, { hienLoading: true });
+  }, [boLoc.trang]);
 
   const taiDanhMuc = async () => {
     try {
@@ -36,23 +85,44 @@ export default function DanhSachSanPham() {
     }
   };
 
-  const taiDanhSach = async (thamSo = boLoc) => {
+  const taiDanhSach = async (thamSo = boLoc, tuyChon = { hienLoading: true }) => {
     try {
-      setDangTai(true);
-      const ketQua = await layDanhSachSanPham(thamSo);
+      if (tuyChon.hienLoading) {
+        setDangTai(true);
+      }
+
+      const params = {
+        ...thamSo,
+        giatu: thamSo.giatu ? Number(thamSo.giatu) : "",
+        giaden: thamSo.giaden ? Number(thamSo.giaden) : "",
+      };
+
+      const ketQua = await layDanhSachSanPham(params);
+
       setDanhSach(ketQua.dulieu.danhsach || []);
       setPhanTrang(ketQua.dulieu.phantrang);
     } catch (loi) {
-      toast.error(loi?.response?.data?.thongbao || "Không tải được danh sách sản phẩm");
-    } finally { setDangTai(false); }
+      const thongBao =
+        loi?.response?.data?.thongbao || "Không tải được danh sách sản phẩm";
+
+      toast.error(thongBao);
+    } finally {
+      if (tuyChon.hienLoading) {
+        setDangTai(false);
+      }
+    }
   };
 
   const capNhatBoLoc = (event) => {
     const { name, value } = event.target;
-    setBoLoc((cu) => ({ ...cu, [name]: value, trang: 1 }));
+
+    setBoLoc((cu) => ({
+      ...cu,
+      [name]: value,
+      trang: 1,
+    }));
   };
 
-  const timKiem = (event) => { event.preventDefault(); const locMoi = { ...boLoc, trang: 1 }; setBoLoc(locMoi); taiDanhSach(locMoi); };
   const moThem = () => { setCheDoModal("them"); setDuLieuSua(null); setModalMo(true); };
   const moSua = (item) => { setCheDoModal("sua"); setDuLieuSua(item); setModalMo(true); };
   const dongModal = () => { if (dangXuLy) return; setModalMo(false); setDuLieuSua(null); };
@@ -71,51 +141,225 @@ export default function DanhSachSanPham() {
   };
 
   const doiTrangThai = async (item) => {
+    if (dangDoiTrangThaiId === item.id) {
+      return;
+    }
+
+    if (item.trangthai === "het_hang" || Number(item.soluongton || 0) <= 0) {
+      toast.error("Sản phẩm đã hết hàng, vui lòng cập nhật tồn kho trước");
+      return;
+    }
+
+    const trangThaiCu = item.trangthai;
     const trangThaiMoi = item.trangthai === "hien_thi" ? "an" : "hien_thi";
-    try { await capNhatTrangThaiSanPham(item.id, trangThaiMoi); toast.success("Cập nhật trạng thái thành công"); await taiDanhSach(boLoc); } catch (loi) { toast.error(loi?.response?.data?.thongbao || "Không cập nhật được trạng thái"); }
+
+    try {
+      setDangDoiTrangThaiId(item.id);
+
+      setDanhSach((danhSachCu) =>
+        danhSachCu.map((sp) =>
+          sp.id === item.id
+            ? {
+                ...sp,
+                trangthai: trangThaiMoi,
+              }
+            : sp
+        )
+      );
+
+      const ketQua = await capNhatTrangThaiSanPham(item.id, trangThaiMoi);
+      const duLieuMoi = ketQua?.dulieu;
+
+      if (duLieuMoi?.id) {
+        setDanhSach((danhSachCu) =>
+          danhSachCu.map((sp) =>
+            sp.id === duLieuMoi.id
+              ? {
+                  ...sp,
+                  ...duLieuMoi,
+                }
+              : sp
+          )
+        );
+      }
+
+      toast.success(
+        (duLieuMoi?.trangthai || trangThaiMoi) === "hien_thi"
+          ? "Đã bật hiển thị sản phẩm"
+          : "Đã ẩn sản phẩm"
+      );
+    } catch (loi) {
+      setDanhSach((danhSachCu) =>
+        danhSachCu.map((sp) =>
+          sp.id === item.id
+            ? {
+                ...sp,
+                trangthai: trangThaiCu,
+              }
+            : sp
+        )
+      );
+
+      const thongBao =
+        loi?.response?.data?.thongbao || "Không cập nhật được trạng thái";
+
+      toast.error(thongBao);
+    } finally {
+      setDangDoiTrangThaiId(null);
+    }
   };
 
   const xoa = async (item) => {
-    if (!window.confirm(`Bạn có chắc muốn xóa sản phẩm "${item.tensanpham}" không?`)) return;
-    try { await xoaSanPham(item.id); toast.success("Xóa sản phẩm thành công"); await taiDanhSach(boLoc); } catch (loi) { toast.error(loi?.response?.data?.thongbao || "Không xóa được sản phẩm"); }
+    const dongY = window.confirm(
+      `Bạn có chắc muốn xóa sản phẩm "${item.tensanpham}" không?`
+    );
+
+    if (!dongY) return;
+
+    try {
+      await xoaSanPham(item.id);
+      toast.success("Xóa sản phẩm thành công");
+      await taiDanhSach(boLoc);
+    } catch (loi) {
+      const thongBao =
+        loi?.response?.data?.thongbao || "Không xóa được sản phẩm";
+
+      toast.error(thongBao);
+    }
   };
 
-  const chuyenTrang = (trangMoi) => { if (trangMoi < 1 || trangMoi > phanTrang.tongsotrang) return; setBoLoc((cu) => ({ ...cu, trang: trangMoi })); };
+  const chuyenTrang = (trangMoi) => {
+    if (trangMoi < 1 || trangMoi > phanTrang.tongsotrang) return;
+
+    setBoLoc((cu) => ({
+      ...cu,
+      trang: trangMoi,
+    }));
+  };
 
   return (
     <div className="trang-san-pham-admin">
-      <div className="thanh-cong-cu-trang">
-        <form className="bo-loc-san-pham" onSubmit={timKiem}>
-          <div className="o-tim-kiem-bang">
-            <Search size={18} />
-            <input
-              name="timkiem"
-              value={boLoc.timkiem}
-              onChange={capNhatBoLoc}
-              placeholder="Tìm theo tên sản phẩm hoặc mã định danh..."
-            />
+      <div className="dau-trang-san-pham">
+        <div>
+          <h1>Quản lý sản phẩm</h1>
+          <p>Quản lý thông tin sản phẩm, giá bán, tồn kho và trạng thái hiển thị.</p>
+        </div>
+      </div>
+
+      <div className="thanh-san-pham">
+        <div className="bo-loc-card-san-pham">
+          <div className="hang-loc-chinh-san-pham">
+            <div className="o-tim-san-pham-admin">
+              <Search size={18} />
+              <input
+                name="timkiem"
+                value={boLoc.timkiem}
+                onChange={capNhatBoLoc}
+                placeholder="Tìm tên, mã, SKU hoặc barcode..."
+              />
+            </div>
+
+            <div className="select-san-pham-wrap">
+              <select
+                name="danhmuc_id"
+                value={boLoc.danhmuc_id}
+                onChange={capNhatBoLoc}
+              >
+                <option value="">Tất cả danh mục</option>
+
+                {danhSachDanhMuc.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.tendanhmuc}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="select-san-pham-wrap">
+              <select
+                name="trangthai"
+                value={boLoc.trangthai}
+                onChange={capNhatBoLoc}
+              >
+                <option value="">Tất cả trạng thái</option>
+                <option value="hien_thi">Hiển thị</option>
+                <option value="an">Đang ẩn</option>
+                <option value="het_hang">Hết hàng</option>
+              </select>
+            </div>
+
+            <button
+              type="button"
+              className={`nut-loc-nang-cao-san-pham ${
+                moLocNangCao ? "dang-mo" : ""
+              }`}
+              onClick={() => setMoLocNangCao((cu) => !cu)}
+            >
+              <SlidersHorizontal size={16} />
+              <span>Nâng cao</span>
+            </button>
+
+            <button
+              type="button"
+              className="nut-them-san-pham-trong-loc"
+              onClick={moThem}
+            >
+              <Plus size={18} />
+              <span>Thêm sản phẩm</span>
+            </button>
           </div>
-          <select name="danhmuc_id" value={boLoc.danhmuc_id} onChange={capNhatBoLoc}>
-            <option value="">Tất cả danh mục</option>
-            {danhSachDanhMuc.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.tendanhmuc}
-              </option>
-            ))}
-          </select>
-          <select name="trangthai" value={boLoc.trangthai} onChange={capNhatBoLoc}>
-            <option value="">Tất cả trạng thái</option>
-            <option value="hien_thi">Hiển thị</option>
-            <option value="an">Đang ẩn</option>
-            <option value="het_hang">Hết hàng</option>
-          </select>
-          <NutBam type="submit" bienThe="phu">
-            Tìm kiếm
-          </NutBam>
-        </form>
-        <NutBam icon={Plus} onClick={moThem}>
-          Thêm sản phẩm
-        </NutBam>
+
+          {moLocNangCao && (
+            <div className="hang-loc-nang-cao-san-pham">
+              <div className="select-san-pham-wrap">
+                <select name="tonkho" value={boLoc.tonkho} onChange={capNhatBoLoc}>
+                  <option value="">Tất cả tồn kho</option>
+                  <option value="con_hang">Còn hàng</option>
+                  <option value="sap_het">Sắp hết</option>
+                  <option value="het_hang">Hết hàng</option>
+                </select>
+              </div>
+
+              <div className="select-san-pham-wrap">
+                <select name="sanpham" value={boLoc.sanpham} onChange={capNhatBoLoc}>
+                  <option value="">Tất cả sản phẩm</option>
+                  <option value="noibat">Nổi bật</option>
+                  <option value="banchay">Bán chạy</option>
+                  <option value="khuyenmai">Khuyến mãi</option>
+                </select>
+              </div>
+
+              <input
+                className="input-gia-loc"
+                name="giatu"
+                value={boLoc.giatu}
+                onChange={capNhatBoLoc}
+                placeholder="Giá từ"
+                inputMode="numeric"
+              />
+
+              <input
+                className="input-gia-loc"
+                name="giaden"
+                value={boLoc.giaden}
+                onChange={capNhatBoLoc}
+                placeholder="Giá đến"
+                inputMode="numeric"
+              />
+
+              <div className="select-san-pham-wrap">
+                <select name="sapxep" value={boLoc.sapxep} onChange={capNhatBoLoc}>
+                  <option value="moi_nhat">Mới nhất</option>
+                  <option value="cu_nhat">Cũ nhất</option>
+                  <option value="gia_tang">Giá tăng dần</option>
+                  <option value="gia_giam">Giá giảm dần</option>
+                  <option value="ton_kho_thap">Tồn kho thấp</option>
+                  <option value="luot_ban">Lượt bán</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       {dangTai && <DangTai noidung="Đang tải danh sách sản phẩm..." />}
       {!dangTai && danhSach.length === 0 && (
@@ -188,27 +432,38 @@ export default function DanhSachSanPham() {
                         <span>sản phẩm</span>
                       </div>
                     </td>
-                    <td>
-                      <TheTrangThai trangthai={item.trangthai} />
+                    <td className="trang-thai-col">
+                      <button
+                        type="button"
+                        className={`nut-toggle-trang-thai ${
+                          item.trangthai === "hien_thi" ? "bat" : "tat"
+                        } ${item.trangthai === "het_hang" ? "het-hang" : ""} ${
+                          dangDoiTrangThaiId === item.id ? "dang-doi" : ""
+                        }`}
+                        title={
+                          item.trangthai === "het_hang"
+                            ? "Hết hàng"
+                            : item.trangthai === "hien_thi"
+                            ? "Đang hiển thị"
+                            : "Đang ẩn"
+                        }
+                        disabled={dangDoiTrangThaiId === item.id}
+                        onClick={() => doiTrangThai(item)}
+                      >
+                        <span className="toggle-thumb"></span>
+                      </button>
                     </td>
                     <td>
                       <div className="nhom-nut-thao-tac">
                         <button
                           type="button"
                           className="nut-icon"
-                          title="Bật/tắt trạng thái"
-                          onClick={() => doiTrangThai(item)}
-                        >
-                          <Power size={16} />
-                        </button>
-                        <button
-                          type="button"
-                          className="nut-icon"
                           title="Sửa sản phẩm"
                           onClick={() => moSua(item)}
                         >
-                          <Edit size={16} />
+                          <Pencil size={16} />
                         </button>
+
                         <button
                           type="button"
                           className="nut-icon nguy-hiem"
@@ -224,30 +479,34 @@ export default function DanhSachSanPham() {
               </tbody>
             </table>
           </div>
-          <div className="phan-trang">
-            <div>
-              Hiển thị <strong>{danhSach.length}</strong> trên <strong>{phanTrang.tongsodong}</strong> sản phẩm
+          {phanTrang.tongsodong > 10 && (
+            <div className="phan-trang">
+              <div>
+                Hiển thị <strong>{danhSach.length}</strong> trên{" "} 
+                <strong>{phanTrang.tongsodong}</strong> sản phẩm
+              </div>
+
+              <div className="nut-phan-trang">
+                <button
+                  disabled={phanTrang.trang <= 1}
+                  onClick={() => chuyenTrang(phanTrang.trang - 1)}
+                >
+                  Trước
+                </button>
+
+                <span>
+                  Trang {phanTrang.trang} / {phanTrang.tongsotrang}
+                </span>
+
+                <button
+                  disabled={phanTrang.trang >= phanTrang.tongsotrang}
+                  onClick={() => chuyenTrang(phanTrang.trang + 1)}
+                >
+                  Sau
+                </button>
+              </div>
             </div>
-            <div className="nut-phan-trang">
-              <button
-                type="button"
-                disabled={phanTrang.trang <= 1}
-                onClick={() => chuyenTrang(phanTrang.trang - 1)}
-              >
-                Trước
-              </button>
-              <span>
-                Trang {phanTrang.trang} / {phanTrang.tongsotrang}
-              </span>
-              <button
-                type="button"
-                disabled={phanTrang.trang >= phanTrang.tongsotrang}
-                onClick={() => chuyenTrang(phanTrang.trang + 1)}
-              >
-                Sau
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       )}
       <SanPhamModal

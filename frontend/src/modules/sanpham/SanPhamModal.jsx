@@ -36,7 +36,23 @@ export default function SanPhamModal({ mo, cheDo = "them", duLieuSua, danhSachDa
 
   const capNhatForm = (event) => {
     const { name, value } = event.target;
-    setForm((duLieuCu) => ({ ...duLieuCu, [name]: value }));
+
+    setForm((duLieuCu) => {
+      const formMoi = {
+        ...duLieuCu,
+        [name]: value,
+      };
+
+      if (
+        name === "soluongton" &&
+        Number(value || 0) > 0 &&
+        duLieuCu.trangthai === "het_hang"
+      ) {
+        formMoi.trangthai = "hien_thi";
+      }
+
+      return formMoi;
+    });
   };
 
   const chonAnh = (event) => {
@@ -57,7 +73,24 @@ export default function SanPhamModal({ mo, cheDo = "them", duLieuSua, danhSachDa
     if (!giaban || giaban <= 0) return onLuu({ error: "giá bán phải lớn hơn 0" });
     if (giakhuyenmai != null && giakhuyenmai > 0 && giakhuyenmai >= giaban) return onLuu({ error: "giá khuyến mãi phải nhỏ hơn giá bán" });
 
-    onLuu({ madinhdanh: form.madinhdanh.trim(), tensanpham: form.tensanpham.trim(), mota: form.mota.trim(), giaban, giakhuyenmai, soluongton, trangthai: form.trangthai, danhmuc_id }, fileAnh);
+    onLuu(
+      {
+        madinhdanh: form.madinhdanh.trim(),
+        tensanpham: form.tensanpham.trim(),
+        mota: form.mota.trim(),
+        giaban,
+        giakhuyenmai,
+        soluongton,
+        trangthai:
+          Number(form.soluongton || 0) <= 0
+            ? "het_hang"
+            : form.trangthai === "het_hang"
+            ? "an"
+            : form.trangthai,
+        danhmuc_id,
+      },
+      fileAnh
+    );
   };
 
   return (
@@ -74,7 +107,45 @@ export default function SanPhamModal({ mo, cheDo = "them", duLieuSua, danhSachDa
               <div className="nhom-form"><label>Tên sản phẩm <span>*</span></label><input name="tensanpham" value={form.tensanpham} onChange={capNhatForm} /></div>
               <div className="luoi-form-2"><div className="nhom-form"><label>Mã định danh</label><input name="madinhdanh" value={form.madinhdanh} onChange={capNhatForm} /></div><div className="nhom-form"><label>Danh mục</label><select name="danhmuc_id" value={form.danhmuc_id} onChange={capNhatForm}><option value="">Chưa chọn danh mục</option>{danhSachDanhMuc.map((item) => <option key={item.id} value={item.id}>{item.tendanhmuc}</option>)}</select></div></div>
               <div className="luoi-form-3"><div className="nhom-form"><label>Giá bán <span>*</span></label><input type="number" min="0" name="giaban" value={form.giaban} onChange={capNhatForm} /></div><div className="nhom-form"><label>Giá khuyến mãi</label><input type="number" min="0" name="giakhuyenmai" value={form.giakhuyenmai} onChange={capNhatForm} /></div><div className="nhom-form"><label>Số lượng tồn</label><input type="number" min="0" name="soluongton" value={form.soluongton} onChange={capNhatForm} /></div></div>
-              <div className="nhom-form"><label>Trạng thái</label><select name="trangthai" value={form.trangthai} onChange={capNhatForm}><option value="hien_thi">Hiển thị</option><option value="an">Đang ẩn</option><option value="het_hang">Hết hàng</option></select></div>
+              <div className="nhom-form">
+                <label>Trạng thái</label>
+
+                <div className="dong-toggle-modal">
+                  <button
+                    type="button"
+                    className={`nut-toggle-trang-thai ${
+                      form.trangthai === "hien_thi" ? "bat" : "tat"
+                    } ${Number(form.soluongton || 0) <= 0 ? "het-hang" : ""}`}
+                    disabled={Number(form.soluongton || 0) <= 0}
+                    onClick={() => {
+                      setForm((cu) => ({
+                        ...cu,
+                        trangthai: cu.trangthai === "hien_thi" ? "an" : "hien_thi",
+                      }));
+                    }}
+                  >
+                    <span className="toggle-thumb"></span>
+                  </button>
+
+                  <div>
+                    <strong>
+                      {Number(form.soluongton || 0) <= 0
+                        ? "Hết hàng"
+                        : form.trangthai === "hien_thi"
+                        ? "Hiển thị"
+                        : "Đang ẩn"}
+                    </strong>
+
+                    <span>
+                      {Number(form.soluongton || 0) <= 0
+                        ? "Sản phẩm hết tồn kho nên không thể bật hiển thị."
+                        : form.trangthai === "hien_thi"
+                        ? "Sản phẩm sẽ hiển thị trên website bán hàng."
+                        : "Sản phẩm sẽ được ẩn khỏi website bán hàng."}
+                    </span>
+                  </div>
+                </div>
+              </div>
               <div className="nhom-form"><label>Mô tả</label><textarea name="mota" value={form.mota} onChange={capNhatForm} rows={4} /></div>
             </div>
             <div><label className="label-anh-san-pham">Ảnh sản phẩm</label><label className="khung-upload-anh">{anhXemTruoc ? <img src={anhXemTruoc.startsWith("blob:") ? anhXemTruoc : `http://localhost:8080${anhXemTruoc}`} alt="Ảnh sản phẩm" /> : <div><ImagePlus size={34} /><strong>Chọn ảnh</strong><span>JPG, PNG, WEBP dưới 5MB</span></div>}<input type="file" accept="image/*" onChange={chonAnh} /></label></div>

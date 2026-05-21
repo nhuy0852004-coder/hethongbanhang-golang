@@ -15,58 +15,146 @@ func TaoSanPhamRepository(db *sql.DB) *SanPhamRepository {
 	return &SanPhamRepository{db: db}
 }
 
-func (r *SanPhamRepository) DanhSach(timkiem string, trangthai string, danhmucID uint64, trang int, gioihan int) ([]SanPham, int64, error) {
-	dieuKien := []string{"sp.deleted_at IS NULL"}
+func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, error) {
+	dieuKien := []string{
+		"sp.deleted_at IS NULL",
+	}
+
 	thamSo := []interface{}{}
 
-	if strings.TrimSpace(timkiem) != "" {
-		dieuKien = append(dieuKien, "(sp.tensanpham LIKE ? OR sp.madinhdanh LIKE ?)")
-		tuKhoa := "%" + strings.TrimSpace(timkiem) + "%"
-		thamSo = append(thamSo, tuKhoa, tuKhoa)
+	if strings.TrimSpace(loc.TimKiem) != "" {
+		dieuKien = append(dieuKien, `
+			(
+				sp.tensanpham LIKE ?
+				OR sp.madinhdanh LIKE ?
+				OR COALESCE(sp.sku, '') LIKE ?
+				OR COALESCE(sp.barcode, '') LIKE ?
+			)
+		`)
+
+		tuKhoa := "%" + strings.TrimSpace(loc.TimKiem) + "%"
+		thamSo = append(thamSo, tuKhoa, tuKhoa, tuKhoa, tuKhoa)
 	}
 
-	if strings.TrimSpace(trangthai) != "" {
+	if strings.TrimSpace(loc.TrangThai) != "" {
 		dieuKien = append(dieuKien, "sp.trangthai = ?")
-		thamSo = append(thamSo, trangthai)
+		thamSo = append(thamSo, loc.TrangThai)
 	}
 
-	if danhmucID > 0 {
+	if loc.DanhMucID > 0 {
 		dieuKien = append(dieuKien, "sp.danhmuc_id = ?")
-		thamSo = append(thamSo, danhmucID)
+		thamSo = append(thamSo, loc.DanhMucID)
+	}
+
+	if loc.GiaTu > 0 {
+		dieuKien = append(dieuKien, "sp.giaban >= ?")
+		thamSo = append(thamSo, loc.GiaTu)
+	}
+
+	if loc.GiaDen > 0 {
+		dieuKien = append(dieuKien, "sp.giaban <= ?")
+		thamSo = append(thamSo, loc.GiaDen)
+	}
+
+	switch loc.TonKho {
+	case "con_hang":
+		dieuKien = append(dieuKien, "sp.soluongton > 5")
+	case "sap_het":
+		dieuKien = append(dieuKien, "sp.soluongton > 0 AND sp.soluongton <= 5")
+	case "het_hang":
+		dieuKien = append(dieuKien, "sp.soluongton = 0")
+	}
+
+	switch loc.SanPham {
+	case "noibat":
+		dieuKien = append(dieuKien, "sp.noibat = 1")
+	case "khuyenmai":
+		dieuKien = append(dieuKien, "sp.giakhuyenmai IS NOT NULL AND sp.giakhuyenmai > 0")
+	case "banchay":
+		dieuKien = append(dieuKien, "COALESCE(lb.luotban, 0) > 0")
 	}
 
 	chuoiDieuKien := strings.Join(dieuKien, " AND ")
-	cauDem := fmt.Sprintf(`SELECT COUNT(*) FROM sanpham sp WHERE %s`, chuoiDieuKien)
+
+	cauDem := fmt.Sprintf(`
+		SELECT COUNT(*)
+		FROM sanpham sp
+		LEFT JOIN (
+			SELECT 
+				ct.sanpham_id,
+				SUM(ct.soluong) AS luotban
+			FROM chitietdonhang ct
+			INNER JOIN donhang dh ON dh.id = ct.donhang_id
+			WHERE dh.deleted_at IS NULL
+			AND dh.trangthai != 'da_huy'
+			GROUP BY ct.sanpham_id
+		) lb ON lb.sanpham_id = sp.id
+		WHERE %s
+	`, chuoiDieuKien)
 
 	var tongSoDong int64
+
 	if loi := r.db.QueryRow(cauDem, thamSo...).Scan(&tongSoDong); loi != nil {
 		return nil, 0, loi
 	}
 
-	offset := (trang - 1) * gioihan
+	sapXep := "sp.id DESC"
+
+	switch loc.SapXep {
+	case "cu_nhat":
+		sapXep = "sp.id ASC"
+	case "gia_tang":
+		sapXep = "sp.giaban ASC"
+	case "gia_giam":
+		sapXep = "sp.giaban DESC"
+	case "ton_kho_thap":
+		sapXep = "sp.soluongton ASC, sp.id DESC"
+	case "luot_ban":
+		sapXep = "COALESCE(lb.luotban, 0) DESC, sp.id DESC"
+	default:
+		sapXep = "sp.id DESC"
+	}
+
+	offset := (loc.Trang - 1) * loc.GioiHan
+
 	cauLenh := fmt.Sprintf(`
 		SELECT
 			sp.id,
 			sp.madinhdanh,
+			COALESCE(sp.sku, '') AS sku,
+			COALESCE(sp.barcode, '') AS barcode,
 			sp.tensanpham,
 			COALESCE(sp.mota, '') AS mota,
 			sp.giaban,
 			sp.giakhuyenmai,
 			sp.soluongton,
 			COALESCE(sp.hinhanh, '') AS hinhanh,
+			COALESCE(sp.noibat, 0) AS noibat,
 			sp.trangthai,
 			sp.danhmuc_id,
 			COALESCE(dm.tendanhmuc, '') AS tendanhmuc,
+			COALESCE(lb.luotban, 0) AS luotban,
 			sp.created_at,
 			sp.updated_at
 		FROM sanpham sp
 		LEFT JOIN danhmuc dm ON dm.id = sp.danhmuc_id
+		LEFT JOIN (
+			SELECT 
+				ct.sanpham_id,
+				SUM(ct.soluong) AS luotban
+			FROM chitietdonhang ct
+			INNER JOIN donhang dh ON dh.id = ct.donhang_id
+			WHERE dh.deleted_at IS NULL
+			AND dh.trangthai != 'da_huy'
+			GROUP BY ct.sanpham_id
+		) lb ON lb.sanpham_id = sp.id
 		WHERE %s
-		ORDER BY sp.id DESC
+		ORDER BY %s
 		LIMIT ? OFFSET ?
-	`, chuoiDieuKien)
+	`, chuoiDieuKien, sapXep)
 
-	thamSoDanhSach := append(thamSo, gioihan, offset)
+	thamSoDanhSach := append(thamSo, loc.GioiHan, offset)
+
 	rows, loi := r.db.Query(cauLenh, thamSoDanhSach...)
 	if loi != nil {
 		return nil, 0, loi
@@ -74,23 +162,52 @@ func (r *SanPhamRepository) DanhSach(timkiem string, trangthai string, danhmucID
 	defer rows.Close()
 
 	danhSach := []SanPham{}
+
 	for rows.Next() {
 		var item SanPham
 		var giaKhuyenMai sql.NullInt64
 		var danhMucID sql.NullInt64
-		if loi := rows.Scan(&item.ID, &item.MaDinhDanh, &item.TenSanPham, &item.MoTa, &item.GiaBan, &giaKhuyenMai, &item.SoLuongTon, &item.HinhAnh, &item.TrangThai, &danhMucID, &item.TenDanhMuc, &item.CreatedAt, &item.UpdatedAt); loi != nil {
+		var noiBat int
+
+		loi := rows.Scan(
+			&item.ID,
+			&item.MaDinhDanh,
+			&item.SKU,
+			&item.Barcode,
+			&item.TenSanPham,
+			&item.MoTa,
+			&item.GiaBan,
+			&giaKhuyenMai,
+			&item.SoLuongTon,
+			&item.HinhAnh,
+			&noiBat,
+			&item.TrangThai,
+			&danhMucID,
+			&item.TenDanhMuc,
+			&item.LuotBan,
+			&item.CreatedAt,
+			&item.UpdatedAt,
+		)
+
+		if loi != nil {
 			return nil, 0, loi
 		}
+
 		if giaKhuyenMai.Valid {
 			gia := uint64(giaKhuyenMai.Int64)
 			item.GiaKhuyenMai = &gia
 		}
+
 		if danhMucID.Valid {
 			id := uint64(danhMucID.Int64)
 			item.DanhMucID = &id
 		}
+
+		item.NoiBat = noiBat == 1
+
 		danhSach = append(danhSach, item)
 	}
+
 	return danhSach, tongSoDong, nil
 }
 

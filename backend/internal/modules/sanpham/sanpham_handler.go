@@ -25,15 +25,27 @@ func TaoSanPhamHandler(service *SanPhamService) *SanPhamHandler {
 }
 
 func (h *SanPhamHandler) DanhSach(c *gin.Context) {
-	timkiem := c.Query("timkiem")
-	trangthai := c.Query("trangthai")
-
 	trang, _ := strconv.Atoi(c.DefaultQuery("trang", "1"))
 	gioihan, _ := strconv.Atoi(c.DefaultQuery("gioihan", "10"))
 
 	danhmucID, _ := strconv.ParseUint(c.DefaultQuery("danhmuc_id", "0"), 10, 64)
+	giatu, _ := strconv.ParseUint(c.DefaultQuery("giatu", "0"), 10, 64)
+	giaden, _ := strconv.ParseUint(c.DefaultQuery("giaden", "0"), 10, 64)
 
-	duLieu, loi := h.service.DanhSach(timkiem, trangthai, danhmucID, trang, gioihan)
+	loc := LocSanPhamRequest{
+		TimKiem:   c.Query("timkiem"),
+		TrangThai: c.Query("trangthai"),
+		TonKho:    c.Query("tonkho"),
+		SanPham:   c.Query("sanpham"),
+		SapXep:    c.DefaultQuery("sapxep", "moi_nhat"),
+		DanhMucID: danhmucID,
+		GiaTu:     giatu,
+		GiaDen:    giaden,
+		Trang:     trang,
+		GioiHan:   gioihan,
+	}
+
+	duLieu, loi := h.service.DanhSach(loc)
 	if loi != nil {
 		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
 		return
