@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/rand"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -69,12 +71,28 @@ func (s *SanPhamService) Tao(request TaoSanPhamRequest) (*SanPham, error) {
 		return nil, loi
 	}
 
-	madinhdanh, loi := s.taoMaDinhDanhKhongTrung(request.MaDinhDanh, 0)
-	if loi != nil {
-		return nil, loi
+	request.MaDinhDanh = strings.TrimSpace(request.MaDinhDanh)
+	request.SKU = strings.TrimSpace(request.SKU)
+
+	if request.MaDinhDanh == "" {
+		maTuDong, loi := s.taoMaSanPhamDuyNhat(0)
+		if loi != nil {
+			return nil, loi
+		}
+
+		request.MaDinhDanh = maTuDong
 	}
 
-	id, loi := s.repository.Tao(request, madinhdanh)
+	if request.SKU == "" {
+		skuTuDong, loi := s.taoSKUDuyNhat(request.TenSanPham, 0)
+		if loi != nil {
+			return nil, loi
+		}
+
+		request.SKU = skuTuDong
+	}
+
+	id, loi := s.repository.Tao(request, request.MaDinhDanh)
 	if loi != nil {
 		return nil, loi
 	}
@@ -90,12 +108,28 @@ func (s *SanPhamService) CapNhat(id uint64, request CapNhatSanPhamRequest) (*San
 		return nil, loi
 	}
 
-	madinhdanh, loi := s.taoMaDinhDanhKhongTrung(request.MaDinhDanh, id)
-	if loi != nil {
-		return nil, loi
+	request.MaDinhDanh = strings.TrimSpace(request.MaDinhDanh)
+	request.SKU = strings.TrimSpace(request.SKU)
+
+	if request.MaDinhDanh == "" {
+		maTuDong, loi := s.taoMaSanPhamDuyNhat(id)
+		if loi != nil {
+			return nil, loi
+		}
+
+		request.MaDinhDanh = maTuDong
 	}
 
-	if loi := s.repository.CapNhat(id, request, madinhdanh); loi != nil {
+	if request.SKU == "" {
+		skuTuDong, loi := s.taoSKUDuyNhat(request.TenSanPham, id)
+		if loi != nil {
+			return nil, loi
+		}
+
+		request.SKU = skuTuDong
+	}
+
+	if loi := s.repository.CapNhat(id, request, request.MaDinhDanh); loi != nil {
 		return nil, loi
 	}
 
@@ -135,6 +169,30 @@ func (s *SanPhamService) CapNhatHinhAnh(id uint64, duongdan string) (*SanPham, e
 	return s.repository.ChiTiet(id)
 }
 
+func (s *SanPhamService) ThemAlbumAnh(id uint64, danhSachDuongDan []string) (*SanPham, error) {
+	if id == 0 {
+		return nil, errors.New("id sản phẩm không hợp lệ")
+	}
+
+	danhSachHopLe := []string{}
+	for _, duongdan := range danhSachDuongDan {
+		duongdan = strings.TrimSpace(duongdan)
+		if duongdan != "" {
+			danhSachHopLe = append(danhSachHopLe, duongdan)
+		}
+	}
+
+	if len(danhSachHopLe) == 0 {
+		return nil, errors.New("vui lòng chọn ít nhất một ảnh")
+	}
+
+	if loi := s.repository.ThemAlbumAnh(id, danhSachHopLe); loi != nil {
+		return nil, loi
+	}
+
+	return s.repository.ChiTiet(id)
+}
+
 func (s *SanPhamService) taoMaDinhDanhKhongTrung(maNhap string, boQuaID uint64) (string, error) {
 	maGoc := strings.TrimSpace(maNhap)
 	if maGoc == "" {
@@ -156,4 +214,139 @@ func (s *SanPhamService) taoMaDinhDanhKhongTrung(maNhap string, boQuaID uint64) 
 	}
 
 	return "", errors.New("mã định danh sản phẩm đã tồn tại")
+}
+
+func (s *SanPhamService) BulkCapNhatTrangThai(request BulkCapNhatTrangThaiSanPhamRequest) (*BulkSanPhamKetQuaResponse, error) {
+	if loi := request.KiemTra(); loi != nil {
+		return nil, loi
+	}
+
+	response := &BulkSanPhamKetQuaResponse{
+		TongSo: len(request.IDs),
+		KetQua: []BulkSanPhamKetQuaItem{},
+	}
+
+	for _, id := range request.IDs {
+		_, loi := s.CapNhatTrangThai(id, CapNhatTrangThaiSanPhamRequest{
+			TrangThai: request.TrangThai,
+		})
+
+		if loi != nil {
+			response.ThatBai++
+			response.KetQua = append(response.KetQua, BulkSanPhamKetQuaItem{
+				ID:        id,
+				ThanhCong: false,
+				ThongBao:  loi.Error(),
+			})
+			continue
+		}
+
+		response.ThanhCong++
+		response.KetQua = append(response.KetQua, BulkSanPhamKetQuaItem{
+			ID:        id,
+			ThanhCong: true,
+			ThongBao:  "Cập nhật trạng thái thành công",
+		})
+	}
+
+	return response, nil
+}
+
+func (s *SanPhamService) BulkXoa(request BulkXoaSanPhamRequest) (*BulkSanPhamKetQuaResponse, error) {
+	if loi := request.KiemTra(); loi != nil {
+		return nil, loi
+	}
+
+	response := &BulkSanPhamKetQuaResponse{
+		TongSo: len(request.IDs),
+		KetQua: []BulkSanPhamKetQuaItem{},
+	}
+
+	for _, id := range request.IDs {
+		loi := s.Xoa(id)
+
+		if loi != nil {
+			response.ThatBai++
+			response.KetQua = append(response.KetQua, BulkSanPhamKetQuaItem{
+				ID:        id,
+				ThanhCong: false,
+				ThongBao:  loi.Error(),
+			})
+			continue
+		}
+
+		response.ThanhCong++
+		response.KetQua = append(response.KetQua, BulkSanPhamKetQuaItem{
+			ID:        id,
+			ThanhCong: true,
+			ThongBao:  "Xóa sản phẩm thành công",
+		})
+	}
+
+	return response, nil
+}
+
+func taoMaSanPhamTuDong() string {
+	return fmt.Sprintf(
+		"SP-%s-%06d",
+		time.Now().Format("20060102"),
+		rand.Intn(999999),
+	)
+}
+
+func taoSKUTheoTenSanPham(tenSanPham string) string {
+	ten := strings.ToUpper(strings.TrimSpace(tenSanPham))
+
+	reg := regexp.MustCompile(`[^A-Z0-9]+`)
+	ten = reg.ReplaceAllString(ten, "-")
+	ten = strings.Trim(ten, "-")
+
+	if ten == "" {
+		ten = "SAN-PHAM"
+	}
+
+	if len(ten) > 24 {
+		ten = ten[:24]
+		ten = strings.Trim(ten, "-")
+	}
+
+	return fmt.Sprintf(
+		"%s-%06d",
+		ten,
+		rand.Intn(999999),
+	)
+}
+
+func (s *SanPhamService) taoMaSanPhamDuyNhat(boQuaID uint64) (string, error) {
+	for i := 0; i < 20; i++ {
+		ma := taoMaSanPhamTuDong()
+
+		tontai, loi := s.repository.MaDinhDanhDaTonTai(ma, boQuaID)
+		if loi != nil {
+			return "", loi
+		}
+
+		if !tontai {
+			return ma, nil
+		}
+	}
+
+	return "", errors.New("không tạo được mã sản phẩm tự động")
+}
+
+func (s *SanPhamService) taoSKUDuyNhat(tenSanPham string, boQuaID uint64) (string, error) {
+	for i := 0; i < 20; i++ {
+		sku := taoSKUTheoTenSanPham(tenSanPham)
+
+		tontai, loi := s.repository.SKUDaTonTai(sku, boQuaID)
+		if loi != nil {
+			return "", loi
+		}
+
+		if !tontai {
+			return sku, nil
+		}
+	}
+
+	return "", errors.New("không tạo được SKU tự động")
 }

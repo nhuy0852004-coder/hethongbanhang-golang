@@ -15,7 +15,19 @@ import useGiaoDienStore from "../../stores/giaodienStore";
 import { formatTienVietNam } from "../../utils/dinhtien";
 import { layDanhSachDanhMuc } from "../../api/danhmucApi";
 import SanPhamModal from "./SanPhamModal";
-import { capNhatSanPham, capNhatTrangThaiSanPham, layDanhSachSanPham, themSanPham, uploadAnhSanPham, xoaSanPham } from "../../api/sanphamApi";
+import XacNhanModal from "../../components/ui/XacNhanModal";
+import {
+  bulkCapNhatTrangThaiSanPham,
+  bulkXoaSanPham,
+  capNhatSanPham,
+  capNhatTrangThaiSanPham,
+  layDanhSachSanPham,
+  layChiTietSanPham,
+  themSanPham,
+  uploadAlbumAnhSanPham,
+  uploadAnhSanPham,
+  xoaSanPham,
+} from "../../api/sanphamApi";
 
 export default function DanhSachSanPham() {
   const capNhatTieuDeTrang = useGiaoDienStore((state) => state.capNhatTieuDeTrang);
@@ -41,6 +53,8 @@ export default function DanhSachSanPham() {
   const [modalMo, setModalMo] = useState(false);
   const [cheDoModal, setCheDoModal] = useState("them");
   const [duLieuSua, setDuLieuSua] = useState(null);
+  const [idsDangChon, setIdsDangChon] = useState([]);
+  const [modalBulkXoaMo, setModalBulkXoaMo] = useState(false);
 
   useEffect(() => {
     capNhatTieuDeTrang(
@@ -127,17 +141,73 @@ export default function DanhSachSanPham() {
   const moSua = (item) => { setCheDoModal("sua"); setDuLieuSua(item); setModalMo(true); };
   const dongModal = () => { if (dangXuLy) return; setModalMo(false); setDuLieuSua(null); };
 
-  const luuSanPham = async (duLieu, fileAnh) => {
-    if (duLieu?.error) { toast.error(duLieu.error); return; }
+  const luuSanPham = async (duLieu, fileAnh, albumFiles = []) => {
+    if (duLieu?.error) {
+      toast.error(duLieu.error);
+      return;
+    }
+
     try {
       setDangXuLy(true);
+
       let ketQua;
-      if (cheDoModal === "them") { ketQua = await themSanPham(duLieu); toast.success("Thêm sản phẩm thành công"); }
-      else { ketQua = await capNhatSanPham(duLieuSua.id, duLieu); toast.success("Cập nhật sản phẩm thành công"); }
-      const idSanPham = ketQua?.dulieu?.id || duLieuSua?.id;
-      if (fileAnh && idSanPham) { await uploadAnhSanPham(idSanPham, fileAnh); toast.success("Upload ảnh sản phẩm thành công"); }
-      dongModal(); await taiDanhSach(boLoc);
-    } catch (loi) { toast.error(loi?.response?.data?.thongbao || "Không lưu được sản phẩm"); } finally { setDangXuLy(false); }
+      let sanPhamID;
+
+      if (cheDoModal === "them") {
+        ketQua = await themSanPham(duLieu);
+        sanPhamID =
+          ketQua?.dulieu?.id ||
+          ketQua?.dulieu?.sanpham?.id ||
+          ketQua?.dulieu?.sanPham?.id;
+        toast.success("Thêm sản phẩm thành công");
+      } else {
+        ketQua = await capNhatSanPham(duLieuSua.id, duLieu);
+        sanPhamID = duLieuSua.id;
+        toast.success("Cập nhật sản phẩm thành công");
+      }
+
+      if (fileAnh && sanPhamID) {
+        await uploadAnhSanPham(sanPhamID, fileAnh);
+        toast.success("Upload ảnh chính thành công");
+        try {
+          const chiTiet = await layChiTietSanPham(sanPhamID);
+          const duLieuMoi = chiTiet?.dulieu;
+          if (duLieuMoi?.id) {
+            setDanhSach((ds) =>
+              ds.map((sp) => (sp.id === duLieuMoi.id ? { ...sp, ...duLieuMoi } : sp))
+            );
+            if (duLieuSua && duLieuSua.id === duLieuMoi.id) {
+              setDuLieuSua(duLieuMoi);
+            }
+          }
+        } catch {}
+      }
+
+      if (albumFiles.length > 0 && sanPhamID) {
+        await uploadAlbumAnhSanPham(sanPhamID, albumFiles);
+        toast.success("Upload album ảnh thành công");
+        try {
+          const chiTiet = await layChiTietSanPham(sanPhamID);
+          const duLieuMoi = chiTiet?.dulieu;
+          if (duLieuMoi?.id) {
+            setDanhSach((ds) =>
+              ds.map((sp) => (sp.id === duLieuMoi.id ? { ...sp, ...duLieuMoi } : sp))
+            );
+            if (duLieuSua && duLieuSua.id === duLieuMoi.id) {
+              setDuLieuSua(duLieuMoi);
+            }
+          }
+        } catch {}
+      }
+
+      setModalMo(false);
+      setDuLieuSua(null);
+      await taiDanhSach(boLoc, { hienLoading: false });
+    } catch (loi) {
+      toast.error(loi?.response?.data?.thongbao || "Không lưu được sản phẩm");
+    } finally {
+      setDangXuLy(false);
+    }
   };
 
   const doiTrangThai = async (item) => {
@@ -228,6 +298,93 @@ export default function DanhSachSanPham() {
     }
   };
 
+  const idsCoTheChon = danhSach.map((item) => item.id);
+
+  const daChonTatCa =
+    idsCoTheChon.length > 0 &&
+    idsCoTheChon.every((id) => idsDangChon.includes(id));
+
+  const batTatChonTatCa = () => {
+    if (daChonTatCa) {
+      setIdsDangChon((cu) => cu.filter((id) => !idsCoTheChon.includes(id)));
+      return;
+    }
+
+    setIdsDangChon((cu) => Array.from(new Set([...cu, ...idsCoTheChon])));
+  };
+
+  const batTatChonMotDong = (id) => {
+    setIdsDangChon((cu) =>
+      cu.includes(id) ? cu.filter((item) => item !== id) : [...cu, id]
+    );
+  };
+
+  const boChonTatCa = () => {
+    setIdsDangChon([]);
+  };
+
+  const bulkDoiTrangThai = async (trangthai) => {
+    if (idsDangChon.length === 0) {
+      toast.error("Vui lòng chọn ít nhất một sản phẩm");
+      return;
+    }
+
+    try {
+      setDangXuLy(true);
+
+      const ketQua = await bulkCapNhatTrangThaiSanPham(idsDangChon, trangthai);
+
+      toast.success(
+        trangthai === "hien_thi"
+          ? `Đã bật hiển thị ${ketQua.dulieu.thanhcong} sản phẩm`
+          : `Đã ẩn ${ketQua.dulieu.thanhcong} sản phẩm`
+      );
+
+      setIdsDangChon([]);
+      await taiDanhSach(boLoc);
+    } catch (loi) {
+      const thongBao =
+        loi?.response?.data?.thongbao || "Không cập nhật được sản phẩm đã chọn";
+
+      toast.error(thongBao);
+    } finally {
+      setDangXuLy(false);
+    }
+  };
+
+  const xacNhanBulkXoa = async () => {
+    if (idsDangChon.length === 0) {
+      toast.error("Vui lòng chọn ít nhất một sản phẩm");
+      return;
+    }
+
+    try {
+      setDangXuLy(true);
+
+      const ketQua = await bulkXoaSanPham(idsDangChon);
+
+      if (ketQua.dulieu.thatbai > 0) {
+        toast.error(
+          `Xóa thành công ${ketQua.dulieu.thanhcong}, thất bại ${ketQua.dulieu.thatbai}`
+        );
+      } else {
+        toast.success(`Đã xóa ${ketQua.dulieu.thanhcong} sản phẩm`);
+      }
+
+      setIdsDangChon([]);
+      setModalBulkXoaMo(false);
+
+      await taiDanhSach(boLoc);
+    } catch (loi) {
+      const thongBao =
+        loi?.response?.data?.thongbao || "Không xóa được sản phẩm đã chọn";
+
+      toast.error(thongBao);
+    } finally {
+      setDangXuLy(false);
+    }
+  };
+
   const chuyenTrang = (trangMoi) => {
     if (trangMoi < 1 || trangMoi > phanTrang.tongsotrang) return;
 
@@ -266,7 +423,6 @@ export default function DanhSachSanPham() {
                 onChange={capNhatBoLoc}
               >
                 <option value="">Tất cả danh mục</option>
-
                 {danhSachDanhMuc.map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.tendanhmuc}
@@ -361,6 +517,52 @@ export default function DanhSachSanPham() {
           )}
         </div>
       </div>
+
+      {idsDangChon.length > 0 && (
+        <div className="thanh-bulk-san-pham">
+          <div>
+            Đã chọn <strong>{idsDangChon.length}</strong> sản phẩm
+          </div>
+
+          <div className="hanh-dong-bulk-san-pham">
+            <button
+              type="button"
+              className="nut-bulk"
+              disabled={dangXuLy}
+              onClick={() => bulkDoiTrangThai("hien_thi")}
+            >
+              Bật hiển thị
+            </button>
+
+            <button
+              type="button"
+              className="nut-bulk"
+              disabled={dangXuLy}
+              onClick={() => bulkDoiTrangThai("an")}
+            >
+              Ẩn sản phẩm
+            </button>
+
+            <button
+              type="button"
+              className="nut-bulk nguy-hiem"
+              disabled={dangXuLy}
+              onClick={() => setModalBulkXoaMo(true)}
+            >
+              Xóa đã chọn
+            </button>
+
+            <button
+              type="button"
+              className="nut-bulk phu"
+              disabled={dangXuLy}
+              onClick={boChonTatCa}
+            >
+              Bỏ chọn
+            </button>
+          </div>
+        </div>
+      )}
       {dangTai && <DangTai noidung="Đang tải danh sách sản phẩm..." />}
       {!dangTai && danhSach.length === 0 && (
         <TrangRong
@@ -376,6 +578,13 @@ export default function DanhSachSanPham() {
             <table className="bang-du-lieu bang-san-pham">
               <thead>
                 <tr>
+                  <th style={{ width: 48 }}>
+                    <input
+                      type="checkbox"
+                      checked={daChonTatCa}
+                      onChange={batTatChonTatCa}
+                    />
+                  </th>
                   <th style={{ width: 80 }}>Ảnh</th>
                   <th>Sản phẩm</th>
                   <th style={{ width: 170 }}>Danh mục</th>
@@ -388,6 +597,13 @@ export default function DanhSachSanPham() {
               <tbody>
                 {danhSach.map((item) => (
                   <tr key={item.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={idsDangChon.includes(item.id)}
+                        onChange={() => batTatChonMotDong(item.id)}
+                      />
+                    </td>
                     <td>
                       {item.hinhanh ? (
                         <img
@@ -517,6 +733,17 @@ export default function DanhSachSanPham() {
         dangXuLy={dangXuLy}
         onDong={dongModal}
         onLuu={luuSanPham}
+      />
+
+      <XacNhanModal
+        mo={modalBulkXoaMo}
+        tieuDe="Xóa nhiều sản phẩm"
+        moTa={`Bạn có chắc muốn xóa ${idsDangChon.length} sản phẩm đã chọn không?`}
+        noiDung="Các sản phẩm sẽ được xóa mềm khỏi danh sách quản trị. Bạn nên kiểm tra kỹ trước khi thao tác."
+        tenNutXacNhan="Xóa đã chọn"
+        dangXuLy={dangXuLy}
+        onDong={() => setModalBulkXoaMo(false)}
+        onXacNhan={xacNhanBulkXoa}
       />
     </div>
   );

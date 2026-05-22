@@ -1,8 +1,18 @@
 import ketNoiApi from "./ketnoiapi";
 
 export async function layDanhSachSanPham(params = {}) {
+  const filteredParams = {};
+  Object.keys(params || {}).forEach((key) => {
+    const val = params[key];
+    if (val === undefined || val === null) return;
+    if (typeof val === "string") {
+      if (val.trim() === "") return;
+    }
+    filteredParams[key] = val;
+  });
+
   const phanHoi = await ketNoiApi.get("/sanpham", {
-    params,
+    params: filteredParams,
   });
 
   return phanHoi.data;
@@ -44,6 +54,43 @@ export async function uploadAnhSanPham(id, file) {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+  });
+
+  return phanHoi.data;
+}
+
+export async function uploadAlbumAnhSanPham(id, files = []) {
+  const formData = new FormData();
+
+  Array.from(files).forEach((file) => {
+    formData.append("album", file);
+  });
+
+  const phanHoi = await ketNoiApi.post(
+    `/sanpham/${id}/upload-album`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return phanHoi.data;
+}
+
+export async function bulkCapNhatTrangThaiSanPham(ids, trangthai) {
+  const phanHoi = await ketNoiApi.patch("/sanpham/bulk-trangthai", {
+    ids,
+    trangthai,
+  });
+
+  return phanHoi.data;
+}
+
+export async function bulkXoaSanPham(ids) {
+  const phanHoi = await ketNoiApi.post("/sanpham/bulk-xoa", {
+    ids,
   });
 
   return phanHoi.data;

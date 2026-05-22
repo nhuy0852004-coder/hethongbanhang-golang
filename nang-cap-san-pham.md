@@ -15,7 +15,7 @@
 
 ## Phạm vi chức năng cần có
 
-### 1. Quản lý danh sách sản phẩm
+<!-- ### 1. Quản lý danh sách sản phẩm
 - Hiển thị danh sách sản phẩm theo bảng hoặc card đúng phong cách admin.
 - Có phân trang.
 - Có tìm kiếm theo tên, mã, SKU, barcode.
@@ -65,7 +65,7 @@ Yêu cầu form:
 - Không cho lưu số lượng âm.
 - Có preview ảnh trước khi lưu.
 - Có trạng thái loading khi upload ảnh hoặc submit.
-- Có thông báo lỗi rõ ràng theo từng field.
+- Có thông báo lỗi rõ ràng theo từng field. -->
 
 ### 3. Chỉnh sửa sản phẩm
 - Dữ liệu cũ phải được đổ đầy đủ vào form.

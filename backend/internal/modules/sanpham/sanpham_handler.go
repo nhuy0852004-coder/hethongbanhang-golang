@@ -2,6 +2,8 @@ package sanpham
 
 import (
 	"fmt"
+	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -171,12 +173,83 @@ func (h *SanPhamHandler) UploadAnh(c *gin.Context) {
 		return
 	}
 
-	if file.Size > 5*1024*1024 {
-		phanhoi.ThatBai(c, http.StatusBadRequest, "Ảnh sản phẩm không được vượt quá 5MB", nil)
+	duongDanPublic, ok := h.luuFileAnh(c, id, file)
+	if !ok {
 		return
 	}
 
-	duoiFile := strings.ToLower(filepath.Ext(file.Filename))
+	duLieu, loi := h.service.CapNhatHinhAnh(id, duongDanPublic)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
+		return
+	}
+
+	phanhoi.ThanhCong(c, http.StatusOK, "Upload ảnh sản phẩm thành công", duLieu)
+}
+
+func (h *SanPhamHandler) UploadAlbumAnh(c *gin.Context) {
+	id, loi := strconv.ParseUint(c.Param("id"), 10, 64)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "id sản phẩm không hợp lệ", nil)
+		return
+	}
+
+	form, loi := c.MultipartForm()
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "Dữ liệu album ảnh không hợp lệ", gin.H{
+			"chitiet": loi.Error(),
+		})
+		return
+	}
+
+	files := form.File["album"]
+	if len(files) == 0 {
+		files = form.File["album[]"]
+	}
+
+	if len(files) == 0 {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "Vui lòng chọn ít nhất một ảnh album", nil)
+		return
+	}
+
+	if len(files) > 10 {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "Album chỉ được upload tối đa 10 ảnh mỗi lần", nil)
+		return
+	}
+
+	danhSachDuongDan := []string{}
+	for _, file := range files {
+		duongDanPublic, ok := h.luuFileAnh(c, id, file)
+		if !ok {
+			return
+		}
+		log.Printf("Saved uploaded album file for product %d: %s", id, duongDanPublic)
+		danhSachDuongDan = append(danhSachDuongDan, duongDanPublic)
+	}
+
+	duLieu, loi := h.service.ThemAlbumAnh(id, danhSachDuongDan)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
+		return
+	}
+
+	log.Printf("Inserted %d album images for product %d", len(danhSachDuongDan), id)
+	phanhoi.ThanhCong(c, http.StatusOK, "Upload album ảnh sản phẩm thành công", duLieu)
+}
+
+func (h *SanPhamHandler) luuFileAnh(c *gin.Context, id uint64, file any) (string, bool) {
+	fileHeader, ok := file.(*multipart.FileHeader)
+	if !ok || fileHeader == nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "File ảnh không hợp lệ", nil)
+		return "", false
+	}
+
+	if fileHeader.Size > 5*1024*1024 {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "Ảnh sản phẩm không được vượt quá 5MB", nil)
+		return "", false
+	}
+
+	duoiFile := strings.ToLower(filepath.Ext(fileHeader.Filename))
 	duoiHopLe := map[string]bool{
 		".jpg":  true,
 		".jpeg": true,
@@ -186,35 +259,66 @@ func (h *SanPhamHandler) UploadAnh(c *gin.Context) {
 
 	if !duoiHopLe[duoiFile] {
 		phanhoi.ThatBai(c, http.StatusBadRequest, "Ảnh sản phẩm chỉ hỗ trợ jpg, jpeg, png, webp", nil)
-		return
+		return "", false
 	}
 
 	thuMucLuu := "./public/uploads/sanpham"
-
 	if loi := os.MkdirAll(thuMucLuu, os.ModePerm); loi != nil {
 		phanhoi.ThatBai(c, http.StatusInternalServerError, "Không tạo được thư mục lưu ảnh", gin.H{
 			"chitiet": loi.Error(),
 		})
-		return
+		return "", false
 	}
 
 	tenFile := fmt.Sprintf("sanpham-%d-%d%s", id, time.Now().UnixNano(), duoiFile)
 	duongDanLuu := filepath.Join(thuMucLuu, tenFile)
 
-	if loi := c.SaveUploadedFile(file, duongDanLuu); loi != nil {
+	if loi := c.SaveUploadedFile(fileHeader, duongDanLuu); loi != nil {
 		phanhoi.ThatBai(c, http.StatusInternalServerError, "Không lưu được ảnh sản phẩm", gin.H{
+			"chitiet": loi.Error(),
+		})
+		return "", false
+	}
+
+	log.Printf("Saved file to %s for product %d", duongDanLuu, id)
+
+	return "/uploads/sanpham/" + tenFile, true
+}
+
+func (h *SanPhamHandler) BulkCapNhatTrangThai(c *gin.Context) {
+	var request BulkCapNhatTrangThaiSanPhamRequest
+
+	if loi := c.ShouldBindJSON(&request); loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "Dữ liệu bulk trạng thái không hợp lệ", gin.H{
 			"chitiet": loi.Error(),
 		})
 		return
 	}
 
-	duongDanPublic := "/uploads/sanpham/" + tenFile
-
-	duLieu, loi := h.service.CapNhatHinhAnh(id, duongDanPublic)
+	duLieu, loi := h.service.BulkCapNhatTrangThai(request)
 	if loi != nil {
 		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
 		return
 	}
 
-	phanhoi.ThanhCong(c, http.StatusOK, "Upload ảnh sản phẩm thành công", duLieu)
+	phanhoi.ThanhCong(c, http.StatusOK, "Cập nhật trạng thái sản phẩm hàng loạt thành công", duLieu)
+}
+
+func (h *SanPhamHandler) BulkXoa(c *gin.Context) {
+	var request BulkXoaSanPhamRequest
+
+	if loi := c.ShouldBindJSON(&request); loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "Dữ liệu bulk xóa không hợp lệ", gin.H{
+			"chitiet": loi.Error(),
+		})
+		return
+	}
+
+	duLieu, loi := h.service.BulkXoa(request)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
+		return
+	}
+
+	phanhoi.ThanhCong(c, http.StatusOK, "Xóa sản phẩm hàng loạt thành công", duLieu)
 }

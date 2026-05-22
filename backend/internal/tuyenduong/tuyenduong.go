@@ -1,4 +1,4 @@
-﻿package tuyenduong
+package tuyenduong
 
 import (
 	"database/sql"
@@ -7,11 +7,11 @@ import (
 
 	"hethongbanhang/backend/internal/caidat"
 	"hethongbanhang/backend/internal/modules/baocao"
+	caidatmodule "hethongbanhang/backend/internal/modules/caidat"
 	"hethongbanhang/backend/internal/modules/danhmuc"
 	"hethongbanhang/backend/internal/modules/donhang"
 	"hethongbanhang/backend/internal/modules/giohang"
 	"hethongbanhang/backend/internal/modules/khachhang"
-	caidatmodule "hethongbanhang/backend/internal/modules/caidat"
 	"hethongbanhang/backend/internal/modules/sanpham"
 	"hethongbanhang/backend/internal/modules/taikhoan"
 	"hethongbanhang/backend/internal/modules/thongbao"
@@ -56,6 +56,7 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	sanphamRepository := sanpham.TaoSanPhamRepository(db)
 	sanphamService := sanpham.TaoSanPhamService(sanphamRepository)
 	sanphamHandler := sanpham.TaoSanPhamHandler(sanphamService)
+	
 
 	thongbaoRepository := thongbao.TaoThongBaoRepository(db)
 	thongbaoService := thongbao.TaoThongBaoService(thongbaoRepository)
@@ -129,10 +130,13 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 		nhomQuanTriGoc.PATCH("/danhmuc/:id/trangthai", danhmucHandler.CapNhatTrangThai)
 
 		nhomQuanTriGoc.POST("/sanpham", sanphamHandler.Tao)
+		nhomQuanTriGoc.PATCH("/sanpham/bulk-trangthai", sanphamHandler.BulkCapNhatTrangThai)
+		nhomQuanTriGoc.POST("/sanpham/bulk-xoa", sanphamHandler.BulkXoa)
 		nhomQuanTriGoc.PUT("/sanpham/:id", sanphamHandler.CapNhat)
 		nhomQuanTriGoc.DELETE("/sanpham/:id", sanphamHandler.Xoa)
 		nhomQuanTriGoc.PATCH("/sanpham/:id/trangthai", sanphamHandler.CapNhatTrangThai)
 		nhomQuanTriGoc.POST("/sanpham/:id/upload-anh", sanphamHandler.UploadAnh)
+		nhomQuanTriGoc.POST("/sanpham/:id/upload-album", sanphamHandler.UploadAlbumAnh)
 
 		nhomQuanTriGoc.GET("/donhang", donhangHandler.DanhSach)
 		nhomQuanTriGoc.GET("/donhang/:id", donhangHandler.ChiTiet)

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -125,11 +126,24 @@ func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, e
 			COALESCE(sp.barcode, '') AS barcode,
 			sp.tensanpham,
 			COALESCE(sp.mota, '') AS mota,
+			COALESCE(sp.motangan, '') AS motangan,
+			COALESCE(sp.motachitiet, '') AS motachitiet,
+			COALESCE(sp.thuonghieu, '') AS thuonghieu,
+			COALESCE(sp.donvitinh, 'cái') AS donvitinh,
+			COALESCE(sp.gianhap, 0) AS gianhap,
 			sp.giaban,
 			sp.giakhuyenmai,
 			sp.soluongton,
+			COALESCE(sp.nguongcanhbao, 5) AS nguongcanhbao,
+			sp.trongluong,
+			COALESCE(sp.kichthuoc, '') AS kichthuoc,
 			COALESCE(sp.hinhanh, '') AS hinhanh,
 			COALESCE(sp.noibat, 0) AS noibat,
+			COALESCE(sp.banchay, 0) AS banchay,
+			COALESCE(sp.sanphammoi, 0) AS sanphammoi,
+			COALESCE(sp.chodattruoc, 0) AS chodattruoc,
+			COALESCE(sp.thuoctinh, '') AS thuoctinh,
+			COALESCE(sp.bienthe, '') AS bienthe,
 			sp.trangthai,
 			sp.danhmuc_id,
 			COALESCE(dm.tendanhmuc, '') AS tendanhmuc,
@@ -165,9 +179,11 @@ func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, e
 
 	for rows.Next() {
 		var item SanPham
+		var giaNhap sql.NullInt64
 		var giaKhuyenMai sql.NullInt64
 		var danhMucID sql.NullInt64
-		var noiBat int
+		var trongLuong sql.NullFloat64
+		var noiBat, banChay, sanPhamMoi, choDatTruoc int
 
 		loi := rows.Scan(
 			&item.ID,
@@ -176,11 +192,24 @@ func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, e
 			&item.Barcode,
 			&item.TenSanPham,
 			&item.MoTa,
+			&item.MoTaNgan,
+			&item.MoTaChiTiet,
+			&item.ThuongHieu,
+			&item.DonViTinh,
+			&giaNhap,
 			&item.GiaBan,
 			&giaKhuyenMai,
 			&item.SoLuongTon,
+			&item.NguongCanhBao,
+			&trongLuong,
+			&item.KichThuoc,
 			&item.HinhAnh,
 			&noiBat,
+			&banChay,
+			&sanPhamMoi,
+			&choDatTruoc,
+			&item.ThuocTinh,
+			&item.BienThe,
 			&item.TrangThai,
 			&danhMucID,
 			&item.TenDanhMuc,
@@ -193,9 +222,18 @@ func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, e
 			return nil, 0, loi
 		}
 
+		if giaNhap.Valid {
+			item.GiaNhap = uint64(giaNhap.Int64)
+		}
+
 		if giaKhuyenMai.Valid {
 			gia := uint64(giaKhuyenMai.Int64)
 			item.GiaKhuyenMai = &gia
+		}
+
+		if trongLuong.Valid {
+			giaTri := trongLuong.Float64
+			item.TrongLuong = &giaTri
 		}
 
 		if danhMucID.Valid {
@@ -204,6 +242,15 @@ func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, e
 		}
 
 		item.NoiBat = noiBat == 1
+		item.BanChay = banChay == 1
+		item.SanPhamMoi = sanPhamMoi == 1
+		item.ChoDatTruoc = choDatTruoc == 1
+
+		albumAnh, loi := r.layAlbumAnh(item.ID)
+		if loi != nil {
+			return nil, 0, loi
+		}
+		item.AlbumAnh = albumAnh
 
 		danhSach = append(danhSach, item)
 	}
@@ -211,17 +258,51 @@ func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, e
 	return danhSach, tongSoDong, nil
 }
 
+func (r *SanPhamRepository) SKUDaTonTai(sku string, boQuaID uint64) (bool, error) {
+	var soLuong int
+
+	loi := r.db.QueryRow(`
+		SELECT COUNT(*)
+		FROM sanpham
+		WHERE sku = ?
+		AND deleted_at IS NULL
+		AND id != ?
+	`, sku, boQuaID).Scan(&soLuong)
+
+	if loi != nil {
+		return false, loi
+	}
+
+	return soLuong > 0, nil
+}
+
 func (r *SanPhamRepository) ChiTiet(id uint64) (*SanPham, error) {
 	cauLenh := `
 		SELECT
 			sp.id,
 			sp.madinhdanh,
+			COALESCE(sp.sku, '') AS sku,
+			COALESCE(sp.barcode, '') AS barcode,
 			sp.tensanpham,
 			COALESCE(sp.mota, '') AS mota,
+			COALESCE(sp.motangan, '') AS motangan,
+			COALESCE(sp.motachitiet, '') AS motachitiet,
+			COALESCE(sp.thuonghieu, '') AS thuonghieu,
+			COALESCE(sp.donvitinh, 'cái') AS donvitinh,
+			COALESCE(sp.gianhap, 0) AS gianhap,
 			sp.giaban,
 			sp.giakhuyenmai,
 			sp.soluongton,
+			COALESCE(sp.nguongcanhbao, 5) AS nguongcanhbao,
+			sp.trongluong,
+			COALESCE(sp.kichthuoc, '') AS kichthuoc,
 			COALESCE(sp.hinhanh, '') AS hinhanh,
+			COALESCE(sp.noibat, 0) AS noibat,
+			COALESCE(sp.banchay, 0) AS banchay,
+			COALESCE(sp.sanphammoi, 0) AS sanphammoi,
+			COALESCE(sp.chodattruoc, 0) AS chodattruoc,
+			COALESCE(sp.thuoctinh, '') AS thuoctinh,
+			COALESCE(sp.bienthe, '') AS bienthe,
 			sp.trangthai,
 			sp.danhmuc_id,
 			COALESCE(dm.tendanhmuc, '') AS tendanhmuc,
@@ -234,23 +315,44 @@ func (r *SanPhamRepository) ChiTiet(id uint64) (*SanPham, error) {
 	`
 
 	var item SanPham
+	var giaNhap sql.NullInt64
 	var giaKhuyenMai sql.NullInt64
 	var danhMucID sql.NullInt64
-	loi := r.db.QueryRow(cauLenh, id).Scan(&item.ID, &item.MaDinhDanh, &item.TenSanPham, &item.MoTa, &item.GiaBan, &giaKhuyenMai, &item.SoLuongTon, &item.HinhAnh, &item.TrangThai, &danhMucID, &item.TenDanhMuc, &item.CreatedAt, &item.UpdatedAt)
+	var trongLuong sql.NullFloat64
+	var noiBat, banChay, sanPhamMoi, choDatTruoc int
+	loi := r.db.QueryRow(cauLenh, id).Scan(&item.ID, &item.MaDinhDanh, &item.SKU, &item.Barcode, &item.TenSanPham, &item.MoTa, &item.MoTaNgan, &item.MoTaChiTiet, &item.ThuongHieu, &item.DonViTinh, &giaNhap, &item.GiaBan, &giaKhuyenMai, &item.SoLuongTon, &item.NguongCanhBao, &trongLuong, &item.KichThuoc, &item.HinhAnh, &noiBat, &banChay, &sanPhamMoi, &choDatTruoc, &item.ThuocTinh, &item.BienThe, &item.TrangThai, &danhMucID, &item.TenDanhMuc, &item.CreatedAt, &item.UpdatedAt)
 	if loi != nil {
 		if errors.Is(loi, sql.ErrNoRows) {
 			return nil, errors.New("sản phẩm không tồn tại")
 		}
 		return nil, loi
 	}
+	if giaNhap.Valid {
+		item.GiaNhap = uint64(giaNhap.Int64)
+	}
 	if giaKhuyenMai.Valid {
 		gia := uint64(giaKhuyenMai.Int64)
 		item.GiaKhuyenMai = &gia
+	}
+	if trongLuong.Valid {
+		giaTri := trongLuong.Float64
+		item.TrongLuong = &giaTri
 	}
 	if danhMucID.Valid {
 		idDanhMuc := uint64(danhMucID.Int64)
 		item.DanhMucID = &idDanhMuc
 	}
+	item.NoiBat = noiBat == 1
+	item.BanChay = banChay == 1
+	item.SanPhamMoi = sanPhamMoi == 1
+	item.ChoDatTruoc = choDatTruoc == 1
+
+	albumAnh, loi := r.layAlbumAnh(id)
+	if loi != nil {
+		return nil, loi
+	}
+	item.AlbumAnh = albumAnh
+
 	return &item, nil
 }
 
@@ -261,12 +363,69 @@ func giaTriUint64Ptr(p *uint64) any {
 	return *p
 }
 
+func nullNeuRong(giaTri string) any {
+	if strings.TrimSpace(giaTri) == "" {
+		return nil
+	}
+	return strings.TrimSpace(giaTri)
+}
+
 func (r *SanPhamRepository) Tao(request TaoSanPhamRequest, madinhdanh string) (uint64, error) {
 	cauLenh := `
-		INSERT INTO sanpham (madinhdanh, tensanpham, mota, giaban, giakhuyenmai, soluongton, trangthai, danhmuc_id)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO sanpham (
+			madinhdanh,
+			sku,
+			barcode,
+			tensanpham,
+			mota,
+			motangan,
+			motachitiet,
+			thuonghieu,
+			donvitinh,
+			gianhap,
+			giaban,
+			giakhuyenmai,
+			soluongton,
+			nguongcanhbao,
+			trongluong,
+			kichthuoc,
+			noibat,
+			banchay,
+			sanphammoi,
+			chodattruoc,
+			thuoctinh,
+			bienthe,
+			trangthai,
+			danhmuc_id
+		)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
-	ketQua, loi := r.db.Exec(cauLenh, madinhdanh, request.TenSanPham, request.MoTa, request.GiaBan, giaTriUint64Ptr(request.GiaKhuyenMai), request.SoLuongTon, request.TrangThai, giaTriUint64Ptr(request.DanhMucID))
+	ketQua, loi := r.db.Exec(cauLenh,
+		madinhdanh,
+		request.SKU,
+		request.Barcode,
+		request.TenSanPham,
+		request.MoTa,
+		request.MoTaNgan,
+		request.MoTaChiTiet,
+		request.ThuongHieu,
+		request.DonViTinh,
+		request.GiaNhap,
+		request.GiaBan,
+		giaTriUint64Ptr(request.GiaKhuyenMai),
+		request.SoLuongTon,
+		request.NguongCanhBao,
+		request.TrongLuong,
+		request.KichThuoc,
+		request.NoiBat,
+		request.BanChay,
+		request.SanPhamMoi,
+		request.ChoDatTruoc,
+		nullNeuRong(request.ThuocTinh),
+		nullNeuRong(request.BienThe),
+		request.TrangThai,
+		giaTriUint64Ptr(request.DanhMucID),
+	)
 	if loi != nil {
 		return 0, loi
 	}
@@ -299,11 +458,27 @@ func (r *SanPhamRepository) CapNhat(id uint64, request CapNhatSanPhamRequest, ma
 		UPDATE sanpham
 		SET
 			madinhdanh = ?,
+			sku = ?,
+			barcode = ?,
 			tensanpham = ?,
 			mota = ?,
+			motangan = ?,
+			motachitiet = ?,
+			thuonghieu = ?,
+			donvitinh = ?,
+			gianhap = ?,
 			giaban = ?,
 			giakhuyenmai = ?,
 			soluongton = ?,
+			nguongcanhbao = ?,
+			trongluong = ?,
+			kichthuoc = ?,
+			noibat = ?,
+			banchay = ?,
+			sanphammoi = ?,
+			chodattruoc = ?,
+			thuoctinh = ?,
+			bienthe = ?,
 			trangthai = ?,
 			danhmuc_id = ?
 		WHERE id = ?
@@ -313,11 +488,27 @@ func (r *SanPhamRepository) CapNhat(id uint64, request CapNhatSanPhamRequest, ma
 	_, loi = r.db.Exec(
 		cauLenh,
 		madinhdanh,
+		request.SKU,
+		request.Barcode,
 		request.TenSanPham,
 		request.MoTa,
+		request.MoTaNgan,
+		request.MoTaChiTiet,
+		request.ThuongHieu,
+		request.DonViTinh,
+		request.GiaNhap,
 		request.GiaBan,
 		request.GiaKhuyenMai,
 		request.SoLuongTon,
+		request.NguongCanhBao,
+		request.TrongLuong,
+		request.KichThuoc,
+		request.NoiBat,
+		request.BanChay,
+		request.SanPhamMoi,
+		request.ChoDatTruoc,
+		nullNeuRong(request.ThuocTinh),
+		nullNeuRong(request.BienThe),
 		request.TrangThai,
 		request.DanhMucID,
 		id,
@@ -376,6 +567,81 @@ func (r *SanPhamRepository) CapNhatHinhAnh(id uint64, duongdan string) error {
 		return loi
 	}
 	return tx.Commit()
+}
+
+func (r *SanPhamRepository) ThemAlbumAnh(id uint64, danhSachDuongDan []string) error {
+	tx, loi := r.db.Begin()
+	if loi != nil {
+		log.Printf("ThemAlbumAnh: begin tx error: %v", loi)
+		return loi
+	}
+
+	var tonTai int
+	loi = tx.QueryRow(`SELECT COUNT(*) FROM sanpham WHERE id = ? AND deleted_at IS NULL`, id).Scan(&tonTai)
+	if loi != nil {
+		_ = tx.Rollback()
+		log.Printf("ThemAlbumAnh: product exists check error: %v", loi)
+		return loi
+	}
+	if tonTai == 0 {
+		_ = tx.Rollback()
+		return errors.New("sản phẩm không tồn tại")
+	}
+
+	var thuTuBatDau sql.NullInt64
+	loi = tx.QueryRow(`SELECT MAX(thutu) FROM anhsanpham WHERE sanpham_id = ?`, id).Scan(&thuTuBatDau)
+	if loi != nil {
+		_ = tx.Rollback()
+		log.Printf("ThemAlbumAnh: select max thutu error: %v", loi)
+		return loi
+	}
+
+	thuTu := 0
+	if thuTuBatDau.Valid {
+		thuTu = int(thuTuBatDau.Int64) + 1
+	}
+
+	for index, duongdan := range danhSachDuongDan {
+		_, loi = tx.Exec(
+			`INSERT INTO anhsanpham (sanpham_id, duongdan, anhchinh, thutu) VALUES (?, ?, 0, ?)`,
+			id,
+			duongdan,
+			thuTu+index,
+		)
+		if loi != nil {
+			_ = tx.Rollback()
+			log.Printf("ThemAlbumAnh: insert anhsanpham error (index=%d): %v", index, loi)
+			return loi
+		}
+	}
+
+	return tx.Commit()
+}
+
+func (r *SanPhamRepository) layAlbumAnh(id uint64) ([]AnhSanPham, error) {
+	rows, loi := r.db.Query(`
+		SELECT id, sanpham_id, duongdan, anhchinh, thutu
+		FROM anhsanpham
+		WHERE sanpham_id = ?
+		ORDER BY anhchinh DESC, thutu ASC, id ASC
+	`, id)
+	if loi != nil {
+		return nil, loi
+	}
+	defer rows.Close()
+
+	danhSach := []AnhSanPham{}
+	for rows.Next() {
+		var item AnhSanPham
+		var anhChinh int
+		if loi := rows.Scan(&item.ID, &item.SanPhamID, &item.DuongDan, &anhChinh, &item.ThuTu); loi != nil {
+			return nil, loi
+		}
+		item.AnhChinh = anhChinh == 1
+		danhSach = append(danhSach, item)
+	}
+
+	return danhSach, rows.Err()
 }
 
 func (r *SanPhamRepository) MaDinhDanhDaTonTai(madinhdanh string, boQuaID uint64) (bool, error) {

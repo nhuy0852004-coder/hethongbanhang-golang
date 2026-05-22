@@ -2,6 +2,8 @@
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 
 	"hethongbanhang/backend/internal/caidat"
 	"hethongbanhang/backend/internal/cosodulieu"
@@ -12,7 +14,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
 func main() {
 	cauhinh := caidat.LayCauHinh()
 
@@ -32,9 +33,16 @@ func main() {
 
 	r := gin.Default()
 
+	// Allow larger multipart forms for uploading multiple images (default 32MB).
+	r.MaxMultipartMemory = 100 << 20 // 100 MB
+
 	r.Use(truycap.ChoPhepTruyCap(cauhinh.URLFrontend))
 
-	r.Static("/uploads", "./public/uploads")
+	// Serve uploads using absolute path to avoid wrong working-dir issues.
+	cwd, _ := os.Getwd()
+	uploadsPath := filepath.Join(cwd, "public", "uploads")
+	log.Println("Serving uploads from:", uploadsPath)
+	r.Static("/uploads", uploadsPath)
 
 	tuyenduong.DangKy(r, db, cauhinh, realtime)
 
