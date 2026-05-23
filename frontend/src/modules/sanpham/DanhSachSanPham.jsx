@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Eye,
   ImageOff,
   Pencil,
   Plus,
@@ -15,7 +16,9 @@ import useGiaoDienStore from "../../stores/giaodienStore";
 import { formatTienVietNam } from "../../utils/dinhtien";
 import { layDanhSachDanhMuc } from "../../api/danhmucApi";
 import SanPhamModal from "./SanPhamModal";
+import ChiTietSanPhamModal from "./ChiTietSanPhamModal";
 import XacNhanModal from "../../components/ui/XacNhanModal";
+
 import {
   bulkCapNhatTrangThaiSanPham,
   bulkXoaSanPham,
@@ -55,6 +58,12 @@ export default function DanhSachSanPham() {
   const [duLieuSua, setDuLieuSua] = useState(null);
   const [idsDangChon, setIdsDangChon] = useState([]);
   const [modalBulkXoaMo, setModalBulkXoaMo] = useState(false);
+  const [modalXoaMo, setModalXoaMo] = useState(false);
+  const [sanPhamCanXoa, setSanPhamCanXoa] = useState(null);
+  const [modalChiTietMo, setModalChiTietMo] = useState(false);
+  const [sanPhamChiTiet, setSanPhamChiTiet] = useState(null);
+  const [albumChiTiet, setAlbumChiTiet] = useState([]);
+  const [dangTaiChiTiet, setDangTaiChiTiet] = useState(false);
 
   useEffect(() => {
     capNhatTieuDeTrang(
@@ -140,6 +149,52 @@ export default function DanhSachSanPham() {
   const moThem = () => { setCheDoModal("them"); setDuLieuSua(null); setModalMo(true); };
   const moSua = (item) => { setCheDoModal("sua"); setDuLieuSua(item); setModalMo(true); };
   const dongModal = () => { if (dangXuLy) return; setModalMo(false); setDuLieuSua(null); };
+
+  const xemNhanh = async (item) => {
+    try {
+      setModalChiTietMo(true);
+      setDangTaiChiTiet(true);
+      setSanPhamChiTiet(null);
+      setAlbumChiTiet([]);
+
+      const ketQua = await layChiTietSanPham(item.id);
+
+      setSanPhamChiTiet(ketQua?.dulieu?.sanpham || item);
+      setAlbumChiTiet(ketQua?.dulieu?.album || []);
+    } catch (loi) {
+      toast.error(
+        loi?.response?.data?.thongbao || "Không tải được chi tiết sản phẩm"
+      );
+      setSanPhamChiTiet(item);
+    } finally {
+      setDangTaiChiTiet(false);
+    }
+  };
+
+  const suaNhanhTuChiTiet = (sanPham) => {
+    if (!sanPham) return;
+
+    setModalChiTietMo(false);
+    moSua(sanPham);
+  };
+
+  const nhanBanSanPham = (sanPham) => {
+    if (!sanPham) return;
+
+    setModalChiTietMo(false);
+
+    setCheDoModal("them");
+    setDuLieuSua({
+      ...sanPham,
+      id: undefined,
+      madinhdanh: "",
+      sku: "",
+      barcode: "",
+      tensanpham: `${sanPham.tensanpham} - bản sao`,
+      hinhanh: "",
+    });
+    setModalMo(true);
+  };
 
   const luuSanPham = async (duLieu, fileAnh, albumFiles = []) => {
     if (duLieu?.error) {
@@ -279,22 +334,35 @@ export default function DanhSachSanPham() {
     }
   };
 
-  const xoa = async (item) => {
-    const dongY = window.confirm(
-      `Bạn có chắc muốn xóa sản phẩm "${item.tensanpham}" không?`
-    );
+  const moModalXoa = (item) => {
+    setSanPhamCanXoa(item);
+    setModalXoaMo(true);
+  };
 
-    if (!dongY) return;
+  const dongModalXoa = () => {
+    setSanPhamCanXoa(null);
+    setModalXoaMo(false);
+  };
+
+  const xacNhanXoaSanPham = async () => {
+    if (!sanPhamCanXoa) return;
 
     try {
-      await xoaSanPham(item.id);
+      setDangXuLy(true);
+
+      await xoaSanPham(sanPhamCanXoa.id);
+
       toast.success("Xóa sản phẩm thành công");
-      await taiDanhSach(boLoc);
+
+      dongModalXoa();
+      await taiDanhSach(boLoc, { hienLoading: false });
     } catch (loi) {
       const thongBao =
         loi?.response?.data?.thongbao || "Không xóa được sản phẩm";
 
       toast.error(thongBao);
+    } finally {
+      setDangXuLy(false);
     }
   };
 
@@ -674,6 +742,15 @@ export default function DanhSachSanPham() {
                         <button
                           type="button"
                           className="nut-icon"
+                          title="Xem chi tiết sản phẩm"
+                          onClick={() => xemNhanh(item)}
+                        >
+                          <Eye size={16} />
+                        </button>
+
+                        <button
+                          type="button"
+                          className="nut-icon"
                           title="Sửa sản phẩm"
                           onClick={() => moSua(item)}
                         >
@@ -682,9 +759,9 @@ export default function DanhSachSanPham() {
 
                         <button
                           type="button"
-                          className="nut-icon nguy-hiem"
+                          className="nut-icon-tron nguy-hiem"
                           title="Xóa sản phẩm"
-                          onClick={() => xoa(item)}
+                          onClick={() => moModalXoa(item)}
                         >
                           <Trash2 size={16} />
                         </button>
@@ -736,6 +813,19 @@ export default function DanhSachSanPham() {
       />
 
       <XacNhanModal
+        mo={modalXoaMo}
+        tieuDe="Xóa sản phẩm"
+        moTa={`Bạn có chắc muốn xóa sản phẩm "${
+          sanPhamCanXoa?.tensanpham || ""
+        }" không?`}
+        noiDung="Sản phẩm sẽ được xóa khỏi danh sách quản trị. Bạn nên kiểm tra kỹ trước khi thao tác."
+        tenNutXacNhan="Xóa sản phẩm"
+        dangXuLy={dangXuLy}
+        onDong={dongModalXoa}
+        onXacNhan={xacNhanXoaSanPham}
+      />
+
+      <XacNhanModal
         mo={modalBulkXoaMo}
         tieuDe="Xóa nhiều sản phẩm"
         moTa={`Bạn có chắc muốn xóa ${idsDangChon.length} sản phẩm đã chọn không?`}
@@ -744,6 +834,16 @@ export default function DanhSachSanPham() {
         dangXuLy={dangXuLy}
         onDong={() => setModalBulkXoaMo(false)}
         onXacNhan={xacNhanBulkXoa}
+      />
+
+      <ChiTietSanPhamModal
+        mo={modalChiTietMo}
+        sanPham={sanPhamChiTiet}
+        album={albumChiTiet}
+        dangTai={dangTaiChiTiet}
+        onDong={() => setModalChiTietMo(false)}
+        onSuaNhanh={suaNhanhTuChiTiet}
+        onNhanBan={nhanBanSanPham}
       />
     </div>
   );

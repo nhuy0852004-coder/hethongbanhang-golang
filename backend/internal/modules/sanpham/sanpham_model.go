@@ -43,3 +43,8 @@ type SanPham struct {
 	CreatedAt     time.Time    `json:"created_at"`
 	UpdatedAt     time.Time    `json:"updated_at"`
 }
+
+type ChiTietSanPhamResponse struct {
+	SanPham SanPham      `json:"sanpham"`
+	Album   []AnhSanPham `json:"album"`
+}

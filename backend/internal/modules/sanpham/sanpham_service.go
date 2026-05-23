@@ -59,11 +59,25 @@ func (s *SanPhamService) DanhSach(loc LocSanPhamRequest) (*DanhSachSanPhamRespon
 	}, nil
 }
 
-func (s *SanPhamService) ChiTiet(id uint64) (*SanPham, error) {
+func (s *SanPhamService) ChiTiet(id uint64) (*ChiTietSanPhamResponse, error) {
 	if id == 0 {
 		return nil, errors.New("id sản phẩm không hợp lệ")
 	}
-	return s.repository.ChiTiet(id)
+
+	sanPham, loi := s.repository.ChiTiet(id)
+	if loi != nil {
+		return nil, loi
+	}
+
+	album, loi := s.repository.LayAlbumAnh(id)
+	if loi != nil {
+		return nil, loi
+	}
+
+	return &ChiTietSanPhamResponse{
+		SanPham: *sanPham,
+		Album:   album,
+	}, nil
 }
 
 func (s *SanPhamService) Tao(request TaoSanPhamRequest) (*SanPham, error) {

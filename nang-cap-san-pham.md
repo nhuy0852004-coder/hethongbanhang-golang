@@ -67,11 +67,11 @@ Yêu cầu form:
 - Có trạng thái loading khi upload ảnh hoặc submit.
 - Có thông báo lỗi rõ ràng theo từng field. -->
 
-### 3. Chỉnh sửa sản phẩm
+<!-- ### 3. Chỉnh sửa sản phẩm
 - Dữ liệu cũ phải được đổ đầy đủ vào form.
 - Cho phép cập nhật từng phần mà không làm mất dữ liệu ảnh hoặc thuộc tính nếu không thay đổi.
 - Hiển thị cảnh báo nếu thay đổi ảnh, giá hoặc tồn kho ảnh hưởng đến đơn hàng hoặc chiến lược bán.
-- Có nút lưu nháp hoặc lưu cập nhật tùy luồng nghiệp vụ.
+- Có nút lưu nháp hoặc lưu cập nhật tùy luồng nghiệp vụ. -->
 
 ### 4. Xem chi tiết sản phẩm
 - Hiển thị đầy đủ thông tin sản phẩm.

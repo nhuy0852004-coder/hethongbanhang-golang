@@ -651,3 +651,45 @@ func (r *SanPhamRepository) MaDinhDanhDaTonTai(madinhdanh string, boQuaID uint64
 	}
 	return soLuong > 0, nil
 }
+
+func (r *SanPhamRepository) LayAlbumAnh(sanPhamID uint64) ([]AnhSanPham, error) {
+	rows, loi := r.db.Query(`
+		SELECT 
+			id,
+			duongdan,
+			anhchinh,
+			thutu
+		FROM anhsanpham
+		WHERE sanpham_id = ?
+		AND deleted_at IS NULL
+		ORDER BY anhchinh DESC, thutu ASC, id ASC
+	`, sanPhamID)
+
+	if loi != nil {
+		return nil, loi
+	}
+	defer rows.Close()
+
+	danhSach := []AnhSanPham{}
+
+	for rows.Next() {
+		var item AnhSanPham
+		var anhChinh int
+
+		loi := rows.Scan(
+			&item.ID,
+			&item.DuongDan,
+			&anhChinh,
+			&item.ThuTu,
+		)
+
+		if loi != nil {
+			return nil, loi
+		}
+
+		item.AnhChinh = anhChinh == 1
+		danhSach = append(danhSach, item)
+	}
+
+	return danhSach, nil
+}
