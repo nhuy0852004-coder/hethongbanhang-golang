@@ -14,13 +14,3 @@ export function formatTienNhap(value) {
 
   return so.toLocaleString("vi-VN");
 }
-
-export function formatTienHienThi(value) {
-  const so = Number(value || 0);
-
-  return so.toLocaleString("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  });
-}

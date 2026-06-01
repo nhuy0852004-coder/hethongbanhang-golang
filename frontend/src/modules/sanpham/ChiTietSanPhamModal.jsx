@@ -7,7 +7,7 @@ import {
   ShoppingCart,
   X,
 } from "lucide-react";
-import { formatTienHienThi } from "../../utils/tienviet";
+import { formatTienVietNam as formatTienHienThi } from "../../utils/dinhtien";
 
 function hienThiTrangThai(trangthai) {
   if (trangthai === "hien_thi") return "Hiển thị";

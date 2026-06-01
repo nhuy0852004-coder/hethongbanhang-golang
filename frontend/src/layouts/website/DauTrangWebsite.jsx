@@ -1,5 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
-import { Search, ShoppingCart, Store } from "lucide-react";
+import { Heart, MessageCircle, Search, ShoppingCart } from "lucide-react";
 import useGioHangStore from "../../stores/giohangStore";
 import useCaiDatStore from "../../stores/caidatStore";
 
@@ -12,45 +12,37 @@ export default function DauTrangWebsite() {
     0
   );
 
-  const tenCuaHang = caidat?.tencuahang || "Cửa Hàng Việt";
-  const logo = caidat?.logo || "";
+  const tenCuaHang = caidat?.tencuahang || "CỬA HÀNG";
 
   return (
-    <header className="header-website">
-      <div className="container-website header-website-inner">
-        <Link to="/" className="logo-website">
-          <div className="logo-website-icon">
-            {logo ? (
-              <img src={`http://localhost:8080${logo}`} alt={tenCuaHang} />
-            ) : (
-              <Store size={22} />
-            )}
-          </div>
-
-          <div>
-            <strong>{tenCuaHang}</strong>
-            <span>Bán hàng chất lượng</span>
-          </div>
+    <header className="mu-header">
+      <div className="mu-header-inner">
+        <Link to="/" className="mu-logo">
+          <span className="mu-logo-bold">{tenCuaHang}</span>
         </Link>
 
-        <nav className="menu-website">
+        <nav className="mu-nav">
           <NavLink to="/">Trang chủ</NavLink>
           <NavLink to="/sanpham">Sản phẩm</NavLink>
-          <NavLink to="/tra-cuu-don-hang">Tra cứu đơn</NavLink>
+          <NavLink to="/tra-cuu-don-hang">Tra cứu đơn hàng</NavLink>
           <NavLink to="/chinh-sach-van-chuyen">Vận chuyển</NavLink>
           <NavLink to="/chinh-sach-doi-tra">Đổi trả</NavLink>
-          <NavLink to="/admin">Admin</NavLink>
+          <NavLink to="/admin" className="mu-nav-new">Admin</NavLink>
         </nav>
 
-        <div className="hanh-dong-website">
-          <div className="tim-kiem-website">
+        <div className="mu-header-actions">
+          <button className="mu-header-icon" title="Tìm kiếm">
             <Search size={17} />
-            <input placeholder="Tìm sản phẩm..." />
-          </div>
-
-          <Link to="/giohang" className="nut-gio-hang-website">
-            <ShoppingCart size={20} />
-            <span>{tongSoLuong}</span>
+          </button>
+          <button className="mu-header-icon" title="Tin nhắn">
+            <MessageCircle size={17} />
+          </button>
+          <Link to="/giohang" className="mu-header-icon" title="Yêu thích">
+            <Heart size={17} />
+          </Link>
+          <Link to="/giohang" className="mu-header-icon mu-cart-icon" title="Giỏ hàng">
+            <ShoppingCart size={17} />
+            {tongSoLuong > 0 && <span className="mu-cart-badge">{tongSoLuong}</span>}
           </Link>
         </div>
       </div>

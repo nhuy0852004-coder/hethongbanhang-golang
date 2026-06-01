@@ -50,10 +50,6 @@ const router = createBrowserRouter([
         element: <ThanhToanWebsite />,
       },
       {
-        path: "tra-cuu-don-hang",
-        element: <TraCuuDonHangWebsite />,
-      },
-      {
         path: "chinh-sach-van-chuyen",
         element: <ChinhSachVanChuyen />,
       },

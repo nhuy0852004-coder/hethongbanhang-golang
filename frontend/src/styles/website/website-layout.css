@@ -1,364 +1,338 @@
 /* ==================================================
-   WEBSITE LAYOUT
-   Header + Footer + Container + Responsive
+   WEBSITE LAYOUT - MU STORE STYLE
+   Bám sát thiết kế Figma
 ================================================== */
 
 .bo-cuc-website {
-    min-height: 100vh;
-    background: #f8fafc;
-    color: #111827;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.noi-dung-website {
+  min-height: 60vh;
+}
+
+.container-website {
+  width: min(1360px, calc(100% - 80px));
+  margin: 0 auto;
+}
+
+/* ==================================================
+   HEADER
+   Nền trắng, logo trái, nav giữa, icons phải
+   Height: 36px (compact)
+================================================== */
+
+.mu-header {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mu-header-inner {
+  width: min(1360px, calc(100% - 80px));
+  margin: 0 auto;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+/* Logo - left aligned */
+.mu-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #1a1a1a;
+  flex-shrink: 0;
+  margin-right: 24px;
+}
+
+.mu-logo-bold {
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+}
+
+/* Navigation - center */
+.mu-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex: 1;
+  justify-content: center;
+}
+
+.mu-nav a {
+  color: #4b5563;
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.mu-nav a:hover,
+.mu-nav a.active {
+  color: #1a1a1a;
+}
+
+.mu-nav-new {
+  color: #c8102e !important;
+  font-weight: 700 !important;
+}
+
+/* Header Actions - right aligned */
+.mu-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: 24px;
+}
+
+.mu-header-icon {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  color: #1a1a1a;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.15s;
+  border-radius: 0;
+  padding: 0;
+}
+
+.mu-header-icon:hover {
+  color: #6b7280;
+}
+
+.mu-cart-badge {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  min-width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  background: #c8102e;
+  color: #ffffff;
+  font-size: 9px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* ==================================================
+   FOOTER - MU STORE
+   Nền tối, 4 cột, social dots, payment badges
+================================================== */
+
+.mu-footer {
+  margin-top: 0;
+}
+
+.mu-footer-main {
+  background: #1a1a1a;
+  padding: 50px 0 40px;
+}
+
+.mu-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+.mu-footer h4 {
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin: 0 0 20px;
+}
+
+.mu-footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mu-footer li {
+  margin-bottom: 10px;
+}
+
+.mu-footer a,
+.mu-footer li span {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.15s;
+  cursor: default;
+}
+
+.mu-footer a:hover {
+  color: #ffffff;
+  cursor: pointer;
+}
+
+/* Social dots */
+.mu-social {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mu-social-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Footer bottom */
+.mu-footer-bottom {
+  background: #141414;
+  padding: 14px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mu-footer-bottom-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mu-footer-copy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 12px;
+}
+
+.mu-footer-logo-mini {
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* Payment badges */
+.mu-footer-payments {
+  display: flex;
+  gap: 6px;
+}
+
+.mu-pay {
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.mu-pay-visa { background: #1a1f71; }
+.mu-pay-mc { background: #eb001b; }
+.mu-pay-amex { background: #006fcf; }
+.mu-pay-momo { background: #a50064; }
+.mu-pay-vnpay { background: #00427a; }
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width: 1080px) {
+  .mu-header-inner {
+    gap: 0;
+    width: calc(100% - 40px);
   }
-  
-  .noi-dung-website {
-    min-height: 60vh;
+
+  .mu-nav {
+    gap: 14px;
   }
-  
+}
+
+@media (max-width: 860px) {
+  .mu-header-inner {
+    height: auto;
+    min-height: 42px;
+    padding: 8px 0;
+    flex-wrap: wrap;
+  }
+
+  .mu-logo {
+    flex: 1;
+    margin-right: 0;
+  }
+
+  .mu-nav {
+    order: 3;
+    width: 100%;
+    flex: 0 0 100%;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 8px 0 2px;
+    justify-content: flex-start;
+  }
+
+  .mu-nav::-webkit-scrollbar {
+    height: 0;
+  }
+
+  .mu-header-actions {
+    margin-left: auto;
+  }
+
+  .mu-footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .container-website {
-    width: min(1180px, calc(100% - 32px));
-    margin: 0 auto;
+    width: calc(100% - 40px);
   }
-  
-  /* ==================================================
-     HEADER WEBSITE
-  ================================================== */
-  
-  .header-website {
-    position: sticky;
-    top: 0;
-    z-index: 80;
-    background: rgba(255, 255, 255, 0.96);
-    border-bottom: 1px solid #e5e7eb;
+}
+
+@media (max-width: 560px) {
+  .container-website {
+    width: calc(100% - 32px);
   }
-  
-  .header-website-inner {
-    height: 74px;
-    display: flex;
-    align-items: center;
+
+  .mu-header-inner {
+    width: calc(100% - 32px);
+  }
+
+  .mu-nav {
+    gap: 14px;
+  }
+
+  .mu-footer-grid {
+    grid-template-columns: 1fr;
     gap: 28px;
   }
-  
-  /* ==================================================
-     LOGO WEBSITE
-  ================================================== */
-  
-  .logo-website {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    color: #111827;
-    text-decoration: none;
-    flex: 0 0 auto;
-    min-width: 0;
-  }
-  
-  .logo-website:hover {
-    color: #111827;
-  }
-  
-  .logo-website-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    background: #2563eb;
-    color: #ffffff;
-    display: grid;
-    place-items: center;
-    overflow: hidden;
-    flex: 0 0 auto;
-  }
-  
-  .logo-website-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .logo-website strong {
-    display: block;
-    font-size: 16px;
-    font-weight: 800;
-    color: #111827;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .logo-website span {
-    display: block;
-    font-size: 12px;
-    color: #6b7280;
-    margin-top: 2px;
-    white-space: nowrap;
-  }
-  
-  /* ==================================================
-     MENU WEBSITE
-  ================================================== */
-  
-  .menu-website {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    flex: 1;
-    min-width: 0;
-  }
-  
-  .menu-website a {
-    color: #374151;
-    font-size: 14px;
-    text-decoration: none;
-    font-weight: 600;
-    white-space: nowrap;
-    transition: color 0.15s ease;
-  }
-  
-  .menu-website a:hover,
-  .menu-website a.active {
-    color: #2563eb;
-  }
-  
-  /* ==================================================
-     HEADER ACTIONS
-  ================================================== */
-  
-  .hanh-dong-website {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 0 0 auto;
-  }
-  
-  .tim-kiem-website {
-    width: 250px;
-    height: 40px;
-    border: 1px solid #e5e7eb;
-    background: #f9fafb;
-    border-radius: 11px;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 0 12px;
-    color: #6b7280;
-    transition: 0.15s ease;
-  }
-  
-  .tim-kiem-website:hover {
-    background: #ffffff;
-    border-color: #d1d5db;
-  }
-  
-  .tim-kiem-website:focus-within {
-    background: #ffffff;
-    border-color: #93c5fd;
-  }
-  
-  .tim-kiem-website input {
-    border: 0;
-    outline: 0;
-    background: transparent;
-    min-width: 0;
-    flex: 1;
-    font-size: 14px;
-    color: #111827;
-  }
-  
-  .tim-kiem-website input::placeholder {
-    color: #9ca3af;
-  }
-  
-  /* ==================================================
-     CART BUTTON
-  ================================================== */
-  
-  .nut-gio-hang-website {
-    width: 42px;
-    height: 42px;
-    border: 1px solid #e5e7eb;
-    background: #ffffff;
-    border-radius: 11px;
-    color: #111827;
-    display: grid;
-    place-items: center;
-    position: relative;
-    text-decoration: none;
-    transition: 0.15s ease;
-  }
-  
-  .nut-gio-hang-website:hover {
-    color: #111827;
-    background: #f9fafb;
-    border-color: #d1d5db;
-  }
-  
-  .nut-gio-hang-website span {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    min-width: 19px;
-    height: 19px;
-    border-radius: 999px;
-    background: #ef4444;
-    color: #ffffff;
-    border: 2px solid #ffffff;
-    font-size: 11px;
-    display: grid;
-    place-items: center;
-    font-weight: 800;
-    line-height: 1;
-  }
-  
-  /* ==================================================
-     FOOTER WEBSITE
-  ================================================== */
-  
-  .footer-website {
-    background: #ffffff;
-    border-top: 1px solid #e5e7eb;
-    margin-top: 40px;
-  }
-  
-  .footer-website-grid {
-    padding: 34px 0;
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
-    gap: 24px;
-  }
-  
-  .footer-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .footer-brand strong {
-    color: #111827;
-    font-size: 16px;
-    font-weight: 800;
-  }
-  
-  .footer-website p {
-    color: #6b7280;
-    line-height: 1.6;
-    margin: 14px 0 0;
-    font-size: 14px;
-  }
-  
-  .footer-website h4 {
-    font-size: 15px;
-    font-weight: 800;
-    margin: 0 0 12px;
-    color: #111827;
-  }
-  
-  .footer-website ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .footer-website li {
-    color: #6b7280;
-    font-size: 14px;
-    margin-bottom: 9px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    line-height: 1.45;
-  }
-  
-  .footer-website a {
-    color: #6b7280;
-    text-decoration: none;
-  }
-  
-  .footer-website a:hover {
-    color: #2563eb;
-  }
-  
-  .footer-copy {
-    border-top: 1px solid #e5e7eb;
+
+  .mu-footer-bottom-inner {
+    flex-direction: column;
+    gap: 12px;
     text-align: center;
-    color: #6b7280;
-    padding: 14px;
-    font-size: 13px;
   }
-  
-  /* ==================================================
-     RESPONSIVE
-  ================================================== */
-  
-  @media (max-width: 1080px) {
-    .header-website-inner {
-      gap: 18px;
-    }
-  
-    .menu-website {
-      gap: 14px;
-    }
-  
-    .tim-kiem-website {
-      width: 210px;
-    }
+
+  .mu-footer-payments {
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  
-  @media (max-width: 860px) {
-    .header-website-inner {
-      height: auto;
-      min-height: 74px;
-      padding: 14px 0;
-      flex-wrap: wrap;
-    }
-  
-    .logo-website {
-      flex: 1;
-    }
-  
-    .menu-website {
-      order: 3;
-      width: 100%;
-      flex: 0 0 100%;
-      overflow-x: auto;
-      gap: 16px;
-      padding-bottom: 2px;
-    }
-  
-    .menu-website::-webkit-scrollbar {
-      height: 0;
-    }
-  
-    .tim-kiem-website {
-      display: none;
-    }
-  
-    .footer-website-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  
-  @media (max-width: 560px) {
-    .container-website {
-      width: min(100% - 24px, 1180px);
-    }
-  
-    .header-website-inner {
-      gap: 12px;
-    }
-  
-    .logo-website strong {
-      max-width: 190px;
-    }
-  
-    .menu-website {
-      gap: 14px;
-    }
-  
-    .footer-website-grid {
-      grid-template-columns: 1fr;
-      padding: 28px 0;
-    }
-  
-    .footer-copy {
-      font-size: 12px;
-    }
-  }
+}

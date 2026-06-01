@@ -1,27 +1,23 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
-  CalendarCheck,
-  Headphones,
+  ChevronLeft,
+  ChevronRight,
   ImageOff,
-  MapPin,
   Package,
-  PackageCheck,
-  Search,
-  ShieldCheck,
-  ShoppingBag,
-  Star,
+  Share2,
+  ShoppingCart,
   Truck,
-  WalletCards,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import DangTai from "../../../components/DangTai";
-import TrangRong from "../../../components/TrangRong";
 import useTieuDeTrang from "../../../hooks/useTieuDeTrang";
 import { layDanhSachSanPham } from "../../../api/sanphamApi";
 import { layDanhSachDanhMuc } from "../../../api/danhmucApi";
-import TheSanPhamWebsite from "../sanpham/TheSanPhamWebsite";
+import { formatTienVietNam } from "../../../utils/dinhtien";
+import useGioHangStore from "../../../stores/giohangStore";
+import heroBannerVideo from "../../../assets/hero-banner.mp4";
 
 const API_URL = "http://localhost:8080";
 
@@ -31,36 +27,19 @@ function layAnhSanPham(sanPham) {
   return `${API_URL}${sanPham.hinhanh}`;
 }
 
-function taoLinkSanPham(params = {}) {
-  const query = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") {
-      query.set(key, value);
-    }
-  });
-
-  const chuoiQuery = query.toString();
-  return chuoiQuery ? `/sanpham?${chuoiQuery}` : "/sanpham";
-}
-
 export default function TrangChuWebsite() {
   useTieuDeTrang("Trang chủ");
 
   const [dangTai, setDangTai] = useState(true);
   const [sanPhamMoi, setSanPhamMoi] = useState([]);
   const [danhMuc, setDanhMuc] = useState([]);
-
-  const [boLocNhanh, setBoLocNhanh] = useState({
-    timkiem: "",
-    danhmuc_id: "",
-    sapxep: "moi_nhat",
-  });
+  const [viTriCarousel, setViTriCarousel] = useState(0);
+  const carouselRef = useRef(null);
+  const themVaoGio = useGioHangStore((state) => state.themVaoGio);
 
   const taiDuLieu = async () => {
     try {
       setDangTai(true);
-
       const [ketQuaSanPham, ketQuaDanhMuc] = await Promise.all([
         layDanhSachSanPham({
           trang: 1,
@@ -74,7 +53,6 @@ export default function TrangChuWebsite() {
           trangthai: "hien_thi",
         }),
       ]);
-
       setSanPhamMoi(ketQuaSanPham?.dulieu?.danhsach || []);
       setDanhMuc(ketQuaDanhMuc?.dulieu?.danhsach || []);
     } catch {
@@ -88,329 +66,247 @@ export default function TrangChuWebsite() {
     taiDuLieu();
   }, []);
 
-  const sanPhamHero = useMemo(() => {
-    return sanPhamMoi.find((item) => item.hinhanh) || sanPhamMoi[0] || null;
-  }, [sanPhamMoi]);
-
-  const linkTimKiemNhanh = useMemo(() => {
-    return taoLinkSanPham({
-      timkiem: boLocNhanh.timkiem.trim(),
-      danhmuc_id: boLocNhanh.danhmuc_id,
-      sapxep: boLocNhanh.sapxep,
-    });
-  }, [boLocNhanh]);
-
-  const capNhatBoLocNhanh = (event) => {
-    const { name, value } = event.target;
-
-    setBoLocNhanh((duLieuCu) => ({
-      ...duLieuCu,
-      [name]: value,
-    }));
+  const cuonCarousel = (huong) => {
+    if (!carouselRef.current) return;
+    const cardWidth = 348;
+    const maxVi = Math.max(0, sanPhamMoi.length - 4);
+    const viTriMoi = Math.max(0, Math.min(viTriCarousel + huong, maxVi));
+    setViTriCarousel(viTriMoi);
+    carouselRef.current.style.transform = `translateX(-${viTriMoi * cardWidth}px)`;
   };
 
+  const xuLyThemGio = (sanpham) => {
+    if (sanpham.soluongton <= 0 || sanpham.trangthai === "het_hang") {
+      toast.error("Sản phẩm đã hết hàng");
+      return;
+    }
+    themVaoGio(sanpham, 1);
+    toast.success("Đã thêm vào giỏ hàng");
+  };
+
+  const sanPhamNoiBat = sanPhamMoi.length > 0 ? sanPhamMoi[0] : null;
+
   return (
-    <div className="trang-chu-website">
-      <section className="hero-website hero-website-moi">
-        <div className="container-website">
-          <div className="hero-grid hero-grid-moi">
-            <div className="hero-noi-dung">
-              <span className="nhan-hero">Cửa hàng trực tuyến</span>
+    <div className="mu-trangchu">
+      {/* Hero Video Banner - full width, no text overlay */}
+      <section className="mu-hero-banner">
+        <video autoPlay muted loop playsInline className="mu-hero-video">
+          <source src={heroBannerVideo} type="video/mp4" />
+        </video>
+      </section>
 
-              <h1>Mua sắm dễ dàng, chọn sản phẩm nhanh chóng</h1>
-
-              <p>
-                Sản phẩm được cập nhật trực tiếp từ hệ thống quản trị. Giá hiển
-                thị bằng Việt Nam Đồng, tồn kho rõ ràng và đặt hàng nhanh chóng.
-              </p>
-
-              <div className="hero-actions">
-                <Link to="/sanpham" className="nut-web-chinh">
-                  Xem sản phẩm
-                  <ArrowRight size={18} />
-                </Link>
-
-                <Link to="/tra-cuu-don-hang" className="nut-web-phu">
-                  Tra cứu đơn hàng
-                </Link>
+      {/* Sản phẩm mới - Carousel */}
+      <section className="mu-section-sanpham">
+        <div className="mu-container">
+          <div className="mu-section-header">
+            <h2>Sản phẩm mới nhất</h2>
+            <div className="mu-section-header-right">
+              <Link to="/sanpham" className="mu-viewall">Xem tất cả</Link>
+              <div className="mu-carousel-nav">
+                <button
+                  onClick={() => cuonCarousel(-1)}
+                  disabled={viTriCarousel === 0}
+                  className="mu-carousel-btn"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <button
+                  onClick={() => cuonCarousel(1)}
+                  disabled={viTriCarousel >= sanPhamMoi.length - 4}
+                  className="mu-carousel-btn"
+                >
+                  <ChevronRight size={16} />
+                </button>
               </div>
             </div>
-
-            <div className="hero-anh-lon">
-              {sanPhamHero?.hinhanh ? (
-                <img src={layAnhSanPham(sanPhamHero)} alt={sanPhamHero.tensanpham} />
-              ) : (
-                <div>
-                  <ImageOff size={88} />
-                  <span>Ảnh sản phẩm nổi bật</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="hop-tim-kiem-trang-chu">
-            <div className="o-tim-trang-chu">
-              <Search size={18} />
-              <input
-                name="timkiem"
-                value={boLocNhanh.timkiem}
-                onChange={capNhatBoLocNhanh}
-                placeholder="Tìm kiếm sản phẩm..."
-              />
-            </div>
-
-            <select
-              name="danhmuc_id"
-              value={boLocNhanh.danhmuc_id}
-              onChange={capNhatBoLocNhanh}
-            >
-              <option value="">Tất cả danh mục</option>
-
-              {danhMuc.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.tendanhmuc}
-                </option>
-              ))}
-            </select>
-
-            <select
-              name="sapxep"
-              value={boLocNhanh.sapxep}
-              onChange={capNhatBoLocNhanh}
-            >
-              <option value="moi_nhat">Mới nhất</option>
-              <option value="gia_tang">Giá tăng dần</option>
-              <option value="gia_giam">Giá giảm dần</option>
-              <option value="luot_ban">Bán chạy</option>
-            </select>
-
-            <Link to={linkTimKiemNhanh}>Tìm kiếm</Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="container-website">
-        <div className="loi-ich-grid loi-ich-grid-moi">
-          <div className="loi-ich-item">
-            <Truck size={24} />
-            <div>
-              <strong>Giao hàng toàn quốc</strong>
-              <span>Thông tin rõ ràng, dễ theo dõi</span>
-            </div>
-          </div>
-
-          <div className="loi-ich-item">
-            <WalletCards size={24} />
-            <div>
-              <strong>Giá Việt Nam Đồng</strong>
-              <span>Hiển thị đúng định dạng 120.000 ₫</span>
-            </div>
-          </div>
-
-          <div className="loi-ich-item">
-            <ShieldCheck size={24} />
-            <div>
-              <strong>Sản phẩm rõ tồn kho</strong>
-              <span>Không đặt quá số lượng còn lại</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="container-website khoi-website khoi-quy-trinh-web">
-        <div className="tieu-de-khoi-web can-giua">
-          <div>
-            <h2>Mua hàng đơn giản hơn</h2>
-            <p>Chọn sản phẩm, thêm vào giỏ và đặt hàng chỉ trong vài bước.</p>
-          </div>
-        </div>
-
-        <div className="quy-trinh-mua-hang-grid">
-          <div className="quy-trinh-item-web">
-            <div>
-              <MapPin size={28} />
-            </div>
-            <h3>Chọn sản phẩm</h3>
-            <p>Tìm sản phẩm theo danh mục, giá bán hoặc từ khóa.</p>
-          </div>
-
-          <div className="quy-trinh-item-web">
-            <div>
-              <ShoppingBag size={28} />
-            </div>
-            <h3>Thêm vào giỏ</h3>
-            <p>Kiểm tra số lượng, giá tiền và tình trạng tồn kho.</p>
-          </div>
-
-          <div className="quy-trinh-item-web">
-            <div>
-              <CalendarCheck size={28} />
-            </div>
-            <h3>Xác nhận đơn</h3>
-            <p>Điền thông tin nhận hàng và gửi đơn để cửa hàng xử lý.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="container-website khoi-website">
-        <div className="tieu-de-khoi-web">
-          <div>
-            <h2>Danh mục nổi bật</h2>
-            <p>Chọn nhanh nhóm sản phẩm bạn muốn xem</p>
-          </div>
-
-          <Link to="/sanpham">Xem tất cả</Link>
-        </div>
-
-        {dangTai ? (
-          <DangTai noidung="Đang tải danh mục..." />
-        ) : danhMuc.length === 0 ? (
-          <TrangRong
-            tieude="Chưa có danh mục"
-            mota="Admin cần thêm danh mục để hiển thị tại đây."
-          />
-        ) : (
-          <div className="danh-muc-web-grid danh-muc-web-grid-moi">
-            {danhMuc.map((item) => (
-              <Link
-                key={item.id}
-                to={`/sanpham?danhmuc_id=${item.id}`}
-                className="danh-muc-web-item"
-              >
-                <div>
-                  <Package size={24} />
-                </div>
-
-                <strong>{item.tendanhmuc}</strong>
-                <span>{item.sosanpham || 0} sản phẩm</span>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section className="khoi-san-pham-trang-chu">
-        <div className="container-website khoi-website">
-          <div className="tieu-de-khoi-web can-giua">
-            <div>
-              <h2>Sản phẩm mới</h2>
-              <p>Các sản phẩm mới nhất đang được hiển thị</p>
-            </div>
-          </div>
-
-          <div className="tab-san-pham-trang-chu">
-            <Link to="/sanpham" className="dang-chon">
-              Phổ biến
-            </Link>
-            <Link to="/sanpham?sapxep=moi_nhat">Mới nhất</Link>
-            <Link to="/sanpham?sanpham=khuyenmai">Khuyến mãi</Link>
-            <Link to="/sanpham?sapxep=luot_ban">Bán chạy</Link>
           </div>
 
           {dangTai ? (
             <DangTai noidung="Đang tải sản phẩm..." />
           ) : sanPhamMoi.length === 0 ? (
-            <TrangRong
-              tieude="Chưa có sản phẩm"
-              mota="Admin cần thêm sản phẩm để hiển thị trên website."
-            />
+            <div className="mu-trong">
+              <Package size={48} />
+              <p>Chưa có sản phẩm nào</p>
+            </div>
           ) : (
-            <div className="san-pham-web-grid san-pham-web-grid-moi">
-              {sanPhamMoi.map((item) => (
-                <TheSanPhamWebsite key={item.id} sanpham={item} />
+            <div className="mu-carousel-wrapper">
+              <div className="mu-carousel-track" ref={carouselRef}>
+                {sanPhamMoi.map((sp) => {
+                  const coKhuyenMai = sp.giakhuyenmai && sp.giakhuyenmai > 0;
+                  return (
+                    <div key={sp.id} className="mu-card-sp">
+                      <Link to={`/sanpham/${sp.id}`} className="mu-card-anh">
+                        {sp.hinhanh ? (
+                          <img src={layAnhSanPham(sp)} alt={sp.tensanpham} />
+                        ) : (
+                          <div className="mu-card-anh-trong">
+                            <ImageOff size={36} />
+                          </div>
+                        )}
+                        <div className="mu-card-nhan">
+                          <span className="mu-nhan mu-nhan-moi">Mới</span>
+                          {coKhuyenMai && (
+                            <span className="mu-nhan mu-nhan-km">Giảm giá</span>
+                          )}
+                        </div>
+                      </Link>
+                      <div className="mu-card-thongtin">
+                        <span className="mu-card-gia">
+                          {formatTienVietNam(coKhuyenMai ? sp.giakhuyenmai : sp.giaban)}
+                        </span>
+                        <Link to={`/sanpham/${sp.id}`} className="mu-card-ten">
+                          {sp.tensanpham}
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Featured - Sản phẩm nổi bật */}
+      {sanPhamNoiBat && (
+        <section className="mu-featured-section">
+          <div className="mu-container">
+            <div className="mu-featured-wrap">
+              <div className="mu-featured-img">
+                {sanPhamNoiBat.hinhanh ? (
+                  <img src={layAnhSanPham(sanPhamNoiBat)} alt={sanPhamNoiBat.tensanpham} />
+                ) : (
+                  <div className="mu-featured-img-trong">
+                    <ImageOff size={64} />
+                  </div>
+                )}
+              </div>
+              <div className="mu-featured-info">
+                <div className="mu-featured-title-row">
+                  <h2>
+                    Hãy tùy chỉnh sản phẩm của bạn ngay bây giờ!
+                  </h2>
+                  <button className="mu-share-btn" title="Chia sẻ">
+                    <Share2 size={16} />
+                  </button>
+                </div>
+
+                <p className="mu-featured-dm-label">Danh mục: {sanPhamNoiBat.tendanhmuc || "Chưa phân loại"}</p>
+
+                <div className="mu-featured-thumbs">
+                  {sanPhamMoi.slice(0, 2).map((sp) => (
+                    <Link key={sp.id} to={`/sanpham/${sp.id}`} className="mu-featured-thumb">
+                      {sp.hinhanh ? (
+                        <img src={layAnhSanPham(sp)} alt={sp.tensanpham} />
+                      ) : (
+                        <ImageOff size={20} />
+                      )}
+                    </Link>
+                  ))}
+                </div>
+
+                <p className="mu-featured-chon-label">CHỌN MỘT SẢN PHẨM</p>
+                <div className="mu-featured-dropdown">
+                  <select>
+                    {sanPhamMoi.slice(0, 4).map((sp) => (
+                      <option key={sp.id} value={sp.id}>{sp.tensanpham}</option>
+                    ))}
+                  </select>
+                  <ChevronRight size={16} className="mu-dropdown-icon" />
+                </div>
+
+                <Link to={`/sanpham/${sanPhamNoiBat.id}`} className="mu-btn-tuychinh">
+                  XEM CHI TIẾT
+                </Link>
+                <button className="mu-btn-themgio" onClick={() => xuLyThemGio(sanPhamNoiBat)}>
+                  THÊM VÀO GIỎ HÀNG
+                </button>
+
+                <div className="mu-shipping-note">
+                  <Truck size={14} />
+                  <span>Có dịch vụ giao hàng tiêu chuẩn và giao hàng nhanh.</span>
+                </div>
+
+                <div className="mu-disclaimer">
+                  Vui lòng chờ thêm vài ngày để các mặt hàng được cá nhân hóa được gửi đi.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Shop by Category - Danh mục */}
+      <section className="mu-category-section">
+        <div className="mu-container">
+          <h2>Danh mục sản phẩm</h2>
+
+          {dangTai ? (
+            <DangTai noidung="Đang tải danh mục..." />
+          ) : danhMuc.length === 0 ? (
+            <div className="mu-trong">
+              <Package size={48} />
+              <p>Chưa có danh mục nào</p>
+            </div>
+          ) : (
+            <div className="mu-category-grid">
+              {danhMuc.map((dm) => (
+                <Link
+                  key={dm.id}
+                  to={`/sanpham?danhmuc_id=${dm.id}`}
+                  className="mu-category-card"
+                >
+                  <span className="mu-category-letter">
+                    {dm.tendanhmuc.charAt(0).toUpperCase()}
+                  </span>
+                  <div className="mu-category-line" />
+                  <strong>{dm.tendanhmuc}</strong>
+                  <span className="mu-category-link">Xem ngay →</span>
+                </Link>
               ))}
             </div>
           )}
-
-          <div className="xem-them-trang-chu">
-            <Link to="/sanpham">
-              Xem thêm sản phẩm
-              <ArrowRight size={16} />
-            </Link>
-          </div>
         </div>
       </section>
 
-      <section className="container-website khoi-website khoi-loi-ich-lon">
-        <div className="loi-ich-lon-grid">
-          <div className="loi-ich-lon-anh">
-            {sanPhamHero?.hinhanh ? (
-              <img src={layAnhSanPham(sanPhamHero)} alt={sanPhamHero.tensanpham} />
-            ) : (
-              <ImageOff size={78} />
-            )}
-          </div>
-
-          <div className="loi-ich-lon-noi-dung">
-            <div className="tieu-de-khoi-web">
-              <div>
-                <h2>Lý do khách hàng chọn cửa hàng</h2>
-                <p>
-                  Trải nghiệm mua sắm rõ ràng, thông tin minh bạch và hỗ trợ
-                  nhanh chóng.
-                </p>
-              </div>
+      {/* Campaign Banner - Bộ sưu tập */}
+      <section className="mu-campaign-section">
+        <div className="mu-container">
+          <div className="mu-campaign-grid">
+            <div className="mu-campaign-text">
+              <span className="mu-campaign-label">BỘ SƯU TẬP ĐẶC BIỆT</span>
+              <h2>Khám phá bộ sưu tập sản phẩm mới nhất của chúng tôi.</h2>
+              <p>
+                Những sản phẩm chất lượng, được chọn lọc kỹ lưỡng để mang đến trải nghiệm tốt nhất cho khách hàng.
+              </p>
+              <Link to="/sanpham" className="mu-campaign-btn">
+                MUA NGAY
+              </Link>
             </div>
-
-            <div className="danh-sach-loi-ich-lon">
-              <div>
-                <Headphones size={22} />
-                <div>
-                  <strong>Hỗ trợ khách hàng</strong>
-                  <span>Cửa hàng liên hệ xác nhận đơn và hỗ trợ khi cần.</span>
-                </div>
-              </div>
-
-              <div>
-                <PackageCheck size={22} />
-                <div>
-                  <strong>Sản phẩm rõ ràng</strong>
-                  <span>Giá bán, tồn kho và trạng thái được hiển thị rõ.</span>
-                </div>
-              </div>
-
-              <div>
-                <ShieldCheck size={22} />
-                <div>
-                  <strong>Mua hàng an tâm</strong>
-                  <span>Quy trình đặt hàng đơn giản, phù hợp cả điện thoại.</span>
-                </div>
-              </div>
+            <div className="mu-campaign-cards">
+              {danhMuc.slice(0, 2).map((dm) => (
+                <Link key={dm.id} to={`/sanpham?danhmuc_id=${dm.id}`} className="mu-campaign-card-item">
+                  <span className="mu-campaign-card-letter">
+                    {dm.tendanhmuc.charAt(0).toUpperCase()}
+                  </span>
+                  <span>{dm.tendanhmuc}</span>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="khoi-danh-gia-trang-chu">
-        <div className="container-website khoi-website">
-          <div className="tieu-de-khoi-web can-giua">
-            <div>
-              <h2>Khách hàng tin tưởng cửa hàng</h2>
-              <p>Những phản hồi tích cực từ khách hàng đã mua sản phẩm.</p>
-            </div>
+      {/* Newsletter */}
+      <section className="mu-newsletter-section">
+        <div className="mu-container mu-newsletter-inner">
+          <div className="mu-newsletter-left">
+            <h3>ĐĂNG KÝ NHẬN ƯU ĐÃI ĐỘC QUYỀN</h3>
+            <p>Nhận thông tin sản phẩm mới và ưu đãi đặc biệt sớm nhất</p>
           </div>
-
-          <div className="danh-gia-grid-trang-chu">
-            {["Minh Anh", "Việt Hoàng", "Thanh Huyền"].map((ten) => (
-              <div className="danh-gia-card-trang-chu" key={ten}>
-                <div className="danh-gia-dau">
-                  <div className="avatar-danh-gia"></div>
-                  <div>
-                    <strong>{ten}</strong>
-                    <div>
-                      {Array.from({ length: 5 }).map((_, index) => (
-                        <Star key={index} size={13} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <p>
-                  Sản phẩm đúng mô tả, đặt hàng nhanh và cửa hàng hỗ trợ rất
-                  nhiệt tình.
-                </p>
-              </div>
-            ))}
+          <div className="mu-newsletter-form">
+            <input type="email" placeholder="Nhập email của bạn" />
+            <button>ĐĂNG KÝ</button>
           </div>
         </div>
       </section>

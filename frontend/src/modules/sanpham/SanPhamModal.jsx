@@ -3,9 +3,9 @@ import { ImagePlus, X } from "lucide-react";
 import NutBam from "../../components/ui/NutBam";
 import {
   chuyenTienNhapThanhSo,
-  formatTienHienThi,
   formatTienNhap,
 } from "../../utils/tienviet";
+import { formatTienVietNam as formatTienHienThi } from "../../utils/dinhtien";
 
 const formMacDinh = {
   madinhdanh: "",
