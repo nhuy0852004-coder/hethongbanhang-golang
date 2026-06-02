@@ -1,10 +1,15 @@
 import {
   AlertTriangle,
+  ArrowUpRight,
   Boxes,
+  CheckCircle2,
+  Clock,
+  Eye,
   Package,
   ShoppingCart,
   TrendingUp,
   Users,
+  XCircle,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -16,7 +21,9 @@ import { formatTienVietNam } from "../../utils/dinhtien";
 import useGiaoDienStore from "../../stores/giaodienStore";
 
 export default function DashboardAdmin() {
-  const capNhatTieuDeTrang = useGiaoDienStore((state) => state.capNhatTieuDeTrang);
+  const capNhatTieuDeTrang = useGiaoDienStore(
+    (state) => state.capNhatTieuDeTrang
+  );
 
   const [dangTai, setDangTai] = useState(true);
   const [duLieu, setDuLieu] = useState(null);
@@ -24,7 +31,7 @@ export default function DashboardAdmin() {
   useEffect(() => {
     capNhatTieuDeTrang(
       "Tổng quan",
-      "Theo dõi doanh thu, đơn hàng, sản phẩm và cảnh báo tồn kho"
+      "Theo dõi doanh thu, đơn hàng và các cảnh báo quan trọng trong hệ thống."
     );
   }, [capNhatTieuDeTrang]);
 
@@ -35,14 +42,11 @@ export default function DashboardAdmin() {
   const taiDuLieu = async () => {
     try {
       setDangTai(true);
-
       const ketQua = await layTongQuan();
-
       setDuLieu(ketQua.dulieu);
     } catch (loi) {
       const thongBao =
         loi?.response?.data?.thongbao || "Không tải được dữ liệu tổng quan";
-
       toast.error(thongBao);
     } finally {
       setDangTai(false);
@@ -51,8 +55,32 @@ export default function DashboardAdmin() {
 
   const doanhThuLonNhat = useMemo(() => {
     if (!duLieu?.doanhthubayngay?.length) return 0;
+    return Math.max(
+      ...duLieu.doanhthubayngay.map((item) => item.doanhthu || 0)
+    );
+  }, [duLieu]);
 
-    return Math.max(...duLieu.doanhthubayngay.map((item) => item.doanhthu || 0));
+  const tongDoanhThu7Ngay = useMemo(() => {
+    if (!duLieu?.doanhthubayngay?.length) return 0;
+    return duLieu.doanhthubayngay.reduce(
+      (sum, item) => sum + (item.doanhthu || 0),
+      0
+    );
+  }, [duLieu]);
+
+  const tongDon7Ngay = useMemo(() => {
+    if (!duLieu?.doanhthubayngay?.length) return 0;
+    return duLieu.doanhthubayngay.reduce(
+      (sum, item) => sum + (item.donhang || 0),
+      0
+    );
+  }, [duLieu]);
+
+  const donHangLonNhat = useMemo(() => {
+    if (!duLieu?.doanhthubayngay?.length) return 0;
+    return Math.max(
+      ...duLieu.doanhthubayngay.map((item) => item.donhang || 0)
+    );
   }, [duLieu]);
 
   if (dangTai) {
@@ -69,184 +97,369 @@ export default function DashboardAdmin() {
   }
 
   const thongKe = duLieu.thongke || {};
+  const trangThai = duLieu.trangthadon || {};
+  const sanPhamBanChay = duLieu.sanphambanchay || [];
+  const sanPhamSapHet = duLieu.sanphamsaphethang || [];
+  const donHangMoi = duLieu.donhangmoinhat || [];
+  const doanhThu7Ngay = duLieu.doanhthubayngay || [];
+
+  const tyLeHoanThanh = Math.round(thongKe.tylehoanthanh || 0);
+  const tbNgay = doanhThu7Ngay.length > 0 ? Math.round(tongDoanhThu7Ngay / 7) : 0;
+
+  const maxDoanhThuBanChay = sanPhamBanChay.length > 0
+    ? Math.max(...sanPhamBanChay.map((sp) => sp.doanhthu || 0))
+    : 0;
 
   return (
     <div className="dashboard-admin">
-      <div className="dashboard-grid-card">
-        <div className="dashboard-card">
-          <div className="dashboard-card-icon xanh">
-            <TrendingUp size={24} />
+      {/* ===== 8 STAT CARDS - 2 hàng x 4 cột ===== */}
+      <div className="db-stat-grid">
+        <StatCard
+          icon={<TrendingUp size={15} />}
+          mauIcon="xanh-la"
+          tieuDe="Doanh thu hôm nay"
+          giaTri={formatTienVietNam(thongKe.doanhthuhomnay || 0)}
+          moTa="Tính đơn đã hoàn thành"
+          phu="+12% so với hôm qua"
+          mauPhu="xanh-la"
+        />
+        <StatCard
+          icon={<ShoppingCart size={15} />}
+          mauIcon="xanh-duong"
+          tieuDe="Đơn hàng hôm nay"
+          giaTri={thongKe.donhanghomnay || 0}
+          moTa="Tất cả trạng thái"
+          phu={`+${thongKe.donhanghomnay || 0} đơn mới`}
+          mauPhu="xanh-duong"
+        />
+        <StatCard
+          icon={<Clock size={15} />}
+          mauIcon="cam"
+          tieuDe="Đơn chờ xác nhận"
+          giaTri={thongKe.donchoxacnhan || 0}
+          moTa="Cần xử lý sớm"
+          badge="Ưu tiên"
+          mauBadge="cam"
+        />
+        <StatCard
+          icon={<Package size={15} />}
+          mauIcon="tim"
+          tieuDe="Sản phẩm đang bán"
+          giaTri={thongKe.sanphamdangban || 0}
+          moTa="Sản phẩm đang hiển thị"
+        />
+        <StatCard
+          icon={<Users size={15} />}
+          mauIcon="xanh-duong"
+          tieuDe="Khách hàng mới"
+          giaTri={thongKe.khachhangmoi || 0}
+          moTa="Khách đã đặt hàng"
+        />
+        <StatCard
+          icon={<AlertTriangle size={15} />}
+          mauIcon="vang"
+          tieuDe="Sản phẩm sắp hết"
+          giaTri={thongKe.sanphamsaphet || 0}
+          moTa="Tồn kho dưới 5"
+          badge="Cảnh báo"
+          mauBadge="do"
+        />
+        <StatCard
+          icon={<XCircle size={15} />}
+          mauIcon="do"
+          tieuDe="Đơn đã hủy"
+          giaTri={thongKe.dondahuy || 0}
+          moTa="Trong hôm nay"
+        />
+        <StatCard
+          icon={<CheckCircle2 size={15} />}
+          mauIcon="xanh-la"
+          tieuDe="Tỷ lệ hoàn thành"
+          giaTri={`${tyLeHoanThanh}%`}
+          moTa="Đơn hoàn thành / tổng đơn"
+          progressBar={tyLeHoanThanh}
+        />
+      </div>
+
+      {/* ===== BIỂU ĐỒ DOANH THU + TRẠNG THÁI ĐƠN HÀNG ===== */}
+      <div className="db-chart-row">
+        <div className="db-box db-chart-box">
+          <div className="db-box-header">
+            <div>
+              <h2>Doanh thu 7 ngày</h2>
+              <p>Thống kê doanh thu từ các đơn hàng không bị hủy</p>
+            </div>
+            <div className="db-chart-legend">
+              <span className="db-legend-item">
+                <span className="db-legend-dot xanh-duong" />
+                Doanh thu
+              </span>
+              <span className="db-legend-item">
+                <span className="db-legend-line" />
+                Đơn hàng
+              </span>
+            </div>
           </div>
 
-          <div>
-            <span>Doanh thu hôm nay</span>
-            <strong>{formatTienVietNam(thongKe.doanhthuhomnay || 0)}</strong>
-            <p>Tính đơn đã hoàn thành</p>
+          <div className="db-chart-summary">
+            <div className="db-summary-item">
+              <span>Tổng doanh thu</span>
+              <strong>{formatTienVietNam(tongDoanhThu7Ngay)}</strong>
+            </div>
+            <div className="db-summary-divider" />
+            <div className="db-summary-item">
+              <span>Tăng trưởng</span>
+              <strong className="mau-xanh-la">+18%</strong>
+            </div>
+            <div className="db-summary-divider" />
+            <div className="db-summary-item">
+              <span>TB / ngày</span>
+              <strong>{formatTienVietNam(tbNgay)}</strong>
+            </div>
+            <div className="db-summary-divider" />
+            <div className="db-summary-item">
+              <span>Tổng đơn</span>
+              <strong>{tongDon7Ngay}</strong>
+            </div>
+          </div>
+
+          <div className="db-barchart">
+            <div className="db-barchart-y">
+              {[...Array(5)].map((_, i) => {
+                const val = doanhThuLonNhat > 0
+                  ? ((4 - i) / 4 * doanhThuLonNhat / 1000000).toFixed(1) + "tr"
+                  : "0";
+                return <span key={i}>{val}</span>;
+              })}
+            </div>
+            <div className="db-barchart-area">
+              <div className="db-barchart-grid">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="db-grid-line" />
+                ))}
+              </div>
+              <div className="db-barchart-bars">
+                {doanhThu7Ngay.map((item) => {
+                  const chieuCao =
+                    doanhThuLonNhat > 0
+                      ? Math.max(4, Math.round((item.doanhthu / doanhThuLonNhat) * 112))
+                      : 4;
+                  return (
+                    <div className="db-bar-col" key={item.ngay}>
+                      <div
+                        className="db-bar"
+                        style={{ height: `${chieuCao}px` }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="db-barchart-y db-barchart-y-right">
+              {[...Array(5)].map((_, i) => {
+                const val = donHangLonNhat > 0
+                  ? Math.round((4 - i) / 4 * donHangLonNhat)
+                  : 0;
+                return <span key={i}>{val}</span>;
+              })}
+            </div>
+          </div>
+          <div className="db-barchart-x">
+            {doanhThu7Ngay.map((item) => (
+              <span key={item.ngay}>
+                {new Date(item.ngay).toLocaleDateString("vi-VN", {
+                  day: "2-digit",
+                  month: "2-digit",
+                })}
+              </span>
+            ))}
           </div>
         </div>
 
-        <div className="dashboard-card">
-          <div className="dashboard-card-icon duong">
-            <ShoppingCart size={24} />
+        <div className="db-box db-status-box">
+          <h2>Trạng thái đơn hàng</h2>
+          <p>Tỷ lệ xử lý đơn trong ngày</p>
+
+          <div className="db-status-list">
+            <StatusBar label="Chờ xác nhận" value={trangThai.choxacnhan || 0} total={trangThai.tongdon || 1} color="#f59e0b" />
+            <StatusBar label="Đã xác nhận" value={trangThai.daxacnhan || 0} total={trangThai.tongdon || 1} color="#3b82f6" />
+            <StatusBar label="Đang giao" value={trangThai.danggiao || 0} total={trangThai.tongdon || 1} color="#8b5cf6" />
+            <StatusBar label="Hoàn thành" value={trangThai.hoanthanh || 0} total={trangThai.tongdon || 1} color="#22c55e" />
+            <StatusBar label="Đã hủy" value={trangThai.dahuy || 0} total={trangThai.tongdon || 1} color="#ef4444" />
           </div>
 
-          <div>
-            <span>Đơn hàng hôm nay</span>
-            <strong>{thongKe.donhanghomnay || 0}</strong>
-            <p>Tất cả trạng thái</p>
-          </div>
-        </div>
-
-        <div className="dashboard-card">
-          <div className="dashboard-card-icon tim">
-            <Package size={24} />
-          </div>
-
-          <div>
-            <span>Tổng sản phẩm</span>
-            <strong>{thongKe.tongsanpham || 0}</strong>
-            <p>Sản phẩm đang quản lý</p>
-          </div>
-        </div>
-
-        <div className="dashboard-card">
-          <div className="dashboard-card-icon cam">
-            <Users size={24} />
-          </div>
-
-          <div>
-            <span>Tổng khách hàng</span>
-            <strong>{thongKe.tongkhachhang || 0}</strong>
-            <p>Khách đã đặt hàng</p>
+          <div className="db-status-footer">
+            <div className="db-status-stacked-bar">
+              {trangThai.tongdon > 0 && (
+                <>
+                  <div style={{ flex: trangThai.choxacnhan || 0, background: "#f59e0b" }} />
+                  <div style={{ flex: trangThai.daxacnhan || 0, background: "#3b82f6" }} />
+                  <div style={{ flex: trangThai.danggiao || 0, background: "#8b5cf6" }} />
+                  <div style={{ flex: trangThai.hoanthanh || 0, background: "#22c55e" }} />
+                  <div style={{ flex: trangThai.dahuy || 0, background: "#ef4444" }} />
+                </>
+              )}
+            </div>
+            <span>Tổng {trangThai.tongdon || 0} đơn trong ngày</span>
           </div>
         </div>
       </div>
 
-      <div className="dashboard-grid-chinh">
-        <div className="dashboard-box">
-          <div className="dashboard-box-title">
-            <div>
-              <h2>Doanh thu 7 ngày</h2>
-              <p>Thống kê các đơn hàng không bị hủy trong 7 ngày gần nhất</p>
-            </div>
-          </div>
-
-          <div className="bieu-do-doanh-thu">
-            {(duLieu.doanhthubayngay || []).map((item) => {
-              const chieuCao =
-                doanhThuLonNhat > 0
-                  ? Math.max(8, Math.round((item.doanhthu / doanhThuLonNhat) * 160))
-                  : 8;
-
-              return (
-                <div className="cot-bieu-do" key={item.ngay}>
-                  <div className="cot-gia-tri">
-                    <span>{formatTienVietNam(item.doanhthu)}</span>
-                    <div style={{ height: `${chieuCao}px` }} />
-                  </div>
-
-                  <small>
-                    {new Date(item.ngay).toLocaleDateString("vi-VN", {
-                      day: "2-digit",
-                      month: "2-digit",
-                    })}
-                  </small>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="dashboard-box">
-          <div className="dashboard-box-title">
-            <div>
+      {/* ===== 3 CARD HÀNG NGANG ===== */}
+      <div className="db-three-col">
+        {/* Sản phẩm sắp hết hàng */}
+        <div className="db-box">
+          <div className="db-box-header">
+            <div className="db-box-header-icon">
+              <AlertTriangle size={13} className="mau-vang-icon" />
               <h2>Sản phẩm sắp hết hàng</h2>
-              <p>Cảnh báo sản phẩm còn từ 5 trở xuống</p>
             </div>
-
-            <AlertTriangle size={22} />
           </div>
+          <p className="db-box-desc">Tồn kho dưới 5 sản phẩm</p>
 
-          {(duLieu.sanphamsaphethang || []).length === 0 ? (
-            <div className="dashboard-empty-mini">
-              <Boxes size={28} />
-              <span>Chưa có sản phẩm sắp hết hàng</span>
-            </div>
-          ) : (
-            <div className="ds-san-pham-sap-het">
-              {duLieu.sanphamsaphethang.map((item) => (
-                <div className="item-san-pham-sap-het" key={item.id}>
-                  {item.hinhanh ? (
-                    <img src={`http://localhost:8080${item.hinhanh}`} alt={item.tensanpham} />
-                  ) : (
-                    <div className="anh-sap-het-trong">Ảnh</div>
-                  )}
-
-                  <div>
+          <div className="db-product-list">
+            {sanPhamSapHet.length === 0 ? (
+              <div className="db-empty-mini">
+                <Boxes size={24} />
+                <span>Chưa có sản phẩm sắp hết hàng</span>
+              </div>
+            ) : (
+              sanPhamSapHet.map((item) => (
+                <div className="db-product-item" key={item.id}>
+                  <div className="db-product-img">
+                    {item.hinhanh ? (
+                      <img
+                        src={`http://localhost:8080${item.hinhanh}`}
+                        alt={item.tensanpham}
+                      />
+                    ) : (
+                      <div className="db-img-placeholder" />
+                    )}
+                  </div>
+                  <div className="db-product-info">
                     <strong>{item.tensanpham}</strong>
                     <span>{item.tendanhmuc || "Chưa phân loại"}</span>
                   </div>
-
-                  <b>{item.soluongton}</b>
+                  <span className="db-stock-badge">còn {item.soluongton}</span>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="dashboard-box dashboard-don-hang-moi mt-3">
-        <div className="dashboard-box-title">
-          <div>
-            <h2>Đơn hàng mới nhất</h2>
-            <p>Các đơn hàng vừa được tạo trên website</p>
+              ))
+            )}
           </div>
         </div>
 
-        {(duLieu.donhangmoinhat || []).length === 0 ? (
-          <TrangRong
-            tieude="Chưa có đơn hàng"
-            mota="Khi khách đặt hàng, đơn mới sẽ hiển thị tại đây."
-          />
+        {/* Việc cần xử lý */}
+        <div className="db-box">
+          <h2>Việc cần xử lý</h2>
+          <p className="db-box-desc">
+            Các tác vụ quan trọng cần kiểm tra hôm nay
+          </p>
+
+          <div className="db-todo-list">
+            <TodoItem color="#ef4444" text={`${thongKe.donchoxacnhan || 0} đơn hàng đang chờ xác nhận`} />
+            <TodoItem color="#f59e0b" text={`${thongKe.sanphamsaphet || 0} sản phẩm sắp hết hàng`} />
+            <TodoItem color="#ef4444" text={`${thongKe.dondahuy || 0} đơn hàng bị hủy cần kiểm tra`} />
+            <TodoItem color="#3b82f6" text={`${thongKe.khachhangmoi || 0} khách hàng mới chưa được chăm sóc`} />
+          </div>
+
+          <button className="db-btn-all">Xem tất cả công việc</button>
+        </div>
+
+        {/* Sản phẩm bán chạy */}
+        <div className="db-box">
+          <h2>Sản phẩm bán chạy</h2>
+          <p className="db-box-desc">
+            Top sản phẩm doanh thu cao nhất 7 ngày
+          </p>
+
+          <div className="db-bestseller-list">
+            {sanPhamBanChay.length === 0 ? (
+              <div className="db-empty-mini">
+                <Package size={24} />
+                <span>Chưa có dữ liệu</span>
+              </div>
+            ) : (
+              sanPhamBanChay.map((item, idx) => (
+                <div className="db-bestseller-item" key={idx}>
+                  <div className="db-bestseller-top">
+                    <strong>{item.tensanpham}</strong>
+                    <span>{item.sodon} đơn</span>
+                  </div>
+                  <div className="db-bestseller-bar-row">
+                    <div className="db-bestseller-bar">
+                      <div
+                        className="db-bestseller-bar-fill"
+                        style={{
+                          width: maxDoanhThuBanChay > 0
+                            ? `${Math.max(5, (item.doanhthu / maxDoanhThuBanChay) * 100)}%`
+                            : "5%",
+                        }}
+                      />
+                    </div>
+                    <span>{formatTienVietNam(item.doanhthu)}</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ===== BẢNG ĐƠN HÀNG MỚI NHẤT ===== */}
+      <div className="db-box db-orders-box">
+        <div className="db-box-header">
+          <div>
+            <h2>Đơn hàng mới nhất</h2>
+            <p>Các đơn hàng vừa được tạo trên hệ thống</p>
+          </div>
+          <button className="db-btn-viewall">Xem tất cả →</button>
+        </div>
+
+        {donHangMoi.length === 0 ? (
+          <div className="db-orders-empty">
+            <div className="db-orders-empty-icon">
+              <ShoppingCart size={28} />
+            </div>
+            <h3>Chưa có đơn hàng nào</h3>
+            <p>Khi khách hàng đặt hàng trên website, đơn mới sẽ hiển thị tại đây.</p>
+          </div>
         ) : (
-          <div className="bang-responsive">
-            <table className="bang-du-lieu bang-dashboard-don">
+          <div className="db-table-wrap">
+            <table className="db-table">
               <thead>
                 <tr>
                   <th>Mã đơn</th>
                   <th>Khách hàng</th>
-                  <th style={{ width: 150 }}>Tổng tiền</th>
-                  <th style={{ width: 150 }}>Trạng thái</th>
-                  <th style={{ width: 160 }}>Thời gian</th>
+                  <th>Số điện thoại</th>
+                  <th>Tổng tiền</th>
+                  <th>Thanh toán</th>
+                  <th>Trạng thái</th>
+                  <th>Thời gian</th>
+                  <th>Thao tác</th>
                 </tr>
               </thead>
-
               <tbody>
-                {duLieu.donhangmoinhat.map((item) => (
+                {donHangMoi.map((item) => (
                   <tr key={item.id}>
                     <td>
-                      <div className="ma-don-hang">
-                        <strong>{item.madonhang}</strong>
-                        <span>#{item.id}</span>
-                      </div>
+                      <span className="db-order-code">{item.madonhang}</span>
                     </td>
-
-                    <td>
-                      <div className="khach-don-hang">
-                        <strong>{item.hoten}</strong>
-                        <span>{item.sodienthoai}</span>
-                      </div>
-                    </td>
-
+                    <td>{item.hoten}</td>
+                    <td className="db-cell-muted">{item.sodienthoai}</td>
                     <td>
                       <strong>{formatTienVietNam(item.tongtien)}</strong>
                     </td>
-
+                    <td className="db-cell-muted">
+                      {item.thanhtoan || "COD"}
+                    </td>
                     <td>
                       <TheTrangThai trangthai={item.trangthai} />
                     </td>
-
-                    <td>{item.created_at}</td>
+                    <td className="db-cell-muted">{item.created_at}</td>
+                    <td>
+                      <button className="db-btn-action" title="Xem chi tiết">
+                        <Eye size={12} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -254,6 +467,55 @@ export default function DashboardAdmin() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function StatCard({ icon, mauIcon, tieuDe, giaTri, moTa, phu, mauPhu, badge, mauBadge, progressBar }) {
+  return (
+    <div className="db-stat-card">
+      <div className={`db-stat-icon ${mauIcon}`}>{icon}</div>
+      <div className="db-stat-content">
+        <span className="db-stat-label">{tieuDe}</span>
+        <strong className="db-stat-value">{giaTri}</strong>
+        <span className="db-stat-desc">{moTa}</span>
+        {phu && (
+          <span className={`db-stat-extra ${mauPhu || ""}`}>{phu}</span>
+        )}
+        {badge && (
+          <span className={`db-stat-badge ${mauBadge || ""}`}>{badge}</span>
+        )}
+        {progressBar !== undefined && (
+          <div className="db-stat-progress">
+            <div
+              className="db-stat-progress-fill"
+              style={{ width: `${Math.min(progressBar, 100)}%` }}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StatusBar({ label, value, total, color }) {
+  const width = total > 0 ? Math.max(2, (value / total) * 100) : 0;
+  return (
+    <div className="db-status-row">
+      <div className="db-status-label">
+        <span className="db-status-dot" style={{ background: color }} />
+        <span>{label}</span>
+      </div>
+      <span className="db-status-value">{value}</span>
+    </div>
+  );
+}
+
+function TodoItem({ color, text }) {
+  return (
+    <div className="db-todo-item">
+      <span className="db-todo-dot" style={{ background: color }} />
+      <span>{text}</span>
     </div>
   );
 }

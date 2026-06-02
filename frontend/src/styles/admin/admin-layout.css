@@ -23,113 +23,184 @@
     transition: width 0.2s ease, transform 0.2s ease;
   }
   
-  .sidebar-header {
-    height: var(--cao-header);
-    padding: 0 16px;
-    border-bottom: 1px solid var(--mau-vien);
+  .sidebar-logo-container {
+    height: 52px;
+    padding: 0 20px;
+    border-bottom: 1px solid #f1f5f9;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    position: relative;
   }
-  
-  .thuong-hieu-admin {
+
+  .sidebar-logo-wrap {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    min-width: 0;
+    gap: 2px;
   }
-  
-  .logo-admin {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    background: var(--mau-chinh);
-    color: #ffffff;
-    display: grid;
-    place-items: center;
-    flex: 0 0 auto;
+
+  .sidebar-logo-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    line-height: 1;
+    letter-spacing: 0.5px;
+    user-select: none;
   }
-  
-  .chu-thuong-hieu {
-    min-width: 0;
-  }
-  
-  .chu-thuong-hieu strong {
-    display: block;
+
+  .sidebar-logo-qh {
     font-size: 15px;
-    color: var(--mau-chu);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-weight: 900;
+    font-style: italic;
+    color: #e53935;
+    font-family: Inter, system-ui, sans-serif;
   }
-  
-  .chu-thuong-hieu span {
-    display: block;
-    font-size: 12px;
-    color: var(--mau-phu);
-    margin-top: 2px;
+
+  .sidebar-logo-soft {
+    font-size: 13px;
+    font-weight: 800;
+    color: #43a047;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .sidebar-logo-text {
+    font-size: 11px;
+    font-weight: 400;
+    color: #1553b8;
+    white-space: nowrap;
+    line-height: 13px;
   }
   
   /* ================= Sidebar menu ================= */
   
   .sidebar-menu {
-    padding: 14px 12px;
+    padding: 10px 10px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 0;
     flex: 1;
     overflow-y: auto;
   }
-  
+
+  .sidebar-nhom {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sidebar-nhom-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 4px 12px 2px;
+  }
+
+  .sidebar-divider {
+    height: 1px;
+    background: var(--mau-vien);
+    margin: 6px 4px 8px;
+  }
+
   .sidebar-link {
-    height: 42px;
+    height: 38px;
     border-radius: 10px;
-    padding: 0 12px;
+    padding: 0 15px;
     color: var(--mau-chu-nhat);
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 11px;
-    font-size: 14px;
+    gap: 10px;
+    font-size: 13.5px;
     transition: 0.15s ease;
   }
-  
+
   .sidebar-link:hover {
     background: #f3f4f6;
     color: var(--mau-chu);
   }
-  
+
   .sidebar-link.active {
     background: var(--mau-xanh-nhat);
     color: var(--mau-chinh-dam);
     font-weight: 600;
   }
-  
+
   .sidebar-link svg {
     flex: 0 0 auto;
   }
-  
+
+  /* ===== Sidebar footer ===== */
+
   .sidebar-footer {
-    padding: 12px;
+    padding: 11px 12px;
     border-top: 1px solid var(--mau-vien);
   }
-  
-  .nut-thu-gon-sidebar {
-    width: 100%;
-    height: 40px;
-    border: 1px solid var(--mau-vien);
-    background: #ffffff;
-    border-radius: 10px;
-    color: var(--mau-chu-nhat);
+
+  .sidebar-user {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 9px;
-    font-size: 14px;
+    gap: 10px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
   }
-  
+
+  .sidebar-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--mau-chinh);
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .sidebar-user-info {
+    min-width: 0;
+  }
+
+  .sidebar-user-info strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mau-chu);
+    line-height: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sidebar-user-info span {
+    display: block;
+    font-size: 11px;
+    color: var(--mau-phu);
+    line-height: 12px;
+    margin-top: 2px;
+  }
+
+  .nut-thu-gon-sidebar {
+    width: 100%;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--mau-phu);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    padding: 0 10px;
+    border-radius: 8px;
+  }
+
   .nut-thu-gon-sidebar:hover {
-    background: #f9fafb;
+    background: #f3f4f6;
+    color: var(--mau-chu);
   }
   
   /* ================= Collapsed sidebar ================= */
@@ -138,17 +209,30 @@
     width: var(--do-rong-sidebar-thu-gon);
   }
   
-  .sidebar-thu-gon .chu-thuong-hieu,
+  .sidebar-thu-gon .sidebar-logo-text,
+  .sidebar-thu-gon .sidebar-logo-soft,
+  .sidebar-thu-gon .sidebar-nhom-label,
   .sidebar-thu-gon .sidebar-link span,
-  .sidebar-thu-gon .nut-thu-gon-sidebar span {
+  .sidebar-thu-gon .nut-thu-gon-sidebar span,
+  .sidebar-thu-gon .sidebar-user-info {
     display: none;
   }
-  
+
   .sidebar-thu-gon .sidebar-link {
     justify-content: center;
     padding: 0;
   }
-  
+
+  .sidebar-thu-gon .sidebar-user {
+    justify-content: center;
+    padding: 8px 0;
+  }
+
+  .sidebar-thu-gon .nut-thu-gon-sidebar {
+    justify-content: center;
+    padding: 0;
+  }
+
   .sidebar-thu-gon .nut-thu-gon-sidebar svg {
     transform: rotate(180deg);
   }
@@ -413,17 +497,28 @@
       width: 280px;
     }
   
-    .sidebar-thu-gon .chu-thuong-hieu,
+    .sidebar-thu-gon .sidebar-logo-text,
+    .sidebar-thu-gon .sidebar-logo-soft,
+    .sidebar-thu-gon .sidebar-nhom-label,
     .sidebar-thu-gon .sidebar-link span,
-    .sidebar-thu-gon .nut-thu-gon-sidebar span {
+    .sidebar-thu-gon .nut-thu-gon-sidebar span,
+    .sidebar-thu-gon .sidebar-user-info {
       display: block;
     }
-  
+
     .sidebar-thu-gon .sidebar-link {
       justify-content: flex-start;
-      padding: 0 12px;
+      padding: 0 15px;
     }
-  
+
+    .sidebar-thu-gon .sidebar-user {
+      justify-content: flex-start;
+    }
+
+    .sidebar-thu-gon .nut-thu-gon-sidebar {
+      justify-content: flex-start;
+    }
+
     .sidebar-thu-gon .nut-thu-gon-sidebar svg {
       transform: none;
     }

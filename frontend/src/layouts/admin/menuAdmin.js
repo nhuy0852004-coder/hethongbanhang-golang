@@ -1,54 +1,69 @@
 import {
-  LayoutDashboard,
+  BarChart3,
+  Bell,
+  FolderOpen,
+  Home,
   Package,
-  Tags,
+  Settings,
   ShoppingCart,
   Users,
-  Bell,
-  BarChart3,
-  Settings,
 } from "lucide-react";
 
 const menuAdmin = [
   {
-    ten: "Tổng quan",
-    duongdan: "/admin",
-    icon: LayoutDashboard,
+    nhom: "MENU CHÍNH",
+    danhSach: [
+      {
+        ten: "Tổng quan",
+        duongdan: "/admin",
+        icon: Home,
+      },
+      {
+        ten: "Quản lý đơn hàng",
+        duongdan: "/admin/donhang",
+        icon: ShoppingCart,
+      },
+      {
+        ten: "Quản lý sản phẩm",
+        duongdan: "/admin/sanpham",
+        icon: Package,
+      },
+      {
+        ten: "Danh mục",
+        duongdan: "/admin/danhmuc",
+        icon: FolderOpen,
+      },
+      {
+        ten: "Khách hàng",
+        duongdan: "/admin/khachhang",
+        icon: Users,
+      },
+    ],
   },
   {
-    ten: "Danh mục",
-    duongdan: "/admin/danhmuc",
-    icon: Tags,
+    nhom: "PHÂN TÍCH",
+    danhSach: [
+      {
+        ten: "Báo cáo doanh thu",
+        duongdan: "/admin/doanhthu",
+        icon: BarChart3,
+      },
+      {
+        ten: "Thông báo",
+        duongdan: "/admin/thongbao",
+        icon: Bell,
+      },
+    ],
   },
   {
-    ten: "Sản phẩm",
-    duongdan: "/admin/sanpham",
-    icon: Package,
-  },
-  {
-    ten: "Đơn hàng",
-    duongdan: "/admin/donhang",
-    icon: ShoppingCart,
-  },
-  {
-    ten: "Khách hàng",
-    duongdan: "/admin/khachhang",
-    icon: Users,
-  },
-  {
-    ten: "Thông báo",
-    duongdan: "/admin/thongbao",
-    icon: Bell,
-  },
-  {
-    ten: "Doanh thu",
-    duongdan: "/admin/doanhthu",
-    icon: BarChart3,
-  },
-  {
-    ten: "Cài đặt",
-    duongdan: "/admin/caidat",
-    icon: Settings,
+    nhom: "",
+    danhSach: [
+      {
+        ten: "Cài đặt",
+        duongdan: "/admin/caidat",
+        icon: Settings,
+      },
+    ],
   },
 ];
 

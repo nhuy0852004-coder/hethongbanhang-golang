@@ -31,10 +31,22 @@ func (s *TongQuanService) LayTongQuan() (*TongQuanResponse, error) {
 		return nil, loi
 	}
 
+	trangThaiDon, loi := s.repository.LayTrangThaiDonHang()
+	if loi != nil {
+		return nil, loi
+	}
+
+	sanPhamBanChay, loi := s.repository.LaySanPhamBanChay()
+	if loi != nil {
+		return nil, loi
+	}
+
 	return &TongQuanResponse{
-		ThongKe:         thongKe,
-		DoanhThuBayNgay: doanhThuBayNgay,
-		DonHangMoiNhat: donHangMoiNhat,
-		SanPhamSapHet:  sanPhamSapHet,
+		ThongKe:          thongKe,
+		DoanhThuBayNgay:  doanhThuBayNgay,
+		DonHangMoiNhat:   donHangMoiNhat,
+		SanPhamSapHetDS:  sanPhamSapHet,
+		TrangThaiDon:     trangThaiDon,
+		SanPhamBanChayDS: sanPhamBanChay,
 	}, nil
 }
