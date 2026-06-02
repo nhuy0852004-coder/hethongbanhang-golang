@@ -1,6 +1,6 @@
 /* ==================================================
    WEBSITE LAYOUT - MU STORE STYLE
-   Bám sát thiết kế Figma
+   Bám sát thiết kế Figma 1:1
 ================================================== */
 
 .bo-cuc-website {
@@ -19,9 +19,65 @@
 }
 
 /* ==================================================
+   ANNOUNCEMENT BAR
+   Figma: 36px, bg #b79e59 (vàng đồng), text đen
+   Text giữa, links trắng bên phải
+================================================== */
+
+.mu-announcement-bar {
+  background: #b79e59;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px 0 60px;
+  font-size: 12px;
+  position: relative;
+}
+
+.mu-announcement-text {
+  color: #000000;
+  font-weight: 400;
+}
+
+.mu-announcement-text u {
+  font-weight: 600;
+}
+
+.mu-announcement-links {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.mu-announcement-links a {
+  color: #000000;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.mu-announcement-links a:first-child {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mu-announcement-links a:hover {
+  opacity: 0.7;
+}
+
+/* ==================================================
    HEADER
-   Nền trắng, logo trái, nav giữa, icons phải
-   Height: 36px (compact)
+   Figma: 36px, bg white, border #b2b2b8
+   px-60, logo left, nav center, icons right
+   Logo: "MANCHESTE" bold tracking 2px + "STORE" light tracking 4px, 16px
+   Nav: 13px medium, gap 28px
+   Icons: gap 17px
 ================================================== */
 
 .mu-header {
@@ -29,47 +85,57 @@
   top: 0;
   z-index: 80;
   background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #b2b2b8;
 }
 
 .mu-header-inner {
-  width: min(1360px, calc(100% - 80px));
-  margin: 0 auto;
-  height: 42px;
+  height: 36px;
   display: flex;
   align-items: center;
-  gap: 0;
+  justify-content: space-between;
+  padding: 0 60px;
 }
 
-/* Logo - left aligned */
+/* Logo */
 .mu-logo {
   display: flex;
   align-items: center;
+  gap: 12px;
   text-decoration: none;
-  color: #1a1a1a;
+  color: #000000;
   flex-shrink: 0;
-  margin-right: 24px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .mu-logo-bold {
-  font-size: 15px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: #1a1a1a;
+  color: #000000;
+}
+
+.mu-logo-light {
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #000000;
 }
 
 /* Navigation - center */
 .mu-nav {
   display: flex;
   align-items: center;
-  gap: 22px;
-  flex: 1;
-  justify-content: center;
+  gap: 28px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .mu-nav a {
-  color: #4b5563;
+  color: #000000;
   font-size: 13px;
   text-decoration: none;
   font-weight: 500;
@@ -79,47 +145,54 @@
 
 .mu-nav a:hover,
 .mu-nav a.active {
-  color: #1a1a1a;
+  color: #000000;
+  opacity: 0.7;
 }
 
-.mu-nav-new {
-  color: #c8102e !important;
-  font-weight: 700 !important;
+.mu-nav-highlight {
+  color: #d42626 !important;
+  font-weight: 500 !important;
 }
 
 /* Header Actions - right aligned */
 .mu-header-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 17px;
   flex-shrink: 0;
-  margin-left: 24px;
 }
 
 .mu-header-icon {
-  width: 32px;
-  height: 32px;
   border: none;
   background: none;
-  color: #1a1a1a;
+  color: #000000;
   display: grid;
   place-items: center;
   cursor: pointer;
   text-decoration: none;
   position: relative;
-  transition: color 0.15s;
-  border-radius: 0;
+  transition: opacity 0.15s;
   padding: 0;
+  line-height: 1;
+}
+
+.mu-heart-icon {
+  font-size: 18px;
+  color: #b2b2b8;
 }
 
 .mu-header-icon:hover {
-  color: #6b7280;
+  opacity: 0.6;
+}
+
+.mu-cart-link {
+  color: #000000;
 }
 
 .mu-cart-badge {
   position: absolute;
-  top: 2px;
-  right: 0;
+  top: -6px;
+  right: -8px;
   min-width: 15px;
   height: 15px;
   border-radius: 999px;
@@ -150,6 +223,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 40px;
+  padding: 0 60px;
 }
 
 .mu-footer h4 {
@@ -202,7 +276,7 @@
 /* Footer bottom */
 .mu-footer-bottom {
   background: #141414;
-  padding: 14px 0;
+  padding: 14px 60px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -258,26 +332,32 @@
 
 @media (max-width: 1080px) {
   .mu-header-inner {
-    gap: 0;
-    width: calc(100% - 40px);
+    padding: 0 30px;
   }
 
   .mu-nav {
-    gap: 14px;
+    gap: 18px;
+    position: static;
+    transform: none;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .mu-announcement-bar {
+    padding: 0 30px;
   }
 }
 
 @media (max-width: 860px) {
   .mu-header-inner {
     height: auto;
-    min-height: 42px;
-    padding: 8px 0;
+    min-height: 36px;
+    padding: 8px 20px;
     flex-wrap: wrap;
   }
 
   .mu-logo {
     flex: 1;
-    margin-right: 0;
   }
 
   .mu-nav {
@@ -287,6 +367,8 @@
     overflow-x: auto;
     gap: 16px;
     padding: 8px 0 2px;
+    position: static;
+    transform: none;
     justify-content: flex-start;
   }
 
@@ -300,10 +382,19 @@
 
   .mu-footer-grid {
     grid-template-columns: 1fr 1fr;
+    padding: 0 30px;
+  }
+
+  .mu-footer-bottom {
+    padding: 14px 30px;
   }
 
   .container-website {
     width: calc(100% - 40px);
+  }
+
+  .mu-announcement-bar {
+    padding: 0 20px;
   }
 }
 
@@ -313,7 +404,17 @@
   }
 
   .mu-header-inner {
-    width: calc(100% - 32px);
+    padding: 8px 16px;
+  }
+
+  .mu-announcement-bar {
+    gap: 8px;
+    padding: 0 16px;
+    font-size: 11px;
+  }
+
+  .mu-announcement-links {
+    display: none;
   }
 
   .mu-nav {
@@ -323,6 +424,11 @@
   .mu-footer-grid {
     grid-template-columns: 1fr;
     gap: 28px;
+    padding: 0 16px;
+  }
+
+  .mu-footer-bottom {
+    padding: 14px 16px;
   }
 
   .mu-footer-bottom-inner {

@@ -18,7 +18,8 @@ export default function DauTrangWebsite() {
     <header className="mu-header">
       <div className="mu-header-inner">
         <Link to="/" className="mu-logo">
-          <span className="mu-logo-bold">{tenCuaHang}</span>
+          <span className="mu-logo-bold">{tenCuaHang.split(" ")[0] || "MANCHESTE"}</span>
+          <span className="mu-logo-light">{tenCuaHang.split(" ").slice(1).join(" ") || "STORE"}</span>
         </Link>
 
         <nav className="mu-nav">
@@ -26,22 +27,19 @@ export default function DauTrangWebsite() {
           <NavLink to="/sanpham">Sản phẩm</NavLink>
           <NavLink to="/tra-cuu-don-hang">Tra cứu đơn hàng</NavLink>
           <NavLink to="/chinh-sach-van-chuyen">Vận chuyển</NavLink>
-          <NavLink to="/chinh-sach-doi-tra">Đổi trả</NavLink>
-          <NavLink to="/admin" className="mu-nav-new">Admin</NavLink>
+          <NavLink to="/admin" className="mu-nav-highlight">Admin</NavLink>
         </nav>
 
         <div className="mu-header-actions">
           <button className="mu-header-icon" title="Tìm kiếm">
-            <Search size={17} />
+            <Search size={18} />
           </button>
           <button className="mu-header-icon" title="Tin nhắn">
-            <MessageCircle size={17} />
+            <MessageCircle size={14} />
           </button>
-          <Link to="/giohang" className="mu-header-icon" title="Yêu thích">
-            <Heart size={17} />
-          </Link>
-          <Link to="/giohang" className="mu-header-icon mu-cart-icon" title="Giỏ hàng">
-            <ShoppingCart size={17} />
+          <span className="mu-header-icon mu-heart-icon">♡</span>
+          <Link to="/giohang" className="mu-header-icon mu-cart-link" title="Giỏ hàng">
+            <ShoppingCart size={14} />
             {tongSoLuong > 0 && <span className="mu-cart-badge">{tongSoLuong}</span>}
           </Link>
         </div>

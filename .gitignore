@@ -1,0 +1,21 @@
+# Environment
+backend/.env
+.env
+*.env
+
+# Go build output
+backend/*.exe
+backend/main
+
+# Frontend build
+frontend/dist/
+
+# Editor
+.cursor/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

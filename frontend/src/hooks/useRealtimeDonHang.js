@@ -37,15 +37,12 @@ export default function useRealtimeDonHang({
           return;
         }
 
-        console.log("WebSocket theo dõi đơn hàng đã kết nối:", madonhang);
         setDaKetNoi(true);
       };
 
       ws.onmessage = (event) => {
         try {
           const tinNhan = JSON.parse(event.data);
-
-          console.log("Realtime đơn hàng:", tinNhan);
 
           if (tinNhan.sukien === "cap_nhat_trang_thai_don_hang") {
             toast.success("Trạng thái đơn hàng đã được cập nhật");
