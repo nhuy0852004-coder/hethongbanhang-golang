@@ -126,11 +126,7 @@ func (r *TongQuanRepository) LayThongKe() (ThongKeTongQuan, error) {
 	return thongKe, nil
 }
 
-func (r *TongQuanRepository) LayDoanhThuBayNgay() ([]DoanhThuTheoNgay, error) {
-	homNay := time.Now()
-	ngayBatDau := homNay.AddDate(0, 0, -6).Format("2006-01-02")
-	ngayKetThuc := homNay.Format("2006-01-02")
-
+func (r *TongQuanRepository) LayDoanhThuTheoKhoang(ngayBatDau, ngayKetThuc string) ([]DoanhThuTheoNgay, error) {
 	rows, loi := r.db.Query(`
 		SELECT
 			DATE_FORMAT(created_at, '%Y-%m-%d') AS ngay,
@@ -167,16 +163,19 @@ func (r *TongQuanRepository) LayDoanhThuBayNgay() ([]DoanhThuTheoNgay, error) {
 		duLieuTheoNgay[item.Ngay] = item
 	}
 
+	batDau, _ := time.Parse("2006-01-02", ngayBatDau)
+	ketThuc, _ := time.Parse("2006-01-02", ngayKetThuc)
+
 	danhSach := []DoanhThuTheoNgay{}
 
-	for i := 6; i >= 0; i-- {
-		ngay := homNay.AddDate(0, 0, -i).Format("2006-01-02")
+	for ngay := batDau; !ngay.After(ketThuc); ngay = ngay.AddDate(0, 0, 1) {
+		key := ngay.Format("2006-01-02")
 
-		if item, tonTai := duLieuTheoNgay[ngay]; tonTai {
+		if item, tonTai := duLieuTheoNgay[key]; tonTai {
 			danhSach = append(danhSach, item)
 		} else {
 			danhSach = append(danhSach, DoanhThuTheoNgay{
-				Ngay:     ngay,
+				Ngay:     key,
 				DoanhThu: 0,
 				DonHang:  0,
 			})
@@ -194,7 +193,7 @@ func (r *TongQuanRepository) LayDonHangMoiNhat() ([]DonHangMoiNhat, error) {
 			hoten,
 			sodienthoai,
 			tongtien,
-			COALESCE(phuongthucthanhtoan, 'COD') AS thanhtoan,
+			'COD' AS thanhtoan,
 			trangthai,
 			DATE_FORMAT(created_at, '%d/%m/%Y') AS created_at
 		FROM donhang

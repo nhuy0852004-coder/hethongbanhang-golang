@@ -1,4 +1,4 @@
-import { Bell, LogOut, Menu, Search } from "lucide-react";
+import { Bell, ChevronDown, Menu, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -90,7 +90,7 @@ export default function DauTrangAdmin() {
 
       <div className="header-giua">
         <div className="o-tim-kiem-header">
-          <Search size={18} />
+          <Search size={13} className="icon-tim-kiem" />
           <input placeholder="Tìm kiếm sản phẩm, đơn hàng, khách hàng..." />
         </div>
       </div>
@@ -103,6 +103,7 @@ export default function DauTrangAdmin() {
               : "trang-thai-realtime mat-ket-noi"
           }
         >
+          <span className="dot-realtime" />
           {daKetNoi ? "Realtime" : "Mất kết nối"}
         </div>
 
@@ -111,7 +112,7 @@ export default function DauTrangAdmin() {
             className="nut-chuong"
             onClick={() => setMoThongBao((cu) => !cu)}
           >
-            <Bell size={19} />
+            <Bell size={14} />
             <span>{soChuaDoc > 99 ? "99+" : soChuaDoc}</span>
           </button>
 
@@ -165,13 +166,11 @@ export default function DauTrangAdmin() {
 
           <div className="thong-tin-admin">
             <strong>{taikhoan?.hoten || "Quản trị viên"}</strong>
-            <span>
-              {taikhoan?.vaitro === "quantri" ? "Quản trị" : "Nhân viên"}
-            </span>
+            <span>{taikhoan?.email || "admin@shop.vn"}</span>
           </div>
 
           <button className="nut-dang-xuat-admin" onClick={xuLyDangXuat}>
-            <LogOut size={17} />
+            <ChevronDown size={13} />
           </button>
         </div>
       </div>

@@ -19,7 +19,9 @@ func TaoTongQuanHandler(service *TongQuanService) *TongQuanHandler {
 }
 
 func (h *TongQuanHandler) LayTongQuan(c *gin.Context) {
-	duLieu, loi := h.service.LayTongQuan()
+	khoangNgay := c.DefaultQuery("khoangngay", "7ngay")
+
+	duLieu, loi := h.service.LayTongQuan(khoangNgay)
 	if loi != nil {
 		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
 		return

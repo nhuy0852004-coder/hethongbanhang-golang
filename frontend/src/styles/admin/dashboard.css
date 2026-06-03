@@ -5,7 +5,116 @@
 .dashboard-admin {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
+}
+
+/* ===== TIÊU ĐỀ TRANG + BỘ LỌC NGÀY ===== */
+
+.db-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.db-page-title h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 28.5px;
+}
+
+.db-page-title p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 400;
+  color: #94a3b8;
+  line-height: 18px;
+}
+
+.db-page-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.db-breadcrumb-separator {
+  color: #cbd5e1;
+}
+
+.db-breadcrumb-current {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.db-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.db-date-tabs {
+  display: flex;
+  border: 1px solid #e5eaf2;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 1px;
+  height: 28.5px;
+}
+
+.db-date-tab {
+  border: none;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  line-height: 16.5px;
+}
+
+.db-date-tab:hover {
+  background: #f8fafc;
+}
+
+.db-date-tab.active {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.db-refresh-btn {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e5eaf2;
+  background: #ffffff;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.db-refresh-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.db-refresh-btn.dang-quay svg {
+  animation: quay 0.8s linear infinite;
+}
+
+@keyframes quay {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* ===== 8 STAT CARDS - 2 hàng x 4 cột ===== */
@@ -13,17 +122,18 @@
 .db-stat-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  gap: 14px;
 }
 
 .db-stat-card {
   background: #ffffff;
-  border: 1px solid var(--mau-vien);
-  border-radius: 12px;
-  padding: 17px;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 20px;
   display: flex;
-  gap: 12px;
+  gap: 16px;
   align-items: flex-start;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
 .db-stat-icon {
@@ -41,13 +151,13 @@
 }
 
 .db-stat-icon.xanh-duong {
-  background: #eff6ff;
+  background: rgba(37, 99, 235, 0.1);
   color: #2563eb;
 }
 
 .db-stat-icon.cam {
-  background: #fff7ed;
-  color: #ea580c;
+  background: rgba(217, 119, 6, 0.1);
+  color: #d97706;
 }
 
 .db-stat-icon.tim {
@@ -72,33 +182,36 @@
 
 .db-stat-label {
   display: block;
-  color: var(--mau-phu);
-  font-size: 13px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 500;
   line-height: 16px;
 }
 
 .db-stat-value {
   display: block;
-  color: var(--mau-chu);
-  font-size: 20px;
-  line-height: 25px;
-  font-weight: 800;
-  margin-top: 0;
+  color: #0f172a;
+  font-size: 18px;
+  line-height: 22.5px;
+  font-weight: 700;
+  margin-top: 2px;
 }
 
 .db-stat-desc {
   display: block;
-  color: var(--mau-phu);
+  color: #cbd5e1;
   font-size: 12px;
-  line-height: 18px;
+  font-weight: 400;
+  line-height: 16px;
   margin-top: 2px;
 }
 
 .db-stat-extra {
   display: block;
   font-size: 12px;
-  line-height: 18px;
-  margin-top: 0;
+  font-weight: 600;
+  line-height: 16px;
+  margin-top: 2px;
 }
 
 .db-stat-extra.xanh-la {
@@ -115,16 +228,16 @@
   font-weight: 600;
   padding: 1px 6px;
   border-radius: 4px;
-  margin-top: 2px;
+  margin-top: 5px;
 }
 
 .db-stat-badge.cam {
-  background: #fff7ed;
-  color: #ea580c;
+  background: rgba(217, 119, 6, 0.09);
+  color: #d97706;
 }
 
 .db-stat-badge.do {
-  background: #fef2f2;
+  background: rgba(239, 68, 68, 0.09);
   color: #dc2626;
 }
 
@@ -146,9 +259,10 @@
 
 .db-box {
   background: #ffffff;
-  border: 1px solid var(--mau-vien);
-  border-radius: 12px;
-  padding: 15px;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
 .db-box h2 {
@@ -164,21 +278,97 @@
   margin: 0;
   color: var(--mau-phu);
   font-size: 12px;
-  line-height: 17px;
+  line-height: 18px;
 }
 
 .db-box-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 0;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.db-chart-header {
+  align-items: center;
+}
+
+.db-chart-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.db-chart-filter {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 120px;
+  height: 25px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  border: 1px solid #E5EAF2;
+  background: #FFF;
+  font-size: 12px;
+  color: #475569;
+}
+
+.db-chart-filter select {
+  width: 100%;
+  height: 100%;
+  padding: 0 22px 0 0;
+  margin: 0;
+  font-size: 12px;
+  line-height: 25px;
+  border: none !important;
+  background: transparent !important;
+  color: #0f172a;
+  outline: none !important;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-sizing: border-box;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+}
+
+.db-chart-filter select:focus,
+.db-chart-filter select:active,
+.db-chart-filter select:hover {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  background: transparent !important;
+}
+
+.db-chart-filter select::focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.db-chart-filter::after {
+  content: "▾";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 10px;
+  color: #64748b;
+}
+
+.db-chart-filter select option {
+  font-size: 12px;
 }
 
 .db-box-header-icon {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .mau-vang-icon {
@@ -190,7 +380,7 @@
 .db-chart-row {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: 10px;
+  gap: 14px;
 }
 
 .db-chart-box .db-box-header {
@@ -199,7 +389,7 @@
 
 .db-chart-legend {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
   white-space: nowrap;
 }
@@ -233,15 +423,15 @@
 .db-chart-summary {
   display: flex;
   align-items: flex-start;
-  gap: 0;
-  margin-top: 8px;
-  padding-top: 8px;
+  gap: 14px;
+  margin-top: 12px;
+  padding-top: 10px;
 }
 
 .db-summary-item {
   display: flex;
   flex-direction: column;
-  padding-right: 17px;
+  padding-right: 0;
 }
 
 .db-summary-item span {
@@ -273,16 +463,16 @@
 /* Bar chart */
 .db-barchart {
   display: flex;
-  gap: 0;
+  gap: 10px;
   height: 112px;
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .db-barchart-y {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 30px;
+  width: 36px;
   flex-shrink: 0;
 }
 
@@ -352,7 +542,7 @@
 .db-barchart-x {
   display: flex;
   justify-content: space-around;
-  padding: 6px 34px 0 34px;
+  padding: 8px 40px 0 40px;
 }
 
 .db-barchart-x span {
@@ -374,7 +564,7 @@
 .db-status-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .db-status-row {
@@ -405,7 +595,7 @@
 }
 
 .db-status-footer {
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 .db-status-stacked-bar {
@@ -433,15 +623,15 @@
 .db-three-col {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 14px;
 }
 
 /* Sản phẩm sắp hết */
 .db-product-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .db-product-item {
@@ -501,8 +691,8 @@
 .db-todo-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .db-todo-item {
@@ -549,8 +739,8 @@
 .db-bestseller-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 8px;
+  gap: 12px;
+  margin-top: 10px;
 }
 
 .db-bestseller-item {
@@ -630,7 +820,7 @@
 }
 
 .db-table-wrap {
-  margin-top: 10px;
+  margin-top: 14px;
   border: 1px solid #eef2f7;
   border-radius: 10px;
   overflow-x: auto;
@@ -658,7 +848,7 @@
 }
 
 .db-table tbody td {
-  padding: 12px 14px;
+  padding: 14px 16px;
   border-bottom: 1px solid #f1f5f9;
   color: #111827;
   font-size: 13px;
@@ -714,9 +904,9 @@
   border: 1px dashed #d1d5db;
   border-radius: 12px;
   background: #fafbfc;
-  padding: 48px 24px;
+  padding: 56px 24px;
   text-align: center;
-  margin-top: 10px;
+  margin-top: 16px;
 }
 
 .db-orders-empty-icon {

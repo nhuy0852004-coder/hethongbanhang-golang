@@ -93,7 +93,7 @@
     display: block;
     font-size: 11px;
     font-weight: 600;
-    color: #9ca3af;
+    color: #94a3b8;
     text-transform: uppercase;
     letter-spacing: 0.03em;
     padding: 4px 12px 2px;
@@ -101,43 +101,51 @@
 
   .sidebar-divider {
     height: 1px;
-    background: var(--mau-vien);
+    background: #f1f5f9;
     margin: 6px 4px 8px;
   }
 
   .sidebar-link {
     height: 38px;
-    border-radius: 10px;
-    padding: 0 15px;
-    color: var(--mau-chu-nhat);
+    border-radius: 8px;
+    padding: 0 12px 0 15px;
+    border-left: 3px solid transparent;
+    color: #64748b;
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 13.5px;
+    font-size: 13px;
+    font-weight: 500;
     transition: 0.15s ease;
-  }
-
-  .sidebar-link:hover {
-    background: #f3f4f6;
-    color: var(--mau-chu);
-  }
-
-  .sidebar-link.active {
-    background: var(--mau-xanh-nhat);
-    color: var(--mau-chinh-dam);
-    font-weight: 600;
   }
 
   .sidebar-link svg {
     flex: 0 0 auto;
+    opacity: 0.6;
+  }
+
+  .sidebar-link:hover {
+    background: #f8fafc;
+    color: #334155;
+  }
+
+  .sidebar-link.active {
+    background: #eff6ff;
+    border-left-color: #2563eb;
+    color: #2563eb;
+    font-weight: 600;
+  }
+
+  .sidebar-link.active svg {
+    opacity: 1;
   }
 
   /* ===== Sidebar footer ===== */
 
   .sidebar-footer {
-    padding: 11px 12px;
-    border-top: 1px solid var(--mau-vien);
+    padding: 11px 12px 10px;
+    border-top: 1px solid #f1f5f9;
   }
 
   .sidebar-user {
@@ -145,18 +153,20 @@
     align-items: center;
     gap: 10px;
     padding: 8px 10px;
-    margin-bottom: 6px;
+    margin-bottom: 0;
+    background: #f8fafc;
+    border-radius: 9px;
   }
 
   .sidebar-user-avatar {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
-    background: var(--mau-chinh);
+    border-radius: 16px;
+    background: #2563eb;
     color: #ffffff;
     display: grid;
     place-items: center;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     flex-shrink: 0;
   }
@@ -167,10 +177,10 @@
 
   .sidebar-user-info strong {
     display: block;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
-    color: var(--mau-chu);
-    line-height: 15px;
+    color: #0f172a;
+    line-height: 14.4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -178,10 +188,11 @@
 
   .sidebar-user-info span {
     display: block;
-    font-size: 11px;
-    color: var(--mau-phu);
+    font-size: 10px;
+    font-weight: 400;
+    color: #94a3b8;
     line-height: 12px;
-    margin-top: 2px;
+    margin-top: 0;
   }
 
   .nut-thu-gon-sidebar {
@@ -189,18 +200,20 @@
     height: 32px;
     border: none;
     background: transparent;
-    color: var(--mau-phu);
+    color: #94a3b8;
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 500;
     padding: 0 10px;
-    border-radius: 8px;
+    margin-top: 6px;
+    border-radius: 7px;
   }
 
   .nut-thu-gon-sidebar:hover {
-    background: #f3f4f6;
-    color: var(--mau-chu);
+    background: #f8fafc;
+    color: #64748b;
   }
   
   /* ================= Collapsed sidebar ================= */
@@ -258,10 +271,10 @@
   /* ================= Header ================= */
   
   .header-admin {
-    height: var(--cao-header);
-    background: var(--mau-the);
-    border-bottom: 1px solid var(--mau-vien);
-    padding: 0 24px;
+    height: 52px;
+    background: #ffffff;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 0 20px;
     display: grid;
     grid-template-columns: auto minmax(260px, 1fr) auto;
     align-items: center;
@@ -279,23 +292,23 @@
   }
   
   .tieu-de-header {
-    min-width: 0;
+    display: none;
   }
-  
+
   .tieu-de-header h1 {
     margin: 0;
     font-size: 19px;
     font-weight: 700;
-    color: var(--mau-chu);
+    color: #0f172a;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  
+
   .tieu-de-header p {
     margin: 4px 0 0;
     font-size: 13px;
-    color: var(--mau-phu);
+    color: #94a3b8;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -306,31 +319,45 @@
   }
   
   .o-tim-kiem-header {
-    max-width: 520px;
-    height: 42px;
-    border: 1px solid var(--mau-vien);
-    background: #f9fafb;
-    border-radius: 11px;
+    max-width: 300px;
+    height: 30px;
+    border: none;
+    background: #f8fafc;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 0 13px;
-    color: var(--mau-phu);
+    gap: 7px;
+    padding: 0 10px 0 30px;
+    color: rgba(71, 85, 105, 0.5);
+    position: relative;
   }
-  
+
   .o-tim-kiem-header:focus-within {
     background: #ffffff;
-    border-color: var(--mau-chinh);
+    box-shadow: 0 0 0 1px #2563eb;
   }
-  
+
   .o-tim-kiem-header input {
     border: 0;
     outline: 0;
     background: transparent;
     flex: 1;
     min-width: 0;
-    font-size: 14px;
-    color: var(--mau-chu);
+    font-size: 12px;
+    color: #0f172a;
+  }
+
+  .o-tim-kiem-header input::placeholder {
+    color: rgba(71, 85, 105, 0.5);
+  }
+
+  .icon-tim-kiem {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
   }
   
   .header-phai {
@@ -354,115 +381,124 @@
   }
   
   .nut-chuong {
-    width: 42px;
-    height: 42px;
-    border: 1px solid var(--mau-vien);
-    background: #ffffff;
-    border-radius: 11px;
-    color: var(--mau-chu-nhat);
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #f8fafc;
+    border-radius: 10px;
+    color: #475569;
     display: grid;
     place-items: center;
     position: relative;
   }
-  
+
   .nut-chuong:hover {
-    background: #f9fafb;
+    background: #f1f5f9;
   }
-  
+
   .nut-chuong span {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    min-width: 19px;
-    height: 19px;
-    border-radius: 999px;
+    top: -2px;
+    right: -2px;
+    min-width: 14px;
+    height: 14px;
+    border-radius: 7px;
     background: #ef4444;
     color: #ffffff;
-    border: 2px solid #ffffff;
+    border: none;
     display: grid;
     place-items: center;
-    font-size: 11px;
+    font-size: 8px;
     font-weight: 700;
   }
   
   /* ================= Account ================= */
   
   .tai-khoan-admin {
-    height: 44px;
-    border: 1px solid var(--mau-vien);
+    height: 40px;
+    border: 1px solid #e5eaf2;
     background: #ffffff;
-    border-radius: 13px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 0 7px;
+    gap: 8px;
+    padding: 0 11px 0 7px;
   }
-  
+
   .avatar-admin {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    background: var(--mau-xanh-nhat);
-    color: var(--mau-chinh-dam);
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    background: #2563eb;
+    color: #ffffff;
     display: grid;
     place-items: center;
+    font-size: 12px;
     font-weight: 700;
   }
-  
+
   .thong-tin-admin strong {
     display: block;
-    font-size: 13px;
-    line-height: 1.1;
-    color: var(--mau-chu);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14.4px;
+    color: #0f172a;
   }
-  
+
   .thong-tin-admin span {
     display: block;
-    font-size: 12px;
-    color: var(--mau-phu);
-    margin-top: 3px;
+    font-size: 10px;
+    font-weight: 500;
+    color: #94a3b8;
+    line-height: 12px;
+    margin-top: 0;
   }
-  
+
   .nut-dang-xuat-admin {
-    width: 31px;
-    height: 31px;
+    width: 13px;
+    height: 13px;
     border: 0;
-    border-radius: 9px;
-    background: #f3f4f6;
-    color: var(--mau-chu-nhat);
+    border-radius: 0;
+    background: transparent;
+    color: #94a3b8;
     display: grid;
     place-items: center;
   }
-  
+
   .nut-dang-xuat-admin:hover {
-    background: #fee2e2;
-    color: var(--mau-nguy-hiem);
+    color: #64748b;
   }
   
   /* ================= Realtime status ================= */
   
   .trang-thai-realtime {
-    height: 30px;
+    height: auto;
     border-radius: 999px;
-    padding: 0 11px;
+    padding: 4px 10px;
     display: inline-flex;
     align-items: center;
-    font-size: 12px;
-    font-weight: 800;
-    border: 1px solid transparent;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    border: none;
     white-space: nowrap;
   }
-  
+
   .trang-thai-realtime.ket-noi {
     background: #ecfdf5;
-    color: #166534;
-    border-color: #bbf7d0;
+    color: #16a34a;
   }
-  
+
   .trang-thai-realtime.mat-ket-noi {
     background: #fef2f2;
     color: #991b1b;
-    border-color: #fecaca;
+  }
+
+  .trang-thai-realtime .dot-realtime {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background: currentColor;
   }
   
   /* ================= Mobile overlay ================= */

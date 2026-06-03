@@ -1,5 +1,7 @@
 package tongquan
 
+import "time"
+
 type TongQuanService struct {
 	repository *TongQuanRepository
 }
@@ -10,13 +12,35 @@ func TaoTongQuanService(repository *TongQuanRepository) *TongQuanService {
 	}
 }
 
-func (s *TongQuanService) LayTongQuan() (*TongQuanResponse, error) {
+func tinhKhoangNgay(khoangNgay string) (time.Time, time.Time) {
+	homNay := time.Now()
+	ketThuc := homNay
+
+	switch khoangNgay {
+	case "homnay":
+		return time.Date(homNay.Year(), homNay.Month(), homNay.Day(), 0, 0, 0, 0, homNay.Location()), ketThuc
+	case "7ngay":
+		return homNay.AddDate(0, 0, -6), ketThuc
+	case "30ngay":
+		return homNay.AddDate(0, 0, -29), ketThuc
+	case "thangnay":
+		return time.Date(homNay.Year(), homNay.Month(), 1, 0, 0, 0, 0, homNay.Location()), ketThuc
+	default:
+		return homNay.AddDate(0, 0, -6), ketThuc
+	}
+}
+
+func (s *TongQuanService) LayTongQuan(khoangNgay string) (*TongQuanResponse, error) {
+	batDau, ketThuc := tinhKhoangNgay(khoangNgay)
+	ngayBatDau := batDau.Format("2006-01-02")
+	ngayKetThuc := ketThuc.Format("2006-01-02")
+
 	thongKe, loi := s.repository.LayThongKe()
 	if loi != nil {
 		return nil, loi
 	}
 
-	doanhThuBayNgay, loi := s.repository.LayDoanhThuBayNgay()
+	doanhThuTheoNgay, loi := s.repository.LayDoanhThuTheoKhoang(ngayBatDau, ngayKetThuc)
 	if loi != nil {
 		return nil, loi
 	}
@@ -43,7 +67,7 @@ func (s *TongQuanService) LayTongQuan() (*TongQuanResponse, error) {
 
 	return &TongQuanResponse{
 		ThongKe:          thongKe,
-		DoanhThuBayNgay:  doanhThuBayNgay,
+		DoanhThuBayNgay:  doanhThuTheoNgay,
 		DonHangMoiNhat:   donHangMoiNhat,
 		SanPhamSapHetDS:  sanPhamSapHet,
 		TrangThaiDon:     trangThaiDon,

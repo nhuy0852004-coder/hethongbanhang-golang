@@ -6,13 +6,15 @@ import {
   Clock,
   Eye,
   Package,
+  RefreshCw,
   ShoppingCart,
   TrendingUp,
   Users,
   XCircle,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import clsx from "clsx";
 import DangTai from "../../components/DangTai";
 import TrangRong from "../../components/TrangRong";
 import TheTrangThai from "../../components/ui/TheTrangThai";
@@ -20,30 +22,46 @@ import { layTongQuan } from "../../api/tongquanApi";
 import { formatTienVietNam } from "../../utils/dinhtien";
 import useGiaoDienStore from "../../stores/giaodienStore";
 
+const DS_KHOANG_NGAY = [
+  { key: "homnay", ten: "Hôm nay" },
+  { key: "7ngay", ten: "7 ngày" },
+  { key: "30ngay", ten: "30 ngày" },
+  { key: "thangnay", ten: "Tháng này" },
+];
+
 export default function DashboardAdmin() {
   const capNhatTieuDeTrang = useGiaoDienStore(
     (state) => state.capNhatTieuDeTrang
   );
 
   const [dangTai, setDangTai] = useState(true);
+  const [dangRefresh, setDangRefresh] = useState(false);
   const [duLieu, setDuLieu] = useState(null);
+  const [khoangNgay, setKhoangNgay] = useState("7ngay");
+  const [khoangNgayChart, setKhoangNgayChart] = useState("7ngay");
+  const [duLieuChart, setDuLieuChart] = useState(null);
+  const [dangTaiChart, setDangTaiChart] = useState(false);
 
   useEffect(() => {
-    capNhatTieuDeTrang(
-      "Tổng quan",
-      "Theo dõi doanh thu, đơn hàng và các cảnh báo quan trọng trong hệ thống."
-    );
+    capNhatTieuDeTrang("", "");
   }, [capNhatTieuDeTrang]);
 
   useEffect(() => {
-    taiDuLieu();
-  }, []);
+    taiDuLieu(khoangNgay);
+  }, [khoangNgay]);
 
-  const taiDuLieu = async () => {
+  useEffect(() => {
+    taiDuLieuChart(khoangNgayChart);
+  }, [khoangNgayChart]);
+
+  const taiDuLieu = async (khoang) => {
     try {
       setDangTai(true);
-      const ketQua = await layTongQuan();
+      const ketQua = await layTongQuan(khoang);
       setDuLieu(ketQua.dulieu);
+      if (khoang === khoangNgayChart) {
+        setDuLieuChart(ketQua.dulieu);
+      }
     } catch (loi) {
       const thongBao =
         loi?.response?.data?.thongbao || "Không tải được dữ liệu tổng quan";
@@ -53,35 +71,77 @@ export default function DashboardAdmin() {
     }
   };
 
+  const xuLyRefresh = useCallback(async () => {
+    setDangRefresh(true);
+    try {
+      const ketQua = await layTongQuan(khoangNgay);
+      setDuLieu(ketQua.dulieu);
+      toast.success("Đã cập nhật dữ liệu");
+      if (khoangNgay === khoangNgayChart) {
+        setDuLieuChart(ketQua.dulieu);
+      }
+    } catch {
+      toast.error("Không thể cập nhật dữ liệu");
+    } finally {
+      setDangRefresh(false);
+    }
+  }, [khoangNgay, khoangNgayChart]);
+
+  const taiDuLieuChart = async (khoang) => {
+    try {
+      setDangTaiChart(true);
+      const ketQua = await layTongQuan(khoang);
+      setDuLieuChart(ketQua.dulieu);
+    } catch {
+      toast.error("Không tải được dữ liệu biểu đồ");
+    } finally {
+      setDangTaiChart(false);
+    }
+  };
+
+  const doiKhoangNgay = (key) => {
+    if (key !== khoangNgay) {
+      setKhoangNgay(key);
+    }
+  };
+
+  const doiKhoangNgayChart = (key) => {
+    if (key !== khoangNgayChart) {
+      setKhoangNgayChart(key);
+    }
+  };
+
+  const doanhThuChart = duLieuChart?.doanhthubayngay || duLieu?.doanhthubayngay || [];
+
   const doanhThuLonNhat = useMemo(() => {
-    if (!duLieu?.doanhthubayngay?.length) return 0;
+    if (!doanhThuChart?.length) return 0;
     return Math.max(
-      ...duLieu.doanhthubayngay.map((item) => item.doanhthu || 0)
+      ...doanhThuChart.map((item) => item.doanhthu || 0)
     );
-  }, [duLieu]);
+  }, [doanhThuChart]);
 
   const tongDoanhThu7Ngay = useMemo(() => {
-    if (!duLieu?.doanhthubayngay?.length) return 0;
-    return duLieu.doanhthubayngay.reduce(
+    if (!doanhThuChart?.length) return 0;
+    return doanhThuChart.reduce(
       (sum, item) => sum + (item.doanhthu || 0),
       0
     );
-  }, [duLieu]);
+  }, [doanhThuChart]);
 
   const tongDon7Ngay = useMemo(() => {
-    if (!duLieu?.doanhthubayngay?.length) return 0;
-    return duLieu.doanhthubayngay.reduce(
+    if (!doanhThuChart?.length) return 0;
+    return doanhThuChart.reduce(
       (sum, item) => sum + (item.donhang || 0),
       0
     );
-  }, [duLieu]);
+  }, [doanhThuChart]);
 
   const donHangLonNhat = useMemo(() => {
-    if (!duLieu?.doanhthubayngay?.length) return 0;
+    if (!doanhThuChart?.length) return 0;
     return Math.max(
-      ...duLieu.doanhthubayngay.map((item) => item.donhang || 0)
+      ...doanhThuChart.map((item) => item.donhang || 0)
     );
-  }, [duLieu]);
+  }, [doanhThuChart]);
 
   if (dangTai) {
     return <DangTai noidung="Đang tải dữ liệu tổng quan..." />;
@@ -112,6 +172,40 @@ export default function DashboardAdmin() {
 
   return (
     <div className="dashboard-admin">
+      {/* ===== TIÊU ĐỀ + BỘ LỌC NGÀY ===== */}
+      <div className="db-page-header">
+        <div className="db-page-title">
+          <div className="db-page-breadcrumb">
+            <span>Trang chủ</span>
+            <span className="db-breadcrumb-separator">/</span>
+            <span className="db-breadcrumb-current">Tổng quan</span>
+          </div>
+          <h1>Tổng quan</h1>
+          <p>Theo dõi doanh thu, đơn hàng và các cảnh báo quan trọng trong hệ thống.</p>
+        </div>
+        <div className="db-page-actions">
+          <div className="db-date-tabs">
+            {DS_KHOANG_NGAY.map((item) => (
+              <button
+                key={item.key}
+                className={clsx("db-date-tab", khoangNgay === item.key && "active")}
+                onClick={() => doiKhoangNgay(item.key)}
+              >
+                {item.ten}
+              </button>
+            ))}
+          </div>
+          <button
+            className={clsx("db-refresh-btn", dangRefresh && "dang-quay")}
+            onClick={xuLyRefresh}
+            disabled={dangRefresh}
+            title="Làm mới dữ liệu"
+          >
+            <RefreshCw size={12} />
+          </button>
+        </div>
+      </div>
+
       {/* ===== 8 STAT CARDS - 2 hàng x 4 cột ===== */}
       <div className="db-stat-grid">
         <StatCard
@@ -184,20 +278,32 @@ export default function DashboardAdmin() {
       {/* ===== BIỂU ĐỒ DOANH THU + TRẠNG THÁI ĐƠN HÀNG ===== */}
       <div className="db-chart-row">
         <div className="db-box db-chart-box">
-          <div className="db-box-header">
+          <div className="db-box-header db-chart-header">
             <div>
-              <h2>Doanh thu 7 ngày</h2>
+              <h2>Doanh thu {khoangNgayChart === "30ngay" ? "30 ngày" : "7 ngày"}</h2>
               <p>Thống kê doanh thu từ các đơn hàng không bị hủy</p>
             </div>
-            <div className="db-chart-legend">
-              <span className="db-legend-item">
-                <span className="db-legend-dot xanh-duong" />
-                Doanh thu
-              </span>
-              <span className="db-legend-item">
-                <span className="db-legend-line" />
-                Đơn hàng
-              </span>
+            <div className="db-chart-header-tools">
+              <div className="db-chart-legend">
+                <span className="db-legend-item">
+                  <span className="db-legend-dot xanh-duong" />
+                  Doanh thu
+                </span>
+                <span className="db-legend-item">
+                  <span className="db-legend-line" />
+                  Đơn hàng
+                </span>
+              </div>
+              <div className="db-chart-filter">
+                <select
+                  id="chart-range"
+                  value={khoangNgayChart}
+                  onChange={(e) => doiKhoangNgayChart(e.target.value)}
+                >
+                  <option value="7ngay">7 ngày</option>
+                  <option value="30ngay">30 ngày</option>
+                </select>
+              </div>
             </div>
           </div>
 
