@@ -1,7 +1,12 @@
 # Environment
 backend/.env
+frontend/.env
 .env
 *.env
+
+# Go cache
+backend/.gocache/
+backend/.gomodcache/
 
 # Go build output
 backend/*.exe
@@ -9,6 +14,7 @@ backend/main
 
 # Frontend build
 frontend/dist/
+frontend/node_modules/
 
 # Editor
 .cursor/

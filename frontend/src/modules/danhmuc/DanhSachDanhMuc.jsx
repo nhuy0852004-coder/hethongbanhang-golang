@@ -19,6 +19,7 @@ export default function DanhSachDanhMuc() {
   const [dangTai, setDangTai] = useState(false);
   const [dangXuLy, setDangXuLy] = useState(false);
   const [dangDoiTrangThaiId, setDangDoiTrangThaiId] = useState(null);
+  const [loiTaiDuLieu, setLoiTaiDuLieu] = useState(null);
 
   const [danhSach, setDanhSach] = useState([]);
   const [phanTrang, setPhanTrang] = useState({
@@ -57,10 +58,13 @@ export default function DanhSachDanhMuc() {
 
       setDanhSach(ketQua.dulieu.danhsach || []);
       setPhanTrang(ketQua.dulieu.phantrang);
+      setLoiTaiDuLieu(null);
     } catch (loi) {
       const thongBao =
         loi?.response?.data?.thongbao || "Không tải được danh sách danh mục";
 
+      setLoiTaiDuLieu(thongBao);
+      console.error("[DanhMuc] Lỗi tải danh sách:", loi);
       toast.error(thongBao);
     } finally {
       if (tuyChon.hienLoading) {
@@ -133,6 +137,7 @@ export default function DanhSachDanhMuc() {
       const thongBao =
         loi?.response?.data?.thongbao || "Không lưu được danh mục";
 
+      console.error("[DanhMuc] Lỗi lưu danh mục:", loi);
       toast.error(thongBao);
     } finally {
       setDangXuLy(false);
@@ -206,6 +211,7 @@ export default function DanhSachDanhMuc() {
       const thongBao =
         loi?.response?.data?.thongbao || "Không cập nhật được trạng thái";
 
+      console.error("[DanhMuc] Lỗi đổi trạng thái:", loi);
       toast.error(thongBao);
     } finally {
       setDangDoiTrangThaiId(null);
@@ -240,6 +246,7 @@ export default function DanhSachDanhMuc() {
       const thongBao =
         loi?.response?.data?.thongbao || "Không xóa được danh mục";
 
+      console.error("[DanhMuc] Lỗi xóa danh mục:", loi);
       toast.error(thongBao);
     } finally {
       setDangXuLy(false);
@@ -278,6 +285,7 @@ export default function DanhSachDanhMuc() {
       const thongBao =
         loi?.response?.data?.thongbao || "Không cập nhật được danh mục đã chọn";
 
+      console.error("[DanhMuc] Lỗi bulk đổi trạng thái:", loi);
       toast.error(thongBao);
     } finally {
       setDangXuLy(false);
@@ -311,6 +319,7 @@ export default function DanhSachDanhMuc() {
       const thongBao =
         loi?.response?.data?.thongbao || "Không xóa được danh mục đã chọn";
 
+      console.error("[DanhMuc] Lỗi bulk xóa:", loi);
       toast.error(thongBao);
     } finally {
       setDangXuLy(false);
@@ -452,6 +461,13 @@ export default function DanhSachDanhMuc() {
         </div>
       )}
 
+      {loiTaiDuLieu && (
+        <div className="thong-bao-loi-bang">
+          <span>Lỗi: {loiTaiDuLieu}</span>
+          <button type="button" onClick={lamMoiDuLieu}>Thử lại</button>
+        </div>
+      )}
+
       {dangTai ? (
         <BangDangTai soCot={9} soDong={6} />
       ) : danhSach.length === 0 ? (
@@ -471,22 +487,22 @@ export default function DanhSachDanhMuc() {
                     onChange={batTatChonTatCa}
                   />
                 </th>
-
-                <th style={{ width: 80 }}>ID</th>
-                <th>Tên danh mục</th>
-                <th style={{ width: 180 }}>Đường dẫn</th>
-                <th style={{ width: 170 }}>Danh mục cha</th>
-                <th style={{ width: 130 }}>Sản phẩm</th>
-                <th className="trang-thai-col" style={{ width: 120 }}>
+                <th style={{ width: 70 }}>STT</th>
+                <th style={{ width: 160 }}>Tên danh mục</th>
+                <th>Mô tả</th>
+                <th style={{ width: 140 }}>Danh mục cha</th>
+                <th style={{ width: 110 }}>Số sản phẩm</th>
+                <th style={{ width: 80 }}>Thứ tự</th>
+                <th className="trang-thai-col" style={{ width: 110 }}>
                   Trạng thái
                 </th>
-                <th style={{ width: 90 }}>Thứ tự</th>
+                <th style={{ width: 120 }}>Ngày tạo</th>
                 <th style={{ width: 100 }}>Thao tác</th>
               </tr>
             </thead>
 
             <tbody>
-              {danhSach.map((item) => (
+              {danhSach.map((item, index) => (
                 <tr key={item.id}>
                   <td>
                     <input
@@ -496,49 +512,27 @@ export default function DanhSachDanhMuc() {
                       onChange={() => batTatChonMotDong(item.id)}
                     />
                   </td>
-
                   <td>
-                    <strong>#{item.id}</strong>
+                    {(phanTrang.trang - 1) * phanTrang.gioihan + index + 1}
                   </td>
 
                   <td>
-                    <div className="o-ten-danh-muc">
-                      <strong>{item.tendanhmuc}</strong>
+                    <strong>{item.tendanhmuc}</strong>
+                  </td>
 
-                      <div className="meta-danh-muc">
-                        {item.daxoa ? (
-                          <span className="chu-xoa-mem da-xoa">Đã xóa mềm</span>
-                        ) : (
-                          <span className="chu-xoa-mem dang-dung">Đang dùng</span>
-                        )}
-
-                        {item.created_at && (
-                          <span>
-                            Tạo: {" "}
-                            {new Date(item.created_at).toLocaleDateString("vi-VN")}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                  <td className="mo-ta-col">
+                    {item.mota || <span className="chu-phu">—</span>}
                   </td>
 
                   <td>
-                    <code className="duong-dan-chip">/{item.duongdan}</code>
+                    {item.tendanhmuccha || <span className="chu-phu">—</span>}
                   </td>
 
                   <td>
-                    {item.tendanhmuccha ? (
-                      item.tendanhmuccha
-                    ) : (
-                      <span className="chu-phu">Danh mục gốc</span>
-                    )}
+                    <span className="so-lieu-text">{item.sosanpham}</span>
                   </td>
 
-                  <td>
-                    <span className="so-lieu-text">
-                      {item.sosanpham} sản phẩm
-                    </span>
-                  </td>
+                  <td>{item.thutu}</td>
 
                   <td className="trang-thai-col">
                     <button
@@ -554,7 +548,11 @@ export default function DanhSachDanhMuc() {
                     </button>
                   </td>
 
-                  <td>{item.thutu}</td>
+                  <td>
+                    {item.created_at
+                      ? new Date(item.created_at).toLocaleDateString("vi-VN")
+                      : "—"}
+                  </td>
 
                   <td>
                     <div className="nhom-thao-tac-icon">

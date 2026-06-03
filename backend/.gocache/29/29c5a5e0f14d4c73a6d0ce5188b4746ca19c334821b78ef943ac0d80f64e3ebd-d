@@ -1,6 +1,0 @@
-./danhmuc_handler.go
-./danhmuc_model.go
-./danhmuc_repository.go
-./danhmuc_request.go
-./danhmuc_response.go
-./danhmuc_service.go

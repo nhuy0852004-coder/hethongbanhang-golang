@@ -1,6 +1,0 @@
-./sanpham_handler.go
-./sanpham_model.go
-./sanpham_repository.go
-./sanpham_request.go
-./sanpham_response.go
-./sanpham_service.go
