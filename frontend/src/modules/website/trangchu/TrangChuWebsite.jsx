@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ArrowRight,
   ChevronLeft,
   ChevronRight,
   ImageOff,
   Package,
   Share2,
-  ShoppingCart,
   Truck,
 } from "lucide-react";
 import { Link } from "react-router-dom";

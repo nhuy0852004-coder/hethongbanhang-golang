@@ -11,7 +11,6 @@ import {
 import toast from "react-hot-toast";
 import DangTai from "../../components/DangTai";
 import TrangRong from "../../components/TrangRong";
-import NutBam from "../../components/ui/NutBam";
 import useGiaoDienStore from "../../stores/giaodienStore";
 import { formatTienVietNam } from "../../utils/dinhtien";
 import { layDanhSachDanhMuc } from "../../api/danhmucApi";
@@ -71,33 +70,6 @@ export default function DanhSachSanPham() {
       "Quản lý sản phẩm, giá bán, tồn kho, ảnh và trạng thái hiển thị"
     );
   }, [capNhatTieuDeTrang]);
-  useEffect(() => { taiDanhMuc(); }, []);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      taiDanhSach(
-        {
-          ...boLoc,
-          trang: 1,
-        },
-        { hienLoading: true }
-      );
-    }, 350);
-
-    return () => clearTimeout(timer);
-  }, [
-    boLoc.timkiem,
-    boLoc.trangthai,
-    boLoc.danhmuc_id,
-    boLoc.tonkho,
-    boLoc.sanpham,
-    boLoc.giatu,
-    boLoc.giaden,
-    boLoc.sapxep,
-  ]);
-
-  useEffect(() => {
-    taiDanhSach(boLoc, { hienLoading: true });
-  }, [boLoc.trang]);
 
   const taiDanhMuc = async () => {
     try {
@@ -135,6 +107,30 @@ export default function DanhSachSanPham() {
       }
     }
   };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { taiDanhMuc(); }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      taiDanhSach({ ...boLoc, trang: 1 }, { hienLoading: true });
+    }, 350);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    boLoc.timkiem,
+    boLoc.trangthai,
+    boLoc.danhmuc_id,
+    boLoc.tonkho,
+    boLoc.sanpham,
+    boLoc.giatu,
+    boLoc.giaden,
+    boLoc.sapxep,
+  ]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { taiDanhSach(boLoc, { hienLoading: true }); }, [boLoc.trang]);
 
   const capNhatBoLoc = (event) => {
     const { name, value } = event.target;

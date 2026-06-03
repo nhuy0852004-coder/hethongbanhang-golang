@@ -1,6 +1,5 @@
 import {
   AlertTriangle,
-  ArrowUpRight,
   Boxes,
   CheckCircle2,
   Clock,
@@ -46,22 +45,11 @@ export default function DashboardAdmin() {
     capNhatTieuDeTrang("", "");
   }, [capNhatTieuDeTrang]);
 
-  useEffect(() => {
-    taiDuLieu(khoangNgay);
-  }, [khoangNgay]);
-
-  useEffect(() => {
-    taiDuLieuChart(khoangNgayChart);
-  }, [khoangNgayChart]);
-
-  const taiDuLieu = async (khoang) => {
+  const taiDuLieu = useCallback(async (khoang) => {
     try {
       setDangTai(true);
       const ketQua = await layTongQuan(khoang);
       setDuLieu(ketQua.dulieu);
-      if (khoang === khoangNgayChart) {
-        setDuLieuChart(ketQua.dulieu);
-      }
     } catch (loi) {
       const thongBao =
         loi?.response?.data?.thongbao || "Không tải được dữ liệu tổng quan";
@@ -69,7 +57,27 @@ export default function DashboardAdmin() {
     } finally {
       setDangTai(false);
     }
-  };
+  }, []);
+
+  const taiDuLieuChart = useCallback(async (khoang) => {
+    try {
+      setDangTaiChart(true);
+      const ketQua = await layTongQuan(khoang);
+      setDuLieuChart(ketQua.dulieu);
+    } catch {
+      toast.error("Không tải được dữ liệu biểu đồ");
+    } finally {
+      setDangTaiChart(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    queueMicrotask(() => taiDuLieu(khoangNgay));
+  }, [khoangNgay, taiDuLieu]);
+
+  useEffect(() => {
+    queueMicrotask(() => taiDuLieuChart(khoangNgayChart));
+  }, [khoangNgayChart, taiDuLieuChart]);
 
   const xuLyRefresh = useCallback(async () => {
     setDangRefresh(true);
@@ -87,18 +95,6 @@ export default function DashboardAdmin() {
     }
   }, [khoangNgay, khoangNgayChart]);
 
-  const taiDuLieuChart = async (khoang) => {
-    try {
-      setDangTaiChart(true);
-      const ketQua = await layTongQuan(khoang);
-      setDuLieuChart(ketQua.dulieu);
-    } catch {
-      toast.error("Không tải được dữ liệu biểu đồ");
-    } finally {
-      setDangTaiChart(false);
-    }
-  };
-
   const doiKhoangNgay = (key) => {
     if (key !== khoangNgay) {
       setKhoangNgay(key);
@@ -111,7 +107,10 @@ export default function DashboardAdmin() {
     }
   };
 
-  const doanhThuChart = duLieuChart?.doanhthubayngay || duLieu?.doanhthubayngay || [];
+  const doanhThuChart = useMemo(
+    () => duLieuChart?.doanhthubayngay || duLieu?.doanhthubayngay || [],
+    [duLieu, duLieuChart]
+  );
 
   const doanhThuLonNhat = useMemo(() => {
     if (!doanhThuChart?.length) return 0;
@@ -161,10 +160,10 @@ export default function DashboardAdmin() {
   const sanPhamBanChay = duLieu.sanphambanchay || [];
   const sanPhamSapHet = duLieu.sanphamsaphethang || [];
   const donHangMoi = duLieu.donhangmoinhat || [];
-  const doanhThu7Ngay = duLieu.doanhthubayngay || [];
-
   const tyLeHoanThanh = Math.round(thongKe.tylehoanthanh || 0);
-  const tbNgay = doanhThu7Ngay.length > 0 ? Math.round(tongDoanhThu7Ngay / 7) : 0;
+  const tbNgay = doanhThuChart.length > 0
+    ? Math.round(tongDoanhThu7Ngay / doanhThuChart.length)
+    : 0;
 
   const maxDoanhThuBanChay = sanPhamBanChay.length > 0
     ? Math.max(...sanPhamBanChay.map((sp) => sp.doanhthu || 0))
@@ -299,6 +298,7 @@ export default function DashboardAdmin() {
                   id="chart-range"
                   value={khoangNgayChart}
                   onChange={(e) => doiKhoangNgayChart(e.target.value)}
+                  disabled={dangTaiChart}
                 >
                   <option value="7ngay">7 ngày</option>
                   <option value="30ngay">30 ngày</option>
@@ -345,7 +345,7 @@ export default function DashboardAdmin() {
                 ))}
               </div>
               <div className="db-barchart-bars">
-                {doanhThu7Ngay.map((item) => {
+                {doanhThuChart.map((item) => {
                   const chieuCao =
                     doanhThuLonNhat > 0
                       ? Math.max(4, Math.round((item.doanhthu / doanhThuLonNhat) * 112))
@@ -371,7 +371,7 @@ export default function DashboardAdmin() {
             </div>
           </div>
           <div className="db-barchart-x">
-            {doanhThu7Ngay.map((item) => (
+            {doanhThuChart.map((item) => (
               <span key={item.ngay}>
                 {new Date(item.ngay).toLocaleDateString("vi-VN", {
                   day: "2-digit",
@@ -611,6 +611,12 @@ function StatusBar({ label, value, total, color }) {
       <div className="db-status-label">
         <span className="db-status-dot" style={{ background: color }} />
         <span>{label}</span>
+      </div>
+      <div className="db-status-progress" aria-hidden="true">
+        <div
+          className="db-status-progress-fill"
+          style={{ width: `${width}%`, background: color }}
+        />
       </div>
       <span className="db-status-value">{value}</span>
     </div>

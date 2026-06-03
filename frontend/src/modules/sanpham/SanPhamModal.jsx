@@ -16,7 +16,7 @@ const formMacDinh = {
   motachitiet: "",
   mota: "",
   thuonghieu: "",
-  donvitinh: "cÃ¡i",
+  donvitinh: "cái",
   gianhap: "",
   giaban: "",
   giakhuyenmai: "",
@@ -63,7 +63,7 @@ export default function SanPhamModal({
         motachitiet: duLieuSua.motachitiet || "",
         mota: duLieuSua.mota || "",
         thuonghieu: duLieuSua.thuonghieu || "",
-        donvitinh: duLieuSua.donvitinh || "cÃ¡i",
+        donvitinh: duLieuSua.donvitinh || "cái",
         gianhap: duLieuSua.gianhap ? formatTienNhap(duLieuSua.gianhap) : "",
         giaban: duLieuSua.giaban ? formatTienNhap(duLieuSua.giaban) : "",
         giakhuyenmai: duLieuSua.giakhuyenmai
@@ -126,35 +126,35 @@ export default function SanPhamModal({
     const loi = {};
 
     if (!form.tensanpham.trim()) {
-      loi.tensanpham = "Vui lÃ²ng nháº­p tÃªn sáº£n pháº©m";
+      loi.tensanpham = "Vui lòng nhập tên sản phẩm";
     }
 
     if (!form.donvitinh.trim()) {
-      loi.donvitinh = "Vui lÃ²ng nháº­p Ä‘Æ¡n vá»‹ tÃ­nh";
+      loi.donvitinh = "Vui lòng nhập đơn vị tính";
     }
 
     if (!giaBanSo || giaBanSo <= 0) {
-      loi.giaban = "GiÃ¡ bÃ¡n pháº£i lá»›n hÆ¡n 0";
+      loi.giaban = "Giá bán phải lớn hơn 0";
     }
 
     if (giaNhapSo > 0 && giaBanSo < giaNhapSo) {
-      loi.giaban = "GiÃ¡ bÃ¡n khÃ´ng Ä‘Æ°á»£c nhá» hÆ¡n giÃ¡ nháº­p";
+      loi.giaban = "Giá bán không được nhỏ hơn giá nhập";
     }
 
     if (giaKhuyenMaiSo > 0 && giaKhuyenMaiSo >= giaBanSo) {
-      loi.giakhuyenmai = "GiÃ¡ khuyáº¿n mÃ£i pháº£i nhá» hÆ¡n giÃ¡ bÃ¡n";
+      loi.giakhuyenmai = "Giá khuyến mãi phải nhỏ hơn giá bán";
     }
 
     if (Number(form.soluongton || 0) < 0) {
-      loi.soluongton = "Sá»‘ lÆ°á»£ng tá»“n khÃ´ng Ä‘Æ°á»£c Ã¢m";
+      loi.soluongton = "Số lượng tồn không được âm";
     }
 
     if (Number(form.nguongcanhbao || 0) < 0) {
-      loi.nguongcanhbao = "NgÆ°á»¡ng cáº£nh bÃ¡o khÃ´ng Ä‘Æ°á»£c Ã¢m";
+      loi.nguongcanhbao = "Ngưỡng cảnh báo không được âm";
     }
 
     if (form.trongluong !== "" && Number(form.trongluong) < 0) {
-      loi.trongluong = "Trá»ng lÆ°á»£ng khÃ´ng Ä‘Æ°á»£c Ã¢m";
+      loi.trongluong = "Trọng lượng không được âm";
     }
 
     setLoiForm(loi);

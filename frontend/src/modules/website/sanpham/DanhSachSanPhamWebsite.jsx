@@ -32,14 +32,6 @@ export default function DanhSachSanPhamWebsite() {
     trangthai: "hien_thi",
   });
 
-  useEffect(() => {
-    taiDanhMuc();
-  }, []);
-
-  useEffect(() => {
-    taiSanPham();
-  }, [boLoc.trang, boLoc.danhmuc_id]);
-
   const taiDanhMuc = async () => {
     try {
       const ketQua = await layDanhSachDanhMuc({
@@ -68,6 +60,12 @@ export default function DanhSachSanPhamWebsite() {
       setDangTai(false);
     }
   };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { taiDanhMuc(); }, []);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { taiSanPham(); }, [boLoc.trang, boLoc.danhmuc_id]);
 
   const capNhatBoLoc = (event) => {
     const { name, value } = event.target;

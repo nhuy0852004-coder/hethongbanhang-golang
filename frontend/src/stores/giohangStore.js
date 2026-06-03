@@ -34,41 +34,32 @@ const useGioHangStore = create((set, get) => ({
     const danhSachCu = get().danhsach;
     const sanPhamTonTai = danhSachCu.find((item) => item.id === sanpham.id);
 
-    let danhSachMoi = [];
-
-    if (sanPhamTonTai) {
-      danhSachMoi = danhSachCu.map((item) => {
-        if (item.id !== sanpham.id) {
-          return item;
-        }
-
-        const soLuongMoi = Math.min(
-          Number(item.soluong || 0) + Number(soluongThem || 1),
-          Number(sanpham.soluongton || 0)
-        );
-
-        return {
-          ...item,
-          soluong: soLuongMoi,
-          soluongton: sanpham.soluongton,
-        };
-      });
-    } else {
-      danhSachMoi = [
-        ...danhSachCu,
-        {
-          id: sanpham.id,
-          madinhdanh: sanpham.madinhdanh,
-          tensanpham: sanpham.tensanpham,
-          hinhanh: sanpham.hinhanh,
-          giaban: sanpham.giaban,
-          giakhuyenmai: sanpham.giakhuyenmai,
-          soluongton: sanpham.soluongton,
-          tendanhmuc: sanpham.tendanhmuc,
-          soluong: Math.min(Number(soluongThem || 1), Number(sanpham.soluongton || 0)),
-        },
-      ];
-    }
+    const danhSachMoi = sanPhamTonTai
+      ? danhSachCu.map((item) => {
+          if (item.id !== sanpham.id) return item;
+          return {
+            ...item,
+            soluong: Math.min(
+              Number(item.soluong || 0) + Number(soluongThem || 1),
+              Number(sanpham.soluongton || 0)
+            ),
+            soluongton: sanpham.soluongton,
+          };
+        })
+      : [
+          ...danhSachCu,
+          {
+            id: sanpham.id,
+            madinhdanh: sanpham.madinhdanh,
+            tensanpham: sanpham.tensanpham,
+            hinhanh: sanpham.hinhanh,
+            giaban: sanpham.giaban,
+            giakhuyenmai: sanpham.giakhuyenmai,
+            soluongton: sanpham.soluongton,
+            tendanhmuc: sanpham.tendanhmuc,
+            soluong: Math.min(Number(soluongThem || 1), Number(sanpham.soluongton || 0)),
+          },
+        ];
 
     luuGioHangVaoLocal(danhSachMoi);
 

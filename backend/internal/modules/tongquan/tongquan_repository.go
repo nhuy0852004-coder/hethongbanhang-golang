@@ -162,6 +162,9 @@ func (r *TongQuanRepository) LayDoanhThuTheoKhoang(ngayBatDau, ngayKetThuc strin
 
 		duLieuTheoNgay[item.Ngay] = item
 	}
+	if loi := rows.Err(); loi != nil {
+		return nil, loi
+	}
 
 	batDau, _ := time.Parse("2006-01-02", ngayBatDau)
 	ketThuc, _ := time.Parse("2006-01-02", ngayKetThuc)
@@ -229,6 +232,9 @@ func (r *TongQuanRepository) LayDonHangMoiNhat() ([]DonHangMoiNhat, error) {
 
 		danhSach = append(danhSach, item)
 	}
+	if loi := rows.Err(); loi != nil {
+		return nil, loi
+	}
 
 	return danhSach, nil
 }
@@ -276,6 +282,9 @@ func (r *TongQuanRepository) LaySanPhamSapHet() ([]SanPhamSapHet, error) {
 		}
 
 		danhSach = append(danhSach, item)
+	}
+	if loi := rows.Err(); loi != nil {
+		return nil, loi
 	}
 
 	return danhSach, nil
@@ -345,6 +354,9 @@ func (r *TongQuanRepository) LaySanPhamBanChay() ([]SanPhamBanChay, error) {
 		}
 
 		danhSach = append(danhSach, item)
+	}
+	if loi := rows.Err(); loi != nil {
+		return nil, loi
 	}
 
 	return danhSach, nil

@@ -1,9 +1,8 @@
-import { CheckCheck, Eye, EyeOff, Search, Trash2 } from "lucide-react";
+import { Eye, EyeOff, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import DangTai from "../../components/DangTai";
 import TrangRong from "../../components/TrangRong";
-import NutBam from "../../components/ui/NutBam";
 import useGiaoDienStore from "../../stores/giaodienStore";
 import useThongBaoStore from "../../stores/thongbaoStore";
 
@@ -24,6 +23,7 @@ export default function DanhSachThongBao() {
   const [boLoc, setBoLoc] = useState({
     timkiem: "",
     dadoc: "",
+    loai: "",
     trang: 1,
     gioihan: 8,
   });

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pencil, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
-import NutBam from "../../components/ui/NutBam";
 import BangDangTai from "../../components/ui/BangDangTai";
 import BangTrong from "../../components/ui/BangTrong";
 import XacNhanModal from "../../components/ui/XacNhanModal";
@@ -45,21 +44,6 @@ export default function DanhSachDanhMuc() {
   const [idsDangChon, setIdsDangChon] = useState([]);
   const [modalBulkXoaMo, setModalBulkXoaMo] = useState(false);
 
-  useEffect(() => {
-    taiDanhSach();
-  }, [boLoc.trang, boLoc.trangthai, boLoc.hienthixoa]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      taiDanhSach({
-        ...boLoc,
-        trang: 1,
-      });
-    }, 350);
-
-    return () => clearTimeout(timer);
-  }, [boLoc.timkiem, boLoc.trangthai, boLoc.hienthixoa]);
-
   const taiDanhSach = async (thamSo = boLoc, tuyChon = { hienLoading: true }) => {
     try {
       if (tuyChon.hienLoading) {
@@ -84,6 +68,18 @@ export default function DanhSachDanhMuc() {
       }
     }
   };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { taiDanhSach(); }, [boLoc.trang, boLoc.trangthai, boLoc.hienthixoa]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      taiDanhSach({ ...boLoc, trang: 1 });
+    }, 350);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [boLoc.timkiem, boLoc.trangthai, boLoc.hienthixoa]);
 
   const capNhatBoLoc = (event) => {
     const { name, value, type, checked } = event.target;
@@ -253,15 +249,6 @@ export default function DanhSachDanhMuc() {
   const lamMoiDuLieu = async () => {
     await taiDanhSach();
     toast.success("Đã làm mới dữ liệu danh mục");
-  };
-
-  const chuyenTrang = (trangMoi) => {
-    if (trangMoi < 1 || trangMoi > phanTrang.tongsotrang) return;
-
-    setBoLoc((cu) => ({
-      ...cu,
-      trang: trangMoi,
-    }));
   };
 
   const boChonTatCa = () => {

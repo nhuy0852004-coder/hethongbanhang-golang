@@ -21,10 +21,6 @@ export default function ChiTietSanPhamWebsite() {
 
   useTieuDeTrang(sanPham?.tensanpham || "Chi tiết sản phẩm");
 
-  useEffect(() => {
-    taiChiTiet();
-  }, [id]);
-
   const taiChiTiet = async () => {
     try {
       setDangTai(true);
@@ -54,6 +50,9 @@ export default function ChiTietSanPhamWebsite() {
       setDangTai(false);
     }
   };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { taiChiTiet(); }, [id]);
 
   const tangSoLuong = () => {
     if (!sanPham) return;

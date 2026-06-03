@@ -3,7 +3,6 @@ import { CheckCircle2, CreditCard, MapPin, Phone, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import TrangRong from "../../../components/TrangRong";
-import ThongTinCuaHang from "../../../components/website/ThongTinCuaHang";
 import useTieuDeTrang from "../../../hooks/useTieuDeTrang";
 import useGioHangStore from "../../../stores/giohangStore";
 import { formatTienVietNam } from "../../../utils/dinhtien";
@@ -183,7 +182,7 @@ export default function ThanhToanWebsite() {
             <button
               className="nut-web-chinh"
               onClick={() => 
-                navigate('/tra-cuu-don-hang?madonhang=${donHangThanhCong.madonhang}')
+                navigate(`/tra-cuu-don-hang?madonhang=${donHangThanhCong.madonhang}`)
               }
             >
               Tra cứu đơn hàng
