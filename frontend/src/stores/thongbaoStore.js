@@ -14,7 +14,7 @@ const useThongBaoStore = create((set, get) => ({
   loi: "",
 
   taiThongBao: async (params = { trang: 1, gioihan: 8 }) => {
-    set({ dangTai: true, loi: "" });
+    set({ loi: "" });
 
     try {
       const ketQua = await layDanhSachThongBao(params);
@@ -35,8 +35,6 @@ const useThongBaoStore = create((set, get) => ({
       });
 
       return null;
-    } finally {
-      set({ dangTai: false });
     }
   },
 

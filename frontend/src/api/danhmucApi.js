@@ -28,6 +28,16 @@ export async function xoaDanhMuc(id) {
   return phanHoi.data;
 }
 
+export async function khoiPhucDanhMuc(id) {
+  const phanHoi = await ketNoiApi.patch(`/danhmuc/${id}/khoiphuc`);
+  return phanHoi.data;
+}
+
+export async function xoaVinhVienDanhMuc(id) {
+  const phanHoi = await ketNoiApi.delete(`/danhmuc/${id}/vinhvien`);
+  return phanHoi.data;
+}
+
 export async function capNhatTrangThaiDanhMuc(id, trangthai) {
   const phanHoi = await ketNoiApi.patch(`/danhmuc/${id}/trangthai`, {
     trangthai,
@@ -48,6 +58,24 @@ export async function bulkCapNhatTrangThaiDanhMuc(ids, trangthai) {
 export async function bulkXoaDanhMuc(ids) {
   const phanHoi = await ketNoiApi.post("/danhmuc/bulk-xoa", {
     ids,
+  });
+
+  return phanHoi.data;
+}
+
+export async function capNhatThuTuDanhMuc(id, thutu) {
+  const phanHoi = await ketNoiApi.patch(`/danhmuc/${id}/thutu`, { thutu });
+  return phanHoi.data;
+}
+
+export async function uploadAnhDanhMuc(id, file) {
+  const formData = new FormData();
+  formData.append("hinhanh", file);
+
+  const phanHoi = await ketNoiApi.post(`/danhmuc/${id}/upload-anh`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 
   return phanHoi.data;

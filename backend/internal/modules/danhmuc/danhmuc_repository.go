@@ -17,7 +17,7 @@ func TaoDanhMucRepository(db *sql.DB) *DanhMucRepository {
 	}
 }
 
-func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, hienthixoa bool, trang int, gioihan int) ([]DanhMuc, int64, error) {
+func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, danhMucChaID *uint64, locDanhMucGoc bool, hienthixoa bool, trang int, gioihan int) ([]DanhMuc, int64, error) {
 	dieuKien := []string{"1 = 1"}
 	thamSo := []interface{}{}
 
@@ -34,6 +34,13 @@ func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, hienthixo
 	if strings.TrimSpace(trangthai) != "" {
 		dieuKien = append(dieuKien, "d.trangthai = ?")
 		thamSo = append(thamSo, trangthai)
+	}
+
+	if locDanhMucGoc {
+		dieuKien = append(dieuKien, "d.danhmuccha_id IS NULL")
+	} else if danhMucChaID != nil {
+		dieuKien = append(dieuKien, "d.danhmuccha_id = ?")
+		thamSo = append(thamSo, *danhMucChaID)
 	}
 
 	chuoiDieuKien := strings.Join(dieuKien, " AND ")
@@ -82,7 +89,7 @@ func (r *DanhMucRepository) DanhSach(timkiem string, trangthai string, hienthixo
 		FROM danhmuc d
 		LEFT JOIN danhmuc dmcha ON dmcha.id = d.danhmuccha_id
 		WHERE %s
-		ORDER BY d.deleted_at IS NOT NULL ASC, d.thutu ASC, d.id DESC
+		ORDER BY d.deleted_at IS NOT NULL ASC, d.thutu ASC, d.id ASC
 		LIMIT ? OFFSET ?
 	`, chuoiDieuKien)
 
@@ -222,15 +229,17 @@ func (r *DanhMucRepository) Tao(request TaoDanhMucRequest, duongdan string) (uin
 			tendanhmuc,
 			duongdan,
 			mota,
+			hinhanh,
 			danhmuccha_id,
 			thutu,
 			trangthai
 		)
-		VALUES (?, ?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	`,
 		request.TenDanhMuc,
 		duongdan,
 		request.MoTa,
+		request.HinhAnh,
 		request.DanhMucChaID,
 		request.ThuTu,
 		request.TrangThai,
@@ -255,6 +264,7 @@ func (r *DanhMucRepository) CapNhat(id uint64, request CapNhatDanhMucRequest, du
 			tendanhmuc = ?,
 			duongdan = ?,
 			mota = ?,
+			hinhanh = ?,
 			danhmuccha_id = ?,
 			thutu = ?,
 			trangthai = ?
@@ -264,6 +274,7 @@ func (r *DanhMucRepository) CapNhat(id uint64, request CapNhatDanhMucRequest, du
 		request.TenDanhMuc,
 		duongdan,
 		request.MoTa,
+		request.HinhAnh,
 		request.DanhMucChaID,
 		request.ThuTu,
 		request.TrangThai,
@@ -302,6 +313,45 @@ func (r *DanhMucRepository) Xoa(id uint64) error {
 	return nil
 }
 
+func (r *DanhMucRepository) KhoiPhuc(id uint64) error {
+	ketQua, loi := r.db.Exec(`
+		UPDATE danhmuc
+		SET deleted_at = NULL
+		WHERE id = ?
+		AND deleted_at IS NOT NULL
+	`, id)
+
+	if loi != nil {
+		return loi
+	}
+
+	soDong, _ := ketQua.RowsAffected()
+	if soDong == 0 {
+		return errors.New("danh mục không tồn tại hoặc chưa bị xóa")
+	}
+
+	return nil
+}
+
+func (r *DanhMucRepository) XoaVinhVien(id uint64) error {
+	ketQua, loi := r.db.Exec(`
+		DELETE FROM danhmuc
+		WHERE id = ?
+		AND deleted_at IS NOT NULL
+	`, id)
+
+	if loi != nil {
+		return loi
+	}
+
+	soDong, _ := ketQua.RowsAffected()
+	if soDong == 0 {
+		return errors.New("danh mục không tồn tại hoặc chưa bị xóa mềm")
+	}
+
+	return nil
+}
+
 func (r *DanhMucRepository) CapNhatTrangThai(id uint64, trangthai string) error {
 	_, loi := r.db.Exec(`
 		UPDATE danhmuc
@@ -311,6 +361,46 @@ func (r *DanhMucRepository) CapNhatTrangThai(id uint64, trangthai string) error 
 	`, trangthai, id)
 
 	return loi
+}
+
+func (r *DanhMucRepository) CapNhatThuTu(id uint64, thutu int) error {
+	ketQua, loi := r.db.Exec(`
+		UPDATE danhmuc
+		SET thutu = ?
+		WHERE id = ?
+		AND deleted_at IS NULL
+	`, thutu, id)
+
+	if loi != nil {
+		return loi
+	}
+
+	soDong, _ := ketQua.RowsAffected()
+	if soDong == 0 {
+		return errors.New("danh mục không tồn tại hoặc đã bị xóa")
+	}
+
+	return nil
+}
+
+func (r *DanhMucRepository) CapNhatHinhAnh(id uint64, hinhanh string) error {
+	ketQua, loi := r.db.Exec(`
+		UPDATE danhmuc
+		SET hinhanh = ?
+		WHERE id = ?
+		AND deleted_at IS NULL
+	`, hinhanh, id)
+
+	if loi != nil {
+		return loi
+	}
+
+	soDong, _ := ketQua.RowsAffected()
+	if soDong == 0 {
+		return errors.New("danh mục không tồn tại hoặc đã bị xóa")
+	}
+
+	return nil
 }
 
 func (r *DanhMucRepository) CapNhatTrangThaiNhieuID(ids []uint64, trangthai string) error {

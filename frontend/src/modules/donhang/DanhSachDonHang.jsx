@@ -29,7 +29,7 @@ export default function DanhSachDonHang() {
     (state) => state.capNhatTieuDeTrang
   );
 
-  const [dangTai, setDangTai] = useState(false);
+  const [dangTai, setDangTai] = useState(true);
   const [danhSach, setDanhSach] = useState([]);
 
   const [phanTrang, setPhanTrang] = useState({

@@ -39,7 +39,7 @@ func (h *SanPhamHandler) DanhSach(c *gin.Context) {
 		TrangThai: c.Query("trangthai"),
 		TonKho:    c.Query("tonkho"),
 		SanPham:   c.Query("sanpham"),
-		SapXep:    c.DefaultQuery("sapxep", "moi_nhat"),
+		SapXep:    c.DefaultQuery("sapxep", "cu_nhat"),
 		DanhMucID: danhmucID,
 		GiaTu:     giatu,
 		GiaDen:    giaden,

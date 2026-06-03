@@ -8,6 +8,55 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <div id="app-loading-screen">
+      <div class="als-box">
+        <div class="als-spinner"></div>
+        <p class="als-text">Đang tải...</p>
+      </div>
+    </div>
+
+    <style>
+      #app-loading-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      #app-loading-screen.an-di {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .als-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+      }
+      .als-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e2e8f0;
+        border-top-color: #2563eb;
+        border-radius: 50%;
+        animation: als-spin 0.7s linear infinite;
+      }
+      @keyframes als-spin {
+        to { transform: rotate(360deg); }
+      }
+      .als-text {
+        margin: 0;
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 14px;
+        color: #64748b;
+        font-weight: 500;
+      }
+    </style>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

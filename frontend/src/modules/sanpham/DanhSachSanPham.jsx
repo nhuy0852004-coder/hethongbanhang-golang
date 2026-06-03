@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Eye,
   ImageOff,
@@ -33,8 +34,11 @@ import {
 } from "../../api/sanphamApi";
 
 export default function DanhSachSanPham() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const danhmucIdTuUrl = searchParams.get("danhmuc_id") || "";
+
   const capNhatTieuDeTrang = useGiaoDienStore((state) => state.capNhatTieuDeTrang);
-  const [dangTai, setDangTai] = useState(false);
+  const [dangTai, setDangTai] = useState(true);
   const [dangXuLy, setDangXuLy] = useState(false);
   const [dangDoiTrangThaiId, setDangDoiTrangThaiId] = useState(null);
   const [danhSach, setDanhSach] = useState([]);
@@ -43,12 +47,12 @@ export default function DanhSachSanPham() {
   const [boLoc, setBoLoc] = useState({
     timkiem: "",
     trangthai: "",
-    danhmuc_id: "",
+    danhmuc_id: danhmucIdTuUrl,
     tonkho: "",
     sanpham: "",
     giatu: "",
     giaden: "",
-    sapxep: "moi_nhat",
+    sapxep: "cu_nhat",
     trang: 1,
     gioihan: 10,
   });
@@ -570,8 +574,8 @@ export default function DanhSachSanPham() {
 
               <div className="select-san-pham-wrap">
                 <select name="sapxep" value={boLoc.sapxep} onChange={capNhatBoLoc}>
-                  <option value="moi_nhat">Mới nhất</option>
-                  <option value="cu_nhat">Cũ nhất</option>
+                  <option value="cu_nhat">Tạo cũ trước</option>
+                  <option value="moi_nhat">Tạo mới trước</option>
                   <option value="gia_tang">Giá tăng dần</option>
                   <option value="gia_giam">Giá giảm dần</option>
                   <option value="ton_kho_thap">Tồn kho thấp</option>

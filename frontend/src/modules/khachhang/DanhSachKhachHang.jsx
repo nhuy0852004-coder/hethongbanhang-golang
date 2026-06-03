@@ -13,7 +13,7 @@ import ChiTietKhachHangModal from "./ChiTietKhachHangModal";
 export default function DanhSachKhachHang() {
   const capNhatTieuDeTrang = useGiaoDienStore((state) => state.capNhatTieuDeTrang);
 
-  const [dangTai, setDangTai] = useState(false);
+  const [dangTai, setDangTai] = useState(true);
   const [dangXuLy, setDangXuLy] = useState(false);
   const [danhSach, setDanhSach] = useState([]);
 

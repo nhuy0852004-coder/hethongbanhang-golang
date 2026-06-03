@@ -80,7 +80,7 @@ export default function useRealtimeAdmin({
         if (!daHuy) {
           reconnectRef.current = setTimeout(() => {
             ketNoi();
-          }, 2500);
+          }, 5000);
         }
       };
     }

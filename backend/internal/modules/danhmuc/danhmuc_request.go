@@ -11,6 +11,7 @@ type TaoDanhMucRequest struct {
 	ThuTu        int     `json:"thutu"`
 	TrangThai    string  `json:"trangthai"`
 	DanhMucChaID *uint64 `json:"danhmuccha_id"`
+	HinhAnh      string  `json:"hinhanh"`
 }
 
 func (r TaoDanhMucRequest) KiemTra() error {
@@ -35,6 +36,7 @@ type CapNhatDanhMucRequest struct {
 	ThuTu        int     `json:"thutu"`
 	TrangThai    string  `json:"trangthai"`
 	DanhMucChaID *uint64 `json:"danhmuccha_id"`
+	HinhAnh      string  `json:"hinhanh"`
 }
 
 func (r CapNhatDanhMucRequest) KiemTra() error {
@@ -116,5 +118,16 @@ func (r *BulkXoaDanhMucRequest) KiemTra() error {
 		}
 	}
 
+	return nil
+}
+
+type CapNhatThuTuRequest struct {
+	ThuTu int `json:"thutu"`
+}
+
+func (r CapNhatThuTuRequest) KiemTra() error {
+	if r.ThuTu < 0 {
+		return errors.New("thứ tự không hợp lệ")
+	}
 	return nil
 }

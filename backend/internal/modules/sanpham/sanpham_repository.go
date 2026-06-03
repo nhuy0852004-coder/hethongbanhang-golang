@@ -99,9 +99,11 @@ func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, e
 		return nil, 0, loi
 	}
 
-	sapXep := "sp.id DESC"
+	sapXep := "sp.id ASC"
 
 	switch loc.SapXep {
+	case "moi_nhat":
+		sapXep = "sp.id DESC"
 	case "cu_nhat":
 		sapXep = "sp.id ASC"
 	case "gia_tang":
@@ -109,11 +111,11 @@ func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, e
 	case "gia_giam":
 		sapXep = "sp.giaban DESC"
 	case "ton_kho_thap":
-		sapXep = "sp.soluongton ASC, sp.id DESC"
+		sapXep = "sp.soluongton ASC, sp.id ASC"
 	case "luot_ban":
-		sapXep = "COALESCE(lb.luotban, 0) DESC, sp.id DESC"
+		sapXep = "COALESCE(lb.luotban, 0) DESC, sp.id ASC"
 	default:
-		sapXep = "sp.id DESC"
+		sapXep = "sp.id ASC"
 	}
 
 	offset := (loc.Trang - 1) * loc.GioiHan

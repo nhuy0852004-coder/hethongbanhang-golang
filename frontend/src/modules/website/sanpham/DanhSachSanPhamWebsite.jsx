@@ -17,6 +17,8 @@ export default function DanhSachSanPhamWebsite() {
   const [danhSach, setDanhSach] = useState([]);
   const [danhMuc, setDanhMuc] = useState([]);
 
+
+
   const [phanTrang, setPhanTrang] = useState({
     trang: 1,
     gioihan: 12,
@@ -32,15 +34,46 @@ export default function DanhSachSanPhamWebsite() {
     trangthai: "hien_thi",
   });
 
+  const buildDanhMucParentMap = (items) => {
+    const map = new Map();
+    (items || []).forEach((it) => {
+      if (it?.id) map.set(it.id, it?.danhmuccha_id ?? null);
+    });
+    return map;
+  };
+
+  const getDepth = (id, parentMap) => {
+    let depth = 0;
+    let current = parentMap.get(id);
+    const max = 20;
+    while (current && depth < max) {
+      if (!parentMap.has(current)) break;
+      depth += 1;
+      current = parentMap.get(current);
+    }
+    return depth;
+  };
+
   const taiDanhMuc = async () => {
     try {
+      // Lấy đủ danh mục hiển thị để dựng depth/indent
       const ketQua = await layDanhSachDanhMuc({
         trang: 1,
-        gioihan: 100,
+        gioihan: 1000,
         trangthai: "hien_thi",
       });
 
-      setDanhMuc(ketQua.dulieu.danhsach || []);
+      const danhsach = ketQua?.dulieu?.danhsach || [];
+      const parentMap = buildDanhMucParentMap(danhsach);
+
+      // Tạo label có indent theo quan hệ cha-con
+      const withIndent = danhsach.map((it) => ({
+        ...it,
+        __depth: getDepth(it.id, parentMap),
+        __label: `${"— ".repeat(getDepth(it.id, parentMap))}${it.tendanhmuc || ""}`,
+      }));
+
+      setDanhMuc(withIndent);
     } catch {
       toast.error("Không tải được danh mục");
     }
@@ -61,11 +94,22 @@ export default function DanhSachSanPhamWebsite() {
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { taiDanhMuc(); }, []);
+  useEffect(() => {
+    const handle = setTimeout(() => {
+      taiDanhMuc();
+    }, 0);
+
+    return () => clearTimeout(handle);
+  }, []);
+
+
+
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { taiSanPham(); }, [boLoc.trang, boLoc.danhmuc_id]);
+  useEffect(() => {
+    taiSanPham();
+  }, [boLoc.trang, boLoc.danhmuc_id]);
+
 
   const capNhatBoLoc = (event) => {
     const { name, value } = event.target;

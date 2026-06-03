@@ -36,13 +36,39 @@
   background: #b91c1c;
 }
 
+/* ================= Breadcrumb ================= */
+
+.trang-danh-muc-admin .breadcrumb-danh-muc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.trang-danh-muc-admin .breadcrumb-link {
+  color: #64748b;
+  cursor: pointer;
+}
+
+.trang-danh-muc-admin .breadcrumb-link:hover {
+  color: #2563eb;
+}
+
+.trang-danh-muc-admin .breadcrumb-sep {
+  color: #94a3b8;
+}
+
+.trang-danh-muc-admin .breadcrumb-hientai {
+  color: #1e293b;
+  font-weight: 600;
+}
+
 /* ================= Toolbar / Bộ lọc ================= */
 
 .trang-danh-muc-admin .thanh-danh-muc {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    display: block;
     gap: 14px;
-    align-items: center;
     margin-bottom: 16px;
   }
   
@@ -336,6 +362,12 @@
     font-weight: 600;
     white-space: nowrap;
   }
+
+  .trang-danh-muc-admin .ten-danh-muc-indent {
+    display: flex;
+    align-items: center;
+  }
+
   
   /* ================= Trạng thái switch ================= */
   
@@ -511,6 +543,113 @@
     line-height: 1.4;
   }
   
+  /* ================= Modal danh mục ngang ================= */
+
+  .modal-danhmuc-ngang {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .modal-danhmuc-trai {
+    min-width: 0;
+  }
+
+  .modal-danhmuc-phai {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-danhmuc-phai .nhom-form-label {
+    display: block;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 0;
+  }
+
+  .khung-anh-danhmuc {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 2px dashed #d1d5db;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    background: #f9fafb;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .khung-anh-danhmuc:hover {
+    border-color: var(--mau-chinh);
+    background: #eff6ff;
+  }
+
+  .khung-anh-danhmuc img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .khung-anh-trong {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    font-size: 13px;
+  }
+
+  .hanh-dong-anh-danhmuc {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .nut-xoa-anh-danhmuc {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #ef4444;
+    border: 1px solid #fee2e2;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    background: #fff;
+    transition: 0.15s ease;
+  }
+
+  .nut-xoa-anh-danhmuc:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+  }
+
+  .ghi-chu-anh-danhmuc {
+    color: #94a3b8;
+    font-size: 12px;
+  }
+
+  @media (max-width: 700px) {
+    .modal-danhmuc-ngang {
+      grid-template-columns: 1fr;
+    }
+
+    .modal-danhmuc-phai {
+      order: -1;
+    }
+
+    .khung-anh-danhmuc {
+      max-width: 180px;
+      margin: 0 auto;
+    }
+  }
+
   /* ================= Validate form danh mục ================= */
   
   .trang-danh-muc-admin .input-loi {
@@ -598,12 +737,7 @@
   
   @media (max-width: 1180px) {
     .trang-danh-muc-admin .thanh-danh-muc {
-      grid-template-columns: 1fr;
-    }
-  
-    .trang-danh-muc-admin .nut-them-danh-muc-moi {
-      width: fit-content;
-      justify-self: end;
+      display: block;
     }
   }
   
@@ -615,10 +749,6 @@
     .trang-danh-muc-admin .cum-loc-danh-muc {
       display: grid;
       grid-template-columns: 1fr 1fr;
-    }
-  
-    .trang-danh-muc-admin .nut-lam-moi-danh-muc {
-      grid-column: 1 / -1;
     }
   
     .trang-danh-muc-admin .select-loc-wrap {
@@ -641,10 +771,6 @@
       width: 100%;
     }
   
-    .trang-danh-muc-admin .nut-them-danh-muc-moi {
-      justify-self: stretch;
-    }
-  
     .trang-danh-muc-admin .bang-du-lieu {
       min-width: 980px;
     }
@@ -655,10 +781,8 @@
 ================================================== */
 
 .trang-danh-muc-admin .thanh-danh-muc {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: block;
   gap: 14px;
-  align-items: center;
   margin-bottom: 16px;
 }
 
@@ -827,12 +951,7 @@
 /* Responsive bộ lọc */
 @media (max-width: 1180px) {
   .trang-danh-muc-admin .thanh-danh-muc {
-    grid-template-columns: 1fr;
-  }
-
-  .trang-danh-muc-admin .nut-them-danh-muc-moi {
-    width: fit-content;
-    justify-self: end;
+    display: block;
   }
 }
 
@@ -844,10 +963,6 @@
   .trang-danh-muc-admin .cum-loc-danh-muc {
     display: grid;
     grid-template-columns: 1fr 1fr;
-  }
-
-  .trang-danh-muc-admin .nut-lam-moi-danh-muc {
-    grid-column: 1 / -1;
   }
 
   .trang-danh-muc-admin .select-loc-wrap {
@@ -866,9 +981,6 @@
     width: 100%;
   }
 
-  .trang-danh-muc-admin .nut-them-danh-muc-moi {
-    justify-self: stretch;
-  }
 }
 
 /* ==================================================
@@ -885,10 +997,11 @@
 
 .trang-danh-muc-admin .dau-trang-danh-muc h1 {
   margin: 0;
-  color: var(--mau-chu);
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -0.02em;
+  color: #0F172A;
+  font-family: Inter, sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 28.5px;
 }
 
 .trang-danh-muc-admin .dau-trang-danh-muc p {
@@ -1120,7 +1233,139 @@
   white-space: nowrap;
 }
 
+.trang-danh-muc-admin .lien-ket-so-sp {
+  background: none;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.trang-danh-muc-admin .lien-ket-so-sp:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.trang-danh-muc-admin .so-lieu-trong {
+  color: #94a3b8;
+}
+
 .trang-danh-muc-admin .nhom-thao-tac-icon {
   justify-content: flex-start;
 }
 
+/* ================= Thứ tự inline ================= */
+
+.trang-danh-muc-admin .thutu-col {
+  white-space: nowrap;
+  min-width: 110px;
+}
+
+.trang-danh-muc-admin .thutu-hien-thi {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trang-danh-muc-admin .thutu-nut-nhom {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trang-danh-muc-admin .nut-thutu-di-chuyen {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--mau-vien);
+  border-radius: 5px;
+  background: #f8fafc;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  flex-shrink: 0;
+}
+
+.trang-danh-muc-admin .nut-thutu-di-chuyen:hover:not(:disabled) {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.trang-danh-muc-admin .nut-thutu-di-chuyen:active:not(:disabled) {
+  background: #dbeafe;
+  transform: scale(0.92);
+}
+
+.trang-danh-muc-admin .nut-thutu-di-chuyen:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.trang-danh-muc-admin .thutu-so {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  min-width: 28px;
+  text-align: center;
+  border-radius: 6px;
+  padding: 3px 7px;
+  transition: background 0.12s ease, color 0.12s ease;
+  user-select: none;
+}
+
+.trang-danh-muc-admin .thutu-so.co-the-click {
+  cursor: pointer;
+  background: #f1f5f9;
+}
+
+.trang-danh-muc-admin .thutu-so.co-the-click:hover {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+/* Inline input khi đang chỉnh thứ tự */
+.trang-danh-muc-admin .thutu-inline-edit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.trang-danh-muc-admin .thutu-input {
+  width: 70px;
+  height: 32px;
+  border: 2px solid #3b82f6;
+  border-radius: 7px;
+  background: #eff6ff;
+  color: #1e40af;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  padding: 0 6px;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  -moz-appearance: textfield;
+}
+
+.trang-danh-muc-admin .thutu-input::-webkit-inner-spin-button,
+.trang-danh-muc-admin .thutu-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.trang-danh-muc-admin .thutu-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.trang-danh-muc-admin .thutu-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

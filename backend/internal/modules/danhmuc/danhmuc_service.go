@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -18,7 +19,7 @@ func TaoDanhMucService(repository *DanhMucRepository) *DanhMucService {
 	}
 }
 
-func (s *DanhMucService) DanhSach(timkiem string, trangthai string, hienthixoa bool, trang int, gioihan int) (*DanhSachDanhMucResponse, error) {
+func (s *DanhMucService) DanhSach(timkiem string, trangthai string, danhmucchaIDRaw string, hienthixoa bool, trang int, gioihan int) (*DanhSachDanhMucResponse, error) {
 	if trang < 1 {
 		trang = 1
 	}
@@ -35,7 +36,22 @@ func (s *DanhMucService) DanhSach(timkiem string, trangthai string, hienthixoa b
 		return nil, errors.New("trạng thái lọc không hợp lệ")
 	}
 
-	danhSach, tongSoDong, loi := s.repository.DanhSach(timkiem, trangthai, hienthixoa, trang, gioihan)
+	var danhMucChaID *uint64
+	locDanhMucGoc := false
+	danhmucchaIDRaw = strings.TrimSpace(danhmucchaIDRaw)
+
+	if danhmucchaIDRaw == "0" {
+		locDanhMucGoc = true
+	} else if danhmucchaIDRaw != "" {
+		id, loi := strconv.ParseUint(danhmucchaIDRaw, 10, 64)
+		if loi != nil || id == 0 {
+			return nil, errors.New("danh mục cha lọc không hợp lệ")
+		}
+
+		danhMucChaID = &id
+	}
+
+	danhSach, tongSoDong, loi := s.repository.DanhSach(timkiem, trangthai, danhMucChaID, locDanhMucGoc, hienthixoa, trang, gioihan)
 	if loi != nil {
 		return nil, loi
 	}
@@ -183,6 +199,68 @@ func (s *DanhMucService) Xoa(id uint64) error {
 	return s.repository.XoaNhieuID(danhSachID)
 }
 
+func (s *DanhMucService) KhoiPhuc(id uint64) (*DanhMuc, error) {
+	if id == 0 {
+		return nil, errors.New("id danh mục không hợp lệ")
+	}
+
+	item, loi := s.repository.ChiTiet(id, true)
+	if loi != nil {
+		return nil, loi
+	}
+
+	if !item.DaXoa {
+		return nil, errors.New("danh mục chưa bị xóa")
+	}
+
+	tenTonTai, loi := s.repository.TenDaTonTai(item.TenDanhMuc, id)
+	if loi != nil {
+		return nil, loi
+	}
+
+	if tenTonTai {
+		return nil, errors.New("không thể khôi phục vì tên danh mục đã tồn tại")
+	}
+
+	duongDanTonTai, loi := s.repository.DuongDanDaTonTai(item.DuongDan, id)
+	if loi != nil {
+		return nil, loi
+	}
+
+	if duongDanTonTai {
+		return nil, errors.New("không thể khôi phục vì đường dẫn danh mục đã tồn tại")
+	}
+
+	if item.DanhMucChaID != nil {
+		if _, loi := s.repository.LayTrangThai(*item.DanhMucChaID); loi != nil {
+			return nil, errors.New("không thể khôi phục khi danh mục cha không tồn tại hoặc đang bị xóa")
+		}
+	}
+
+	if loi := s.repository.KhoiPhuc(id); loi != nil {
+		return nil, loi
+	}
+
+	return s.repository.ChiTiet(id, false)
+}
+
+func (s *DanhMucService) XoaVinhVien(id uint64) error {
+	if id == 0 {
+		return errors.New("id danh mục không hợp lệ")
+	}
+
+	item, loi := s.repository.ChiTiet(id, true)
+	if loi != nil {
+		return loi
+	}
+
+	if !item.DaXoa {
+		return errors.New("chỉ có thể xóa vĩnh viễn danh mục đã bị xóa mềm")
+	}
+
+	return s.repository.XoaVinhVien(id)
+}
+
 func (s *DanhMucService) CapNhatTrangThai(id uint64, request CapNhatTrangThaiRequest) (*DanhMuc, error) {
 	if id == 0 {
 		return nil, errors.New("id danh mục không hợp lệ")
@@ -222,6 +300,42 @@ func (s *DanhMucService) CapNhatTrangThai(id uint64, request CapNhatTrangThaiReq
 	}
 
 	if loi := s.repository.CapNhatTrangThai(id, request.TrangThai); loi != nil {
+		return nil, loi
+	}
+
+	return s.repository.ChiTiet(id, false)
+}
+
+func (s *DanhMucService) CapNhatThuTu(id uint64, request CapNhatThuTuRequest) (*DanhMuc, error) {
+	if id == 0 {
+		return nil, errors.New("id danh mục không hợp lệ")
+	}
+
+	if _, loi := s.repository.ChiTiet(id, false); loi != nil {
+		return nil, loi
+	}
+
+	if loi := request.KiemTra(); loi != nil {
+		return nil, loi
+	}
+
+	if loi := s.repository.CapNhatThuTu(id, request.ThuTu); loi != nil {
+		return nil, loi
+	}
+
+	return s.repository.ChiTiet(id, false)
+}
+
+func (s *DanhMucService) CapNhatHinhAnh(id uint64, hinhanh string) (*DanhMuc, error) {
+	if id == 0 {
+		return nil, errors.New("id danh mục không hợp lệ")
+	}
+
+	if _, loi := s.repository.ChiTiet(id, false); loi != nil {
+		return nil, loi
+	}
+
+	if loi := s.repository.CapNhatHinhAnh(id, hinhanh); loi != nil {
 		return nil, loi
 	}
 
@@ -298,7 +412,7 @@ func (s *DanhMucService) BulkCapNhatTrangThai(request BulkCapNhatTrangThaiReques
 		if loi != nil {
 			response.ThatBai++
 			response.KetQua = append(response.KetQua, BulkKetQuaItem{
-				ID:       id,
+				ID:        id,
 				ThanhCong: false,
 				ThongBao:  loi.Error(),
 			})
@@ -307,7 +421,7 @@ func (s *DanhMucService) BulkCapNhatTrangThai(request BulkCapNhatTrangThaiReques
 
 		response.ThanhCong++
 		response.KetQua = append(response.KetQua, BulkKetQuaItem{
-			ID:       id,
+			ID:        id,
 			ThanhCong: true,
 			ThongBao:  "Cập nhật trạng thái thành công",
 		})
@@ -332,7 +446,7 @@ func (s *DanhMucService) BulkXoa(request BulkXoaDanhMucRequest) (*BulkKetQuaResp
 		if loi != nil {
 			response.ThatBai++
 			response.KetQua = append(response.KetQua, BulkKetQuaItem{
-				ID:       id,
+				ID:        id,
 				ThanhCong: false,
 				ThongBao:  loi.Error(),
 			})
@@ -341,7 +455,7 @@ func (s *DanhMucService) BulkXoa(request BulkXoaDanhMucRequest) (*BulkKetQuaResp
 
 		response.ThanhCong++
 		response.KetQua = append(response.KetQua, BulkKetQuaItem{
-			ID:       id,
+			ID:        id,
 			ThanhCong: true,
 			ThongBao:  "Xóa danh mục thành công",
 		})

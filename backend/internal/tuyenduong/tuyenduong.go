@@ -56,7 +56,6 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	sanphamRepository := sanpham.TaoSanPhamRepository(db)
 	sanphamService := sanpham.TaoSanPhamService(sanphamRepository)
 	sanphamHandler := sanpham.TaoSanPhamHandler(sanphamService)
-	
 
 	thongbaoRepository := thongbao.TaoThongBaoRepository(db)
 	thongbaoService := thongbao.TaoThongBaoService(thongbaoRepository)
@@ -127,7 +126,11 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 		nhomQuanTriGoc.POST("/danhmuc", danhmucHandler.Tao)
 		nhomQuanTriGoc.PUT("/danhmuc/:id", danhmucHandler.CapNhat)
 		nhomQuanTriGoc.DELETE("/danhmuc/:id", danhmucHandler.Xoa)
+		nhomQuanTriGoc.PATCH("/danhmuc/:id/khoiphuc", danhmucHandler.KhoiPhuc)
+		nhomQuanTriGoc.DELETE("/danhmuc/:id/vinhvien", danhmucHandler.XoaVinhVien)
 		nhomQuanTriGoc.PATCH("/danhmuc/:id/trangthai", danhmucHandler.CapNhatTrangThai)
+		nhomQuanTriGoc.PATCH("/danhmuc/:id/thutu", danhmucHandler.CapNhatThuTu)
+		nhomQuanTriGoc.POST("/danhmuc/:id/upload-anh", danhmucHandler.UploadAnh)
 
 		nhomQuanTriGoc.POST("/sanpham", sanphamHandler.Tao)
 		nhomQuanTriGoc.PATCH("/sanpham/bulk-trangthai", sanphamHandler.BulkCapNhatTrangThai)

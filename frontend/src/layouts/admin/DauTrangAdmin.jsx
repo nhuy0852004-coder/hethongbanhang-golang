@@ -47,7 +47,8 @@ export default function DauTrangAdmin() {
     return () => {
       daHuy = true;
     };
-  }, [taikhoan, taiThongBao, taiSoChuaDoc]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [taikhoan]);
 
   const { daKetNoi } = useRealtimeAdmin({
     bat: Boolean(taikhoan),
