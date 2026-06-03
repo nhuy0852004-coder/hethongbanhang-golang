@@ -1,4 +1,5 @@
 import { BarChart3, Package, ShoppingCart, TrendingUp, XCircle } from "lucide-react";
+import { layUrlAnh } from "../../api/ketnoiapi";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import DangTai from "../../components/DangTai";
@@ -214,7 +215,7 @@ export default function BaoCaoDoanhThu() {
                   {topSanPham.map((item, index) => (
                     <div className="item-san-pham-sap-het" key={`${item.id}-${index}`}>
                       {item.hinhanh ? (
-                        <img src={`http://localhost:8080${item.hinhanh}`} alt={item.tensanpham} />
+                        <img src={layUrlAnh(item.hinhanh)} alt={item.tensanpham} />
                       ) : (
                         <div className="anh-sap-het-trong">Ảnh</div>
                       )}

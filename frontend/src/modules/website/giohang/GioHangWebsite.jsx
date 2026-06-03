@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import TrangRong from "../../../components/TrangRong";
 import useGioHangStore from "../../../stores/giohangStore";
 import { formatTienVietNam } from "../../../utils/dinhtien";
+import { layUrlAnh } from "../../../api/ketnoiapi";
 
 export default function GioHangWebsite() {
   const danhSach = useGioHangStore((state) => state.danhsach);
@@ -132,7 +133,7 @@ export default function GioHangWebsite() {
               <div className="dong-gio-hang" key={item.id}>
                 <Link to={`/sanpham/${item.id}`} className="anh-gio-hang">
                   {item.hinhanh ? (
-                    <img src={`http://localhost:8080${item.hinhanh}`} alt={item.tensanpham} />
+                    <img src={layUrlAnh(item.hinhanh)} alt={item.tensanpham} />
                   ) : (
                     <ImageOff size={24} />
                   )}

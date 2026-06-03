@@ -25,4 +25,12 @@ ketNoiApi.interceptors.response.use(
   }
 );
 
+export const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:8080";
+
+export const layUrlAnh = (duongDan) => {
+  if (!duongDan) return "";
+  if (duongDan.startsWith("http")) return duongDan;
+  return `${BASE_URL}${duongDan}`;
+};
+
 export default ketNoiApi;

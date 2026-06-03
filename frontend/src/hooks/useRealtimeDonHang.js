@@ -49,7 +49,6 @@ export default function useRealtimeDonHang({
             onCapNhatDonHangRef.current?.(tinNhan.dulieu);
           }
         } catch (error) {
-          console.warn("Tin nhắn realtime đơn hàng không hợp lệ", error);
         }
       };
 

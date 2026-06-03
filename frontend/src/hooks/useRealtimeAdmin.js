@@ -67,7 +67,6 @@ export default function useRealtimeAdmin({
             onCapNhatDonHangRef.current?.(tinNhan.dulieu);
           }
         } catch {
-          console.warn("Tin nhắn realtime không hợp lệ");
         }
       };
 

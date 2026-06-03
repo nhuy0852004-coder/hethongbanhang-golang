@@ -8,6 +8,7 @@ import { layChiTietSanPham, layDanhSachSanPham } from "../../../api/sanphamApi";
 import { formatTienVietNam } from "../../../utils/dinhtien";
 import TheSanPhamWebsite from "./TheSanPhamWebsite";
 import useGioHangStore from "../../../stores/giohangStore";
+import { layUrlAnh } from "../../../api/ketnoiapi";
 import useTieuDeTrang from "../../../hooks/useTieuDeTrang";
 
 export default function ChiTietSanPhamWebsite() {
@@ -115,7 +116,7 @@ export default function ChiTietSanPhamWebsite() {
         <div className="anh-chi-tiet-san-pham">
           {sanPham.hinhanh ? (
             <img
-              src={`http://localhost:8080${sanPham.hinhanh}`}
+              src={layUrlAnh(sanPham.hinhanh)}
               alt={sanPham.tensanpham}
             />
           ) : (

@@ -1,4 +1,5 @@
 import { Mail, MapPin, Phone, Store } from "lucide-react";
+import { layUrlAnh } from "../../api/ketnoiapi";
 import useCaiDatStore from "../../stores/caidatStore";
 
 export default function ThongTinCuaHang() {
@@ -15,7 +16,7 @@ export default function ThongTinCuaHang() {
       <div className="thong-tin-cua-hang-brand">
         <div className="logo-website-icon">
           {logo ? (
-            <img src={`http://localhost:8080${logo}`} alt={tenCuaHang} />
+            <img src={layUrlAnh(logo)} alt={tenCuaHang} />
           ) : (
             <Store size={22} />
           )}

@@ -10,7 +10,7 @@ import {
   X,
 } from "lucide-react";
 
-const API_URL = "http://localhost:8080";
+import { layUrlAnh } from "../../api/ketnoiapi";
 
 function formatTien(value) {
   const so = Number(value || 0);
@@ -170,7 +170,7 @@ function layAnhSanPham(item) {
   if (!duongDan) return "";
   if (duongDan.startsWith("http")) return duongDan;
 
-  return `${API_URL}${duongDan}`;
+  return layUrlAnh(duongDan);
 }
 
 function laySoLuong(item) {

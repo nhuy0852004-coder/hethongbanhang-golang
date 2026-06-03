@@ -17,12 +17,11 @@ import { formatTienVietNam } from "../../../utils/dinhtien";
 import useGioHangStore from "../../../stores/giohangStore";
 import heroBannerVideo from "../../../assets/hero-banner.mp4";
 
-const API_URL = "http://localhost:8080";
+import { layUrlAnh } from "../../../api/ketnoiapi";
 
 function layAnhSanPham(sanPham) {
   if (!sanPham?.hinhanh) return "";
-  if (sanPham.hinhanh.startsWith("http")) return sanPham.hinhanh;
-  return `${API_URL}${sanPham.hinhanh}`;
+  return layUrlAnh(sanPham.hinhanh);
 }
 
 export default function TrangChuWebsite() {

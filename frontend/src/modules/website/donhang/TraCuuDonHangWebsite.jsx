@@ -8,6 +8,7 @@ import useTieuDeTrang from "../../../hooks/useTieuDeTrang";
 import { formatTienVietNam } from "../../../utils/dinhtien";
 import { traCuuDonHang } from "../../../api/donhangApi";
 import useRealtimeDonHang from "../../../hooks/useRealtimeDonHang";
+import { layUrlAnh } from "../../../api/ketnoiapi";
 
 export default function TraCuuDonHangWebsite() {
   useTieuDeTrang("Tra cứu đơn hàng");
@@ -208,7 +209,7 @@ export default function TraCuuDonHangWebsite() {
               <div className="dong-san-pham-tra-cuu" key={item.id}>
                 {item.hinhanh ? (
                   <img
-                    src={`http://localhost:8080${item.hinhanh}`}
+                    src={layUrlAnh(item.hinhanh)}
                     alt={item.tensanpham}
                   />
                 ) : (

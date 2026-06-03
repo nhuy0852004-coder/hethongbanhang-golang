@@ -7,6 +7,7 @@ import {
   ShoppingCart,
   X,
 } from "lucide-react";
+import { layUrlAnh } from "../../api/ketnoiapi";
 import { formatTienVietNam as formatTienHienThi } from "../../utils/dinhtien";
 
 function hienThiTrangThai(trangthai) {
@@ -68,7 +69,7 @@ export default function ChiTietSanPhamModal({
                 <div className="anh-chinh-chi-tiet-san-pham">
                   {anhChinh ? (
                     <img
-                      src={`http://localhost:8080${anhChinh}`}
+                      src={layUrlAnh(anhChinh)}
                       alt={sanPham?.tensanpham}
                     />
                   ) : (
@@ -84,7 +85,7 @@ export default function ChiTietSanPhamModal({
                     album.map((item) => (
                       <div key={item.id} className="anh-album-chi-tiet">
                         <img
-                          src={`http://localhost:8080${item.duongdan}`}
+                          src={layUrlAnh(item.duongdan)}
                           alt="Ảnh sản phẩm"
                         />
                       </div>

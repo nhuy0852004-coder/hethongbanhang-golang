@@ -166,8 +166,14 @@ func (r *TongQuanRepository) LayDoanhThuTheoKhoang(ngayBatDau, ngayKetThuc strin
 		return nil, loi
 	}
 
-	batDau, _ := time.Parse("2006-01-02", ngayBatDau)
-	ketThuc, _ := time.Parse("2006-01-02", ngayKetThuc)
+	batDau, loiBD := time.Parse("2006-01-02", ngayBatDau)
+	if loiBD != nil {
+		return nil, loiBD
+	}
+	ketThuc, loiKT := time.Parse("2006-01-02", ngayKetThuc)
+	if loiKT != nil {
+		return nil, loiKT
+	}
 
 	danhSach := []DoanhThuTheoNgay{}
 

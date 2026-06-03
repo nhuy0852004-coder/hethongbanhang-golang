@@ -6,6 +6,7 @@ import {
   formatTienNhap,
 } from "../../utils/tienviet";
 import { formatTienVietNam as formatTienHienThi } from "../../utils/dinhtien";
+import { layUrlAnh } from "../../api/ketnoiapi";
 
 const formMacDinh = {
   madinhdanh: "",
@@ -570,7 +571,7 @@ export default function SanPhamModal({
                       src={
                         anhXemTruoc.startsWith("blob:")
                           ? anhXemTruoc
-                          : `http://localhost:8080${anhXemTruoc}`
+                          : layUrlAnh(anhXemTruoc)
                       }
                       alt="Ảnh sản phẩm"
                     />
@@ -605,7 +606,7 @@ export default function SanPhamModal({
                     {albumXemTruoc.map((src, index) => (
                       <img
                         key={index}
-                        src={src.startsWith("blob:") ? src : `http://localhost:8080${src}`}
+                        src={src.startsWith("blob:") ? src : layUrlAnh(src)}
                         alt={`Album ${index + 1}`}
                       />
                     ))}

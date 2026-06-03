@@ -9,6 +9,7 @@ import {
   Trash2,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { layUrlAnh } from "../../api/ketnoiapi";
 import DangTai from "../../components/DangTai";
 import TrangRong from "../../components/TrangRong";
 import useGiaoDienStore from "../../stores/giaodienStore";
@@ -672,7 +673,7 @@ export default function DanhSachSanPham() {
                       {item.hinhanh ? (
                         <img
                           className="anh-san-pham-bang"
-                          src={`http://localhost:8080${item.hinhanh}`}
+                          src={layUrlAnh(item.hinhanh)}
                           alt={item.tensanpham}
                         />
                       ) : (

@@ -39,7 +39,10 @@ func main() {
 	r.Use(truycap.ChoPhepTruyCap(cauhinh.URLFrontend))
 
 	// Serve uploads using absolute path to avoid wrong working-dir issues.
-	cwd, _ := os.Getwd()
+	cwd, loiCwd := os.Getwd()
+	if loiCwd != nil {
+		log.Fatal("Không lấy được thư mục hiện tại:", loiCwd)
+	}
 	uploadsPath := filepath.Join(cwd, "public", "uploads")
 	log.Println("Serving uploads from:", uploadsPath)
 	r.Static("/uploads", uploadsPath)

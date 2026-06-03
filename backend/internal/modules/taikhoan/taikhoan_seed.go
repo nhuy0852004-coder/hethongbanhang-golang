@@ -30,7 +30,11 @@ func TaoTaiKhoanQuanTriMacDinh(db *sql.DB) {
 			return
 		}
 
-		idMoi, _ := ketQua.LastInsertId()
+		idMoi, loiLayID := ketQua.LastInsertId()
+		if loiLayID != nil {
+			log.Println("Không lấy được ID vai trò:", loiLayID)
+			return
+		}
 		vaitroID = uint64(idMoi)
 	}
 

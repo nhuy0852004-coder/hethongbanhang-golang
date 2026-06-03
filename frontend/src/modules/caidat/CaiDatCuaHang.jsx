@@ -1,4 +1,5 @@
 import { ImagePlus, Save } from "lucide-react";
+import { layUrlAnh } from "../../api/ketnoiapi";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import DangTai from "../../components/DangTai";
@@ -206,7 +207,7 @@ export default function CaiDatCuaHang() {
 
         <label className="khung-upload-logo">
           {logo ? (
-            <img src={`http://localhost:8080${logo}`} alt="Logo cửa hàng" />
+            <img src={layUrlAnh(logo)} alt="Logo cửa hàng" />
           ) : (
             <div>
               <ImagePlus size={38} />

@@ -3,6 +3,7 @@ import { ImageOff, ShoppingCart } from "lucide-react";
 import toast from "react-hot-toast";
 import { formatTienVietNam } from "../../../utils/dinhtien";
 import useGioHangStore from "../../../stores/giohangStore";
+import { layUrlAnh } from "../../../api/ketnoiapi";
 
 export default function TheSanPhamWebsite({ sanpham }) {
   const themVaoGio = useGioHangStore((state) => state.themVaoGio);
@@ -23,7 +24,7 @@ export default function TheSanPhamWebsite({ sanpham }) {
       <Link to={`/sanpham/${sanpham.id}`} className="anh-the-san-pham">
         {sanpham.hinhanh ? (
           <img
-            src={`http://localhost:8080${sanpham.hinhanh}`}
+            src={layUrlAnh(sanpham.hinhanh)}
             alt={sanpham.tensanpham}
           />
         ) : (

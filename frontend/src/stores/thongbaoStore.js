@@ -26,8 +26,6 @@ const useThongBaoStore = create((set, get) => ({
 
       return ketQua;
     } catch (loi) {
-      console.warn("Không tải được thông báo:", loi?.response?.data || loi);
-
       set({
         danhsach: [],
         loi:
@@ -52,11 +50,6 @@ const useThongBaoStore = create((set, get) => ({
 
       return ketQua;
     } catch (loi) {
-      console.warn(
-        "Không đếm được thông báo chưa đọc:",
-        loi?.response?.data || loi
-      );
-
       set({
         soChuaDoc: 0,
       });
@@ -90,7 +83,6 @@ const useThongBaoStore = create((set, get) => ({
 
       return ketQua;
     } catch (loi) {
-      console.warn("Không cập nhật được thông báo:", loi?.response?.data || loi);
       return null;
     }
   },
@@ -109,10 +101,6 @@ const useThongBaoStore = create((set, get) => ({
 
       return ketQua;
     } catch (loi) {
-      console.warn(
-        "Không đánh dấu tất cả thông báo:",
-        loi?.response?.data || loi
-      );
       return null;
     }
   },
@@ -129,7 +117,6 @@ const useThongBaoStore = create((set, get) => ({
 
       return ketQua;
     } catch (loi) {
-      console.warn("Không xóa được thông báo:", loi?.response?.data || loi);
       return null;
     }
   },

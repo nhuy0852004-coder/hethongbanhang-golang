@@ -20,6 +20,7 @@ import TheTrangThai from "../../components/ui/TheTrangThai";
 import { layTongQuan } from "../../api/tongquanApi";
 import { formatTienVietNam } from "../../utils/dinhtien";
 import useGiaoDienStore from "../../stores/giaodienStore";
+import { layUrlAnh } from "../../api/ketnoiapi";
 
 const DS_KHOANG_NGAY = [
   { key: "homnay", ten: "Hôm nay" },
@@ -435,7 +436,7 @@ export default function DashboardAdmin() {
                   <div className="db-product-img">
                     {item.hinhanh ? (
                       <img
-                        src={`http://localhost:8080${item.hinhanh}`}
+                        src={layUrlAnh(item.hinhanh)}
                         alt={item.tensanpham}
                       />
                     ) : (
