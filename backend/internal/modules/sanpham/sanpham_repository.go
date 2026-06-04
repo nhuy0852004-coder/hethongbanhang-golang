@@ -59,9 +59,9 @@ func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, e
 
 	switch loc.TonKho {
 	case "con_hang":
-		dieuKien = append(dieuKien, "sp.soluongton > 5")
+		dieuKien = append(dieuKien, "sp.soluongton > COALESCE(sp.nguongcanhbao, 5)")
 	case "sap_het":
-		dieuKien = append(dieuKien, "sp.soluongton > 0 AND sp.soluongton <= 5")
+		dieuKien = append(dieuKien, "sp.soluongton > 0 AND sp.soluongton <= COALESCE(sp.nguongcanhbao, 5)")
 	case "het_hang":
 		dieuKien = append(dieuKien, "sp.soluongton = 0")
 	}
@@ -248,13 +248,26 @@ func (r *SanPhamRepository) DanhSach(loc LocSanPhamRequest) ([]SanPham, int64, e
 		item.SanPhamMoi = sanPhamMoi == 1
 		item.ChoDatTruoc = choDatTruoc == 1
 
-		albumAnh, loi := r.layAlbumAnh(item.ID)
+		danhSach = append(danhSach, item)
+	}
+
+	if len(danhSach) > 0 {
+		ids := make([]uint64, len(danhSach))
+		for i, sp := range danhSach {
+			ids[i] = sp.ID
+		}
+
+		albumMap, loi := r.layAlbumAnhTheoDanhSachID(ids)
 		if loi != nil {
 			return nil, 0, loi
 		}
-		item.AlbumAnh = albumAnh
 
-		danhSach = append(danhSach, item)
+		for i := range danhSach {
+			danhSach[i].AlbumAnh = albumMap[danhSach[i].ID]
+			if danhSach[i].AlbumAnh == nil {
+				danhSach[i].AlbumAnh = []AnhSanPham{}
+			}
+		}
 	}
 
 	return danhSach, tongSoDong, nil
@@ -625,6 +638,7 @@ func (r *SanPhamRepository) layAlbumAnh(id uint64) ([]AnhSanPham, error) {
 		SELECT id, sanpham_id, duongdan, anhchinh, thutu
 		FROM anhsanpham
 		WHERE sanpham_id = ?
+		AND deleted_at IS NULL
 		ORDER BY anhchinh DESC, thutu ASC, id ASC
 	`, id)
 	if loi != nil {
@@ -694,4 +708,44 @@ func (r *SanPhamRepository) LayAlbumAnh(sanPhamID uint64) ([]AnhSanPham, error) 
 	}
 
 	return danhSach, nil
+}
+
+func (r *SanPhamRepository) layAlbumAnhTheoDanhSachID(ids []uint64) (map[uint64][]AnhSanPham, error) {
+	if len(ids) == 0 {
+		return map[uint64][]AnhSanPham{}, nil
+	}
+
+	placeholders := make([]string, len(ids))
+	args := make([]interface{}, len(ids))
+	for i, id := range ids {
+		placeholders[i] = "?"
+		args[i] = id
+	}
+
+	cauLenh := fmt.Sprintf(`
+		SELECT id, sanpham_id, duongdan, anhchinh, thutu
+		FROM anhsanpham
+		WHERE sanpham_id IN (%s)
+		AND deleted_at IS NULL
+		ORDER BY sanpham_id, anhchinh DESC, thutu ASC, id ASC
+	`, strings.Join(placeholders, ","))
+
+	rows, loi := r.db.Query(cauLenh, args...)
+	if loi != nil {
+		return nil, loi
+	}
+	defer rows.Close()
+
+	ketQua := map[uint64][]AnhSanPham{}
+	for rows.Next() {
+		var item AnhSanPham
+		var anhChinh int
+		if loi := rows.Scan(&item.ID, &item.SanPhamID, &item.DuongDan, &anhChinh, &item.ThuTu); loi != nil {
+			return nil, loi
+		}
+		item.AnhChinh = anhChinh == 1
+		ketQua[item.SanPhamID] = append(ketQua[item.SanPhamID], item)
+	}
+
+	return ketQua, rows.Err()
 }

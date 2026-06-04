@@ -227,7 +227,7 @@ export default function DanhSachSanPham() {
         toast.success("Upload ảnh chính thành công");
         try {
           const chiTiet = await layChiTietSanPham(sanPhamID);
-          const duLieuMoi = chiTiet?.dulieu;
+          const duLieuMoi = chiTiet?.dulieu?.sanpham;
           if (duLieuMoi?.id) {
             setDanhSach((ds) =>
               ds.map((sp) => (sp.id === duLieuMoi.id ? { ...sp, ...duLieuMoi } : sp))
@@ -244,7 +244,7 @@ export default function DanhSachSanPham() {
         toast.success("Upload album ảnh thành công");
         try {
           const chiTiet = await layChiTietSanPham(sanPhamID);
-          const duLieuMoi = chiTiet?.dulieu;
+          const duLieuMoi = chiTiet?.dulieu?.sanpham;
           if (duLieuMoi?.id) {
             setDanhSach((ds) =>
               ds.map((sp) => (sp.id === duLieuMoi.id ? { ...sp, ...duLieuMoi } : sp))
@@ -773,7 +773,7 @@ export default function DanhSachSanPham() {
               </tbody>
             </table>
           </div>
-          {phanTrang.tongsodong > 10 && (
+          {phanTrang.tongsodong > phanTrang.gioihan && (
             <div className="phan-trang">
               <div>
                 Hiển thị <strong>{danhSach.length}</strong> trên{" "} 
