@@ -1,0 +1,34 @@
+{
+  "folders": [
+    {
+      "name": "Root",
+      "path": "."
+    },
+    {
+      "name": "Backend (Go)",
+      "path": "backend"
+    },
+    {
+      "name": "Frontend (React)",
+      "path": "frontend"
+    }
+  ],
+  "settings": {
+    "go.useLanguageServer": true,
+    "gopls": {
+      "build.directoryFilters": [
+        "-**/.gomodcache",
+        "-**/.gocache",
+        "-**/node_modules"
+      ]
+    },
+    "files.exclude": {
+      "**/backend/.gomodcache": true,
+      "**/backend/.gocache": true,
+      "**/node_modules": true
+    },
+    "[go]": {
+      "editor.formatOnSave": true
+    }
+  }
+}

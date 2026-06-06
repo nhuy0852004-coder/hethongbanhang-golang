@@ -93,5 +93,66 @@ export async function bulkXoaSanPham(ids) {
     ids,
   });
 
+	return phanHoi.data;
+}
+
+export async function xuatExcelSanPham(params = {}) {
+  const filteredParams = {};
+  Object.keys(params || {}).forEach((key) => {
+    const val = params[key];
+    if (val === undefined || val === null) return;
+    if (typeof val === "string" && val.trim() === "") return;
+    filteredParams[key] = val;
+  });
+
+  const phanHoi = await ketNoiApi.get("/sanpham/export", {
+    params: filteredParams,
+    responseType: "blob",
+  });
+  
+  return phanHoi.data;
+}
+
+export async function nhapExcelSanPham(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const phanHoi = await ketNoiApi.post("/sanpham/import", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return phanHoi.data;
+}
+
+export async function layDanhSachSanPhamDaXoa(params = {}) {
+  const filteredParams = {};
+  Object.keys(params || {}).forEach((key) => {
+    const val = params[key];
+    if (val === undefined || val === null) return;
+    if (typeof val === "string" && val.trim() === "") return;
+    filteredParams[key] = val;
+  });
+
+  const phanHoi = await ketNoiApi.get("/sanpham/thung-rac", {
+    params: filteredParams,
+  });
+
+  return phanHoi.data;
+}
+
+export async function khoiPhucSanPham(id) {
+  const phanHoi = await ketNoiApi.patch(`/sanpham/${id}/khoiphuc`);
+  return phanHoi.data;
+}
+
+export async function xoaVinhVienSanPham(id) {
+  const phanHoi = await ketNoiApi.delete(`/sanpham/${id}/vinhvien`);
+  return phanHoi.data;
+}
+
+export async function layLichSuKho(id, params = {}) {
+  const phanHoi = await ketNoiApi.get(`/sanpham/${id}/lich-su-kho`, { params });
   return phanHoi.data;
 }

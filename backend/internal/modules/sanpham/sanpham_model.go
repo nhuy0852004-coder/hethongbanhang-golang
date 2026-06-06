@@ -23,8 +23,11 @@ type SanPham struct {
 	DonViTinh     string       `json:"donvitinh"`
 	GiaNhap       uint64       `json:"gianhap"`
 	GiaBan        uint64       `json:"giaban"`
-	GiaKhuyenMai  *uint64      `json:"giakhuyenmai"`
-	SoLuongTon    int          `json:"soluongton"`
+	GiaKhuyenMai   *uint64      `json:"giakhuyenmai"`
+	KmBatDau       *time.Time   `json:"km_bat_dau"`
+	KmKetThuc      *time.Time   `json:"km_ket_thuc"`
+	KmDangHoatDong bool         `json:"km_dang_hoat_dong"`
+	SoLuongTon     int          `json:"soluongton"`
 	NguongCanhBao int          `json:"nguongcanhbao"`
 	TrongLuong    *float64     `json:"trongluong"`
 	KichThuoc     string       `json:"kichthuoc"`
@@ -38,10 +41,11 @@ type SanPham struct {
 	TrangThai     string       `json:"trangthai"`
 	DanhMucID     *uint64      `json:"danhmuc_id"`
 	TenDanhMuc    string       `json:"tendanhmuc"`
-	LuotBan       int64        `json:"luotban"`
-	AlbumAnh      []AnhSanPham `json:"albumanh"`
-	CreatedAt     time.Time    `json:"created_at"`
-	UpdatedAt     time.Time    `json:"updated_at"`
+	LuotBan       int64            `json:"luotban"`
+	AlbumAnh      []AnhSanPham     `json:"albumanh"`
+	DanhSachBienThe []BienTheSanPham `json:"danhsachbienthe"`
+	CreatedAt     time.Time        `json:"created_at"`
+	UpdatedAt     time.Time        `json:"updated_at"`
 }
 
 type ChiTietSanPhamResponse struct {

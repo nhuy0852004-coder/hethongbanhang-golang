@@ -10,50 +10,107 @@
     <div id="root"></div>
 
     <div id="app-loading-screen">
-      <div class="als-box">
-        <div class="als-spinner"></div>
-        <p class="als-text">Đang tải...</p>
+      <div class="als-card">
+        <div class="als-logo">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="36" height="36" rx="10" fill="#2563eb"/>
+            <path d="M10 14h16M10 18h10M10 22h13" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="26" cy="22" r="4" fill="#fff" opacity="0.9"/>
+            <path d="M24.5 22l1 1 2-2" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="als-ten">Hệ thống bán hàng</p>
+        <p class="als-mota">Đang khởi động ứng dụng...</p>
+        <div class="als-bar-track">
+          <div class="als-bar-fill"></div>
+        </div>
       </div>
     </div>
 
     <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
       #app-loading-screen {
         position: fixed;
         inset: 0;
         z-index: 99999;
-        background: #f8fafc;
+        background: #f1f5f9;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
       }
+
       #app-loading-screen.an-di {
         opacity: 0;
         visibility: hidden;
       }
-      .als-box {
+
+      .als-card {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 14px;
+        gap: 10px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 36px 48px 32px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+        animation: als-slide-up 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
       }
-      .als-spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid #e2e8f0;
-        border-top-color: #2563eb;
-        border-radius: 50%;
-        animation: als-spin 0.7s linear infinite;
+
+      @keyframes als-slide-up {
+        from { opacity: 0; transform: translateY(20px) scale(0.97); }
+        to   { opacity: 1; transform: translateY(0)   scale(1); }
       }
-      @keyframes als-spin {
-        to { transform: rotate(360deg); }
+
+      .als-logo {
+        margin-bottom: 6px;
+        animation: als-pop 0.4s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
       }
-      .als-text {
-        margin: 0;
+
+      @keyframes als-pop {
+        from { opacity: 0; transform: scale(0.7); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+
+      .als-ten {
         font-family: Inter, system-ui, sans-serif;
-        font-size: 14px;
-        color: #64748b;
-        font-weight: 500;
+        font-size: 16px;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.01em;
+      }
+
+      .als-mota {
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        color: #94a3b8;
+        margin-bottom: 6px;
+      }
+
+      .als-bar-track {
+        width: 180px;
+        height: 4px;
+        background: #e2e8f0;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 4px;
+      }
+
+      .als-bar-fill {
+        height: 100%;
+        width: 40%;
+        background: linear-gradient(90deg, #2563eb, #60a5fa);
+        border-radius: 999px;
+        animation: als-progress 1.4s ease-in-out infinite;
+      }
+
+      @keyframes als-progress {
+        0%   { transform: translateX(-100%); width: 40%; }
+        50%  { width: 60%; }
+        100% { transform: translateX(280%); width: 40%; }
       }
     </style>
 

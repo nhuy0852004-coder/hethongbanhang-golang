@@ -624,6 +624,80 @@
     }
   }
 
+/* ================= Thanh tiến trình chuyển trang ================= */
+
+.thanh-tien-trinh {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 99998;
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 50%, #2563eb 100%);
+  background-size: 200% 100%;
+  animation: ttt-chay 1.2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
+}
+
+@keyframes ttt-chay {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ================= Spinner dùng chung ================= */
+
+.spinner-border {
+  display: inline-block;
+  border-radius: 50%;
+  border: 3px solid #e2e8f0;
+  border-top-color: #2563eb;
+  animation: quay-tron-chung 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.spinner-border-sm {
+  width: 18px;
+  height: 18px;
+  border-width: 2.5px;
+}
+
+@keyframes quay-tron-chung {
+  to { transform: rotate(360deg); }
+}
+
+/* ================= Loading nội dung trang ================= */
+
+.khung-dang-tai-moi {
+  width: 100%;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  animation: hien-dan-trang 0.25s ease;
+}
+
+.khung-dang-tai-moi .spinner-border {
+  width: 36px;
+  height: 36px;
+  border-width: 3px;
+  border-color: #e2e8f0;
+  border-top-color: #2563eb;
+}
+
+.khung-dang-tai-moi span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #94a3b8;
+  font-family: Inter, sans-serif;
+}
+
+@keyframes hien-dan-trang {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ================= Loading toàn màn hình ================= */
 
 .loading-toan-man-hinh {
@@ -668,11 +742,7 @@
   border: 3px solid #e2e8f0;
   border-top-color: #2563eb;
   border-radius: 50%;
-  animation: quay-tron 0.7s linear infinite;
-}
-
-@keyframes quay-tron {
-  to { transform: rotate(360deg); }
+  animation: quay-tron-chung 0.7s linear infinite;
 }
 
 .loading-toan-man-hinh .hop-loading strong {

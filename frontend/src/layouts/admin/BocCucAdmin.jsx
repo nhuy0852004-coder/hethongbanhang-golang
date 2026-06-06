@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import ThanhBenAdmin from "./ThanhBenAdmin";
 import DauTrangAdmin from "./DauTrangAdmin";
 import DangTaiToanManHinh from "../../components/ui/DangTaiToanManHinh";
+import ThanhTienTrinh from "../../components/ui/ThanhTienTrinh";
 import useGiaoDienStore from "../../stores/giaodienStore";
 import clsx from "clsx";
 
@@ -20,6 +21,7 @@ export default function BocCucAdmin() {
         </section>
       </main>
 
+      <ThanhTienTrinh />
       <DangTaiToanManHinh />
     </div>
   );

@@ -301,14 +301,14 @@ export default function ThanhToanWebsite() {
             <h2>Đơn hàng của bạn</h2>
 
             <div className="ds-san-pham-thanh-toan">
-              {danhSach.map((item) => {
+              {danhSach.map((item, index) => {
                 const gia =
                   item.giakhuyenmai && item.giakhuyenmai > 0
                     ? item.giakhuyenmai
                     : item.giaban;
 
                 return (
-                  <div className="dong-sp-thanh-toan" key={item.id}>
+                  <div className="dong-sp-thanh-toan" key={item.id ?? index}>
                     <div>
                       <strong>{item.tensanpham}</strong>
                       <span>Số lượng: {item.soluong}</span>

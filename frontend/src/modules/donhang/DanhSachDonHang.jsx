@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Eye,
   Pencil,
@@ -25,6 +26,7 @@ import {
 
 
 export default function DanhSachDonHang() {
+  const navigate = useNavigate();
   const capNhatTieuDeTrang = useGiaoDienStore(
     (state) => state.capNhatTieuDeTrang
   );
@@ -369,6 +371,12 @@ export default function DanhSachDonHang() {
 
   return (
     <div className="trang-don-hang-admin">
+      <div className="breadcrumb-don-hang">
+        <span className="breadcrumb-link" onClick={() => navigate("/admin")}>Trang chủ</span>
+        <span className="breadcrumb-sep">/</span>
+        <span className="breadcrumb-hientai">Quản lý đơn hàng</span>
+      </div>
+
       <div className="dau-trang-don-hang-admin">
         <div>
           <h1>Quản lý đơn hàng</h1>

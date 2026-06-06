@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useState, useMemo, useRef } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   Eye,
   ImageOff,
@@ -8,6 +8,10 @@ import {
   Search,
   SlidersHorizontal,
   Trash2,
+  Download,
+  Upload,
+  Check,
+  X as XIcon,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { layUrlAnh } from "../../api/ketnoiapi";
@@ -18,6 +22,7 @@ import { formatTienVietNam } from "../../utils/dinhtien";
 import { layDanhSachDanhMuc } from "../../api/danhmucApi";
 import SanPhamModal from "./SanPhamModal";
 import ChiTietSanPhamModal from "./ChiTietSanPhamModal";
+import ThungRacSanPham from "./ThungRacSanPham";
 import XacNhanModal from "../../components/ui/XacNhanModal";
 
 import {
@@ -31,7 +36,27 @@ import {
   uploadAlbumAnhSanPham,
   uploadAnhSanPham,
   xoaSanPham,
+  xuatExcelSanPham,
+  nhapExcelSanPham,
 } from "../../api/sanphamApi";
+
+// Tổ chức danh mục thành cây để hiển thị trong select lọc
+function xayDungCayDanhMuc(danhSach) {
+  const cha = danhSach.filter((d) => !d.danhmuccha_id);
+  const con = danhSach.filter((d) => d.danhmuccha_id);
+  const result = [];
+  cha.forEach((parent) => {
+    const children = con.filter((c) => String(c.danhmuccha_id) === String(parent.id));
+    result.push({ ...parent, _laCha: true });
+    children.forEach((child) => result.push({ ...child, _laCon: true }));
+  });
+  con.forEach((c) => {
+    if (!cha.find((p) => String(p.id) === String(c.danhmuccha_id))) {
+      result.push(c);
+    }
+  });
+  return result;
+}
 
 export default function DanhSachSanPham() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -68,6 +93,15 @@ export default function DanhSachSanPham() {
   const [sanPhamChiTiet, setSanPhamChiTiet] = useState(null);
   const [albumChiTiet, setAlbumChiTiet] = useState([]);
   const [dangTaiChiTiet, setDangTaiChiTiet] = useState(false);
+  const [modalThungRacMo, setModalThungRacMo] = useState(false);
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const inlineInputRef = useRef(null);
+
+  // Inline edit state
+  const [suaInline, setSuaInline] = useState(null); // { id, field }
+  const [giaTriInline, setGiaTriInline] = useState("");
+  const [dangLuuInlineId, setDangLuuInlineId] = useState(null);
 
   useEffect(() => {
     capNhatTieuDeTrang(
@@ -137,6 +171,8 @@ export default function DanhSachSanPham() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { taiDanhSach(boLoc, { hienLoading: true }); }, [boLoc.trang]);
 
+  const cayDanhMuc = useMemo(() => xayDungCayDanhMuc(danhSachDanhMuc), [danhSachDanhMuc]);
+
   const capNhatBoLoc = (event) => {
     const { name, value } = event.target;
 
@@ -145,7 +181,36 @@ export default function DanhSachSanPham() {
       [name]: value,
       trang: 1,
     }));
+
+    // Sync danhmuc_id vào URL để có thể share link
+    if (name === "danhmuc_id") {
+      const params = new URLSearchParams(searchParams);
+      if (value) {
+        params.set("danhmuc_id", value);
+      } else {
+        params.delete("danhmuc_id");
+      }
+      setSearchParams(params, { replace: true });
+    }
   };
+
+  const xoaBoLoc = () => {
+    setBoLoc((cu) => ({
+      ...cu,
+      timkiem: "",
+      trangthai: "",
+      danhmuc_id: "",
+      tonkho: "",
+      sanpham: "",
+      giatu: "",
+      giaden: "",
+      trang: 1,
+    }));
+    setSearchParams({}, { replace: true });
+  };
+
+  const coBoLoc = boLoc.timkiem || boLoc.trangthai || boLoc.danhmuc_id ||
+    boLoc.tonkho || boLoc.sanpham || boLoc.giatu || boLoc.giaden;
 
   const moThem = () => { setCheDoModal("them"); setDuLieuSua(null); setModalMo(true); };
   const moSua = (item) => { setCheDoModal("sua"); setDuLieuSua(item); setModalMo(true); };
@@ -454,6 +519,134 @@ export default function DanhSachSanPham() {
     }
   };
 
+  const xuLyXuatExcel = async () => {
+    try {
+      setDangXuLy(true);
+      toast.loading("Đang xuất file Excel...", { id: "export" });
+      const blob = await xuatExcelSanPham(boLoc);
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `sanpham_${new Date().getTime()}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success("Xuất file Excel thành công", { id: "export" });
+    } catch (loi) {
+      console.error("Lỗi xuất file Excel:", loi);
+      toast.error("Không thể xuất file Excel", { id: "export" });
+    } finally {
+      setDangXuLy(false);
+    }
+  };
+
+  const xuLyNhapExcel = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      setDangXuLy(true);
+      toast.loading("Đang xử lý file Excel...", { id: "import" });
+      
+      const ketQua = await nhapExcelSanPham(file);
+      const thongKe = ketQua.dulieu;
+      
+      if (thongKe.thatbai > 0) {
+        toast.error(`Nhập thành công ${thongKe.thanhcong}, thất bại ${thongKe.thatbai}`, { id: "import", duration: 5000 });
+        console.log("Chi tiết lỗi nhập excel:", thongKe.ketqua.filter(k => !k.thanhcong));
+      } else {
+        toast.success(`Nhập thành công ${thongKe.thanhcong} sản phẩm`, { id: "import" });
+      }
+      
+      await taiDanhSach({ ...boLoc, trang: 1 }, { hienLoading: false });
+    } catch (loi) {
+      toast.error(loi?.response?.data?.thongbao || "Không thể nhập file Excel", { id: "import" });
+    } finally {
+      setDangXuLy(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const batDauSuaInline = (item, field) => {
+    if (dangLuuInlineId) return;
+    setSuaInline({ id: item.id, field });
+    setGiaTriInline(String(field === "giaban" ? item.giaban : item.soluongton));
+    setTimeout(() => inlineInputRef.current?.select(), 0);
+  };
+
+  const huyInline = () => {
+    setSuaInline(null);
+    setGiaTriInline("");
+  };
+
+  const luuInline = async (item) => {
+    if (!suaInline || suaInline.id !== item.id) return;
+    const soMoi = Number(String(giaTriInline).replace(/[^0-9]/g, ""));
+    if (isNaN(soMoi) || soMoi < 0) { huyInline(); return; }
+    const socu = suaInline.field === "giaban" ? item.giaban : item.soluongton;
+    if (soMoi === socu) { huyInline(); return; }
+    if (suaInline.field === "giaban" && soMoi === 0) {
+      toast.error("Giá bán phải lớn hơn 0");
+      return;
+    }
+
+    try {
+      setDangLuuInlineId(item.id);
+      const payload = {
+        madinhdanh: item.madinhdanh || "",
+        sku: item.sku || "",
+        barcode: item.barcode || "",
+        tensanpham: item.tensanpham,
+        mota: item.mota || "",
+        motangan: item.motangan || "",
+        motachitiet: item.motachitiet || "",
+        thuonghieu: item.thuonghieu || "",
+        donvitinh: item.donvitinh || "cái",
+        gianhap: item.gianhap || 0,
+        giaban: suaInline.field === "giaban" ? soMoi : item.giaban,
+        giakhuyenmai: item.giakhuyenmai || null,
+        km_bat_dau: item.km_bat_dau || null,
+        km_ket_thuc: item.km_ket_thuc || null,
+        soluongton: suaInline.field === "soluongton" ? soMoi : item.soluongton,
+        nguongcanhbao: item.nguongcanhbao || 0,
+        trongluong: item.trongluong || null,
+        kichthuoc: item.kichthuoc || "",
+        noibat: Boolean(item.noibat),
+        banchay: Boolean(item.banchay),
+        sanphammoi: Boolean(item.sanphammoi),
+        chodattruoc: Boolean(item.chodattruoc),
+        trangthai: item.trangthai,
+        danhmuc_id: item.danhmuc_id || null,
+        thuoctinh: item.thuoctinh || "",
+        bienthe: item.bienthe || "",
+        danhsachbienthe: [],
+      };
+
+      await capNhatSanPham(item.id, payload);
+
+      setDanhSach((ds) =>
+        ds.map((sp) =>
+          sp.id === item.id ? { ...sp, [suaInline.field]: soMoi } : sp
+        )
+      );
+      toast.success(
+        suaInline.field === "giaban"
+          ? "Đã cập nhật giá bán"
+          : "Đã cập nhật tồn kho"
+      );
+      huyInline();
+    } catch (loi) {
+      toast.error(loi?.response?.data?.thongbao || "Không cập nhật được");
+    } finally {
+      setDangLuuInlineId(null);
+    }
+  };
+
   const chuyenTrang = (trangMoi) => {
     if (trangMoi < 1 || trangMoi > phanTrang.tongsotrang) return;
 
@@ -465,10 +658,55 @@ export default function DanhSachSanPham() {
 
   return (
     <div className="trang-san-pham-admin">
+      <div className="breadcrumb-san-pham">
+        <span className="breadcrumb-link" onClick={() => navigate("/admin")}>Trang chủ</span>
+        <span className="breadcrumb-sep">/</span>
+        <span className="breadcrumb-hientai">Quản lý sản phẩm</span>
+      </div>
+
       <div className="dau-trang-san-pham">
         <div>
           <h1>Quản lý sản phẩm</h1>
           <p>Quản lý thông tin sản phẩm, giá bán, tồn kho và trạng thái hiển thị.</p>
+        </div>
+        <div className="hanh-dong-dau-trang-san-pham">
+          <button
+            type="button"
+            className="nut-phu-san-pham xuat-excel"
+            onClick={xuLyXuatExcel}
+            disabled={dangXuLy}
+          >
+            <Download size={16} />
+            <span>Xuất Excel</span>
+          </button>
+
+          <button
+            type="button"
+            className="nut-phu-san-pham nhap-excel"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={dangXuLy}
+          >
+            <Upload size={16} />
+            <span>Nhập Excel</span>
+          </button>
+          <input 
+            type="file" 
+            accept=".xlsx, .xls" 
+            style={{ display: "none" }} 
+            ref={fileInputRef}
+            onChange={xuLyNhapExcel}
+          />
+
+          <button
+            type="button"
+            className="nut-phu-san-pham"
+            onClick={() => setModalThungRacMo(true)}
+            disabled={dangXuLy}
+            style={{ backgroundColor: "#ef4444", color: "white", borderColor: "#ef4444" }}
+          >
+            <Trash2 size={16} />
+            <span>Thùng rác</span>
+          </button>
         </div>
       </div>
 
@@ -492,11 +730,13 @@ export default function DanhSachSanPham() {
                 onChange={capNhatBoLoc}
               >
                 <option value="">Tất cả danh mục</option>
-                {danhSachDanhMuc.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.tendanhmuc}
-                  </option>
-                ))}
+                {cayDanhMuc
+                  .filter((item) => item._laCon)
+                  .map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.tendanhmuc}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -515,14 +755,23 @@ export default function DanhSachSanPham() {
 
             <button
               type="button"
-              className={`nut-loc-nang-cao-san-pham ${
-                moLocNangCao ? "dang-mo" : ""
-              }`}
+              className={`nut-loc-nang-cao-san-pham ${moLocNangCao ? "dang-mo" : ""}`}
               onClick={() => setMoLocNangCao((cu) => !cu)}
             >
               <SlidersHorizontal size={16} />
               <span>Nâng cao</span>
             </button>
+
+            {coBoLoc && (
+              <button
+                type="button"
+                className="nut-loc-nang-cao-san-pham"
+                onClick={xoaBoLoc}
+                title="Xóa tất cả bộ lọc"
+              >
+                <span>✕ Xóa lọc</span>
+              </button>
+            )}
 
             <button
               type="button"
@@ -647,20 +896,21 @@ export default function DanhSachSanPham() {
             <table className="bang-du-lieu bang-san-pham">
               <thead>
                 <tr>
-                  <th style={{ width: 48 }}>
+                  <th style={{ width: 42 }}>
                     <input
                       type="checkbox"
                       checked={daChonTatCa}
                       onChange={batTatChonTatCa}
                     />
                   </th>
-                  <th style={{ width: 80 }}>Ảnh</th>
+                  <th style={{ width: 60 }}>Ảnh</th>
                   <th>Sản phẩm</th>
-                  <th style={{ width: 170 }}>Danh mục</th>
-                  <th style={{ width: 160 }}>Giá bán</th>
+                  <th style={{ width: 130 }}>Danh mục</th>
+                  <th style={{ width: 140 }}>Giá bán</th>
                   <th style={{ width: 110 }}>Tồn kho</th>
-                  <th style={{ width: 130 }}>Trạng thái</th>
-                  <th style={{ width: 160 }}>Thao tác</th>
+                  <th style={{ width: 80 }}>Đã bán</th>
+                  <th style={{ width: 100 }}>Trạng thái</th>
+                  <th style={{ width: 110 }}>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
@@ -689,82 +939,164 @@ export default function DanhSachSanPham() {
                     <td>
                       <div className="cot-ten-san-pham">
                         <strong>{item.tensanpham}</strong>
-                        <span>{item.madinhdanh}</span>
+                        <span className="ma-san-pham">#{item.madinhdanh}</span>
                       </div>
                     </td>
                     <td>
                       {item.tendanhmuc ? (
-                        item.tendanhmuc
+                        <span className="chip-danh-muc">{item.tendanhmuc}</span>
                       ) : (
-                        <span className="chu-phu">Chưa phân loại</span>
+                        <span className="chip-danh-muc chip-mac-dinh">Chưa phân loại</span>
+                      )}
+                    </td>
+                    <td
+                      className={`ie-cell ${suaInline?.id === item.id && suaInline.field === "giaban" ? "ie-dang-sua" : ""}`}
+                      onClick={() => suaInline?.id !== item.id && batDauSuaInline(item, "giaban")}
+                    >
+                      {suaInline?.id === item.id && suaInline.field === "giaban" ? (
+                        <div className="ie-nhom">
+                          <input
+                            ref={inlineInputRef}
+                            className="ie-input"
+                            type="text"
+                            inputMode="numeric"
+                            value={giaTriInline}
+                            onChange={(e) => setGiaTriInline(e.target.value.replace(/[^0-9]/g, ""))}
+                            onBlur={() => luuInline(item)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") { e.preventDefault(); luuInline(item); }
+                              if (e.key === "Escape") huyInline();
+                            }}
+                            disabled={dangLuuInlineId === item.id}
+                          />
+                          <button className="ie-nut ie-luu" type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => luuInline(item)}>
+                            <Check size={12} />
+                          </button>
+                          <button className="ie-nut ie-huy" type="button" onMouseDown={(e) => e.preventDefault()} onClick={huyInline}>
+                            <XIcon size={12} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="ie-hien-thi">
+                          <div className="cot-gia-san-pham">
+                            {item.giakhuyenmai ? (
+                              <>
+                                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                                  <strong>{formatTienVietNam(item.giakhuyenmai)}</strong>
+                                  {item.km_dang_hoat_dong
+                                    ? <span className="km-badge km-badge--active">Đang KM</span>
+                                    : item.km_ket_thuc && new Date(item.km_ket_thuc) < new Date()
+                                      ? <span className="km-badge km-badge--het">Hết KM</span>
+                                      : item.km_bat_dau && new Date(item.km_bat_dau) > new Date()
+                                        ? <span className="km-badge km-badge--sap">Sắp KM</span>
+                                        : null}
+                                </div>
+                                <span>{formatTienVietNam(item.giaban)}</span>
+                              </>
+                            ) : (
+                              <strong>{formatTienVietNam(item.giaban)}</strong>
+                            )}
+                          </div>
+                          <Pencil size={11} className="ie-icon-pencil" />
+                        </div>
+                      )}
+                    </td>
+                    <td
+                      className={`ie-cell ${suaInline?.id === item.id && suaInline.field === "soluongton" ? "ie-dang-sua" : ""}`}
+                      onClick={() => suaInline?.id !== item.id && batDauSuaInline(item, "soluongton")}
+                    >
+                      {suaInline?.id === item.id && suaInline.field === "soluongton" ? (
+                        <div className="ie-nhom">
+                          <input
+                            ref={inlineInputRef}
+                            className="ie-input"
+                            type="text"
+                            inputMode="numeric"
+                            value={giaTriInline}
+                            onChange={(e) => setGiaTriInline(e.target.value.replace(/[^0-9]/g, ""))}
+                            onBlur={() => luuInline(item)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") { e.preventDefault(); luuInline(item); }
+                              if (e.key === "Escape") huyInline();
+                            }}
+                            disabled={dangLuuInlineId === item.id}
+                          />
+                          <button className="ie-nut ie-luu" type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => luuInline(item)}>
+                            <Check size={12} />
+                          </button>
+                          <button className="ie-nut ie-huy" type="button" onMouseDown={(e) => e.preventDefault()} onClick={huyInline}>
+                            <XIcon size={12} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="ie-hien-thi">
+                          <span className={`chip-ton-kho ${
+                            item.soluongton === 0 ? "het" :
+                            item.soluongton <= 3 ? "sap-het" :
+                            item.soluongton <= 10 ? "it" : "con"
+                          }`}>
+                            {item.soluongton === 0 ? "Hết hàng" : `${item.soluongton} còn lại`}
+                          </span>
+                          <Pencil size={11} className="ie-icon-pencil" />
+                        </div>
                       )}
                     </td>
                     <td>
-                      <div className="cot-gia-san-pham">
-                        {item.giakhuyenmai ? (
-                          <>
-                            <strong>{formatTienVietNam(item.giakhuyenmai)}</strong>
-                            <span>{formatTienVietNam(item.giaban)}</span>
-                          </>
-                        ) : (
-                          <strong>{formatTienVietNam(item.giaban)}</strong>
-                        )}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="ton-kho">
-                        <strong>{item.soluongton}</strong>
-                        <span>sản phẩm</span>
-                      </div>
+                      <span className="so-da-ban">
+                        <strong>{item.luotban || 0}</strong>
+                        <span>đơn</span>
+                      </span>
                     </td>
                     <td className="trang-thai-col">
-                      <button
-                        type="button"
-                        className={`nut-toggle-trang-thai ${
-                          item.trangthai === "hien_thi" ? "bat" : "tat"
-                        } ${item.trangthai === "het_hang" ? "het-hang" : ""} ${
-                          dangDoiTrangThaiId === item.id ? "dang-doi" : ""
-                        }`}
-                        title={
-                          item.trangthai === "het_hang"
-                            ? "Hết hàng"
-                            : item.trangthai === "hien_thi"
-                            ? "Đang hiển thị"
-                            : "Đang ẩn"
-                        }
-                        disabled={dangDoiTrangThaiId === item.id}
-                        onClick={() => doiTrangThai(item)}
-                      >
-                        <span className="toggle-thumb"></span>
-                      </button>
+                      <div className="khung-toggle">
+                        <button
+                          type="button"
+                          className={`nut-toggle-trang-thai ${
+                            item.trangthai === "hien_thi" ? "bat" : "tat"
+                          } ${item.trangthai === "het_hang" ? "het-hang" : ""} ${
+                            dangDoiTrangThaiId === item.id ? "dang-doi" : ""
+                          }`}
+                          title={
+                            item.trangthai === "het_hang"
+                              ? "Hết hàng"
+                              : item.trangthai === "hien_thi"
+                              ? "Đang hiển thị"
+                              : "Đang ẩn"
+                          }
+                          disabled={dangDoiTrangThaiId === item.id}
+                          onClick={() => doiTrangThai(item)}
+                        >
+                          <span className="toggle-thumb"></span>
+                        </button>
+                      </div>
                     </td>
                     <td>
                       <div className="nhom-nut-thao-tac">
                         <button
                           type="button"
-                          className="nut-icon"
+                          className="nut-hanh-dong nut-xem"
                           title="Xem chi tiết sản phẩm"
                           onClick={() => xemNhanh(item)}
                         >
-                          <Eye size={16} />
+                          <Eye size={13} />
                         </button>
 
                         <button
                           type="button"
-                          className="nut-icon"
+                          className="nut-hanh-dong nut-sua"
                           title="Sửa sản phẩm"
                           onClick={() => moSua(item)}
                         >
-                          <Pencil size={16} />
+                          <Pencil size={13} />
                         </button>
 
                         <button
                           type="button"
-                          className="nut-icon-tron nguy-hiem"
+                          className="nut-hanh-dong nut-xoa"
                           title="Xóa sản phẩm"
                           onClick={() => moModalXoa(item)}
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </td>
@@ -775,28 +1107,35 @@ export default function DanhSachSanPham() {
           </div>
           {phanTrang.tongsodong > phanTrang.gioihan && (
             <div className="phan-trang">
-              <div>
-                Hiển thị <strong>{danhSach.length}</strong> trên{" "} 
-                <strong>{phanTrang.tongsodong}</strong> sản phẩm
+              <div className="thong-tin-phan-trang">
+                Hiển thị <strong>{(phanTrang.trang - 1) * phanTrang.gioihan + 1}–{Math.min(phanTrang.trang * phanTrang.gioihan, phanTrang.tongsodong)}</strong> trong <strong>{phanTrang.tongsodong}</strong> sản phẩm
               </div>
 
               <div className="nut-phan-trang">
                 <button
+                  className="nut-trang nut-truoc"
                   disabled={phanTrang.trang <= 1}
                   onClick={() => chuyenTrang(phanTrang.trang - 1)}
                 >
-                  Trước
+                  ‹
                 </button>
 
-                <span>
-                  Trang {phanTrang.trang} / {phanTrang.tongsotrang}
-                </span>
+                {Array.from({ length: phanTrang.tongsotrang }, (_, i) => i + 1).map((soTrang) => (
+                  <button
+                    key={soTrang}
+                    className={`nut-trang nut-so ${phanTrang.trang === soTrang ? "dang-chon" : ""}`}
+                    onClick={() => chuyenTrang(soTrang)}
+                  >
+                    {soTrang}
+                  </button>
+                ))}
 
                 <button
+                  className="nut-trang nut-sau"
                   disabled={phanTrang.trang >= phanTrang.tongsotrang}
                   onClick={() => chuyenTrang(phanTrang.trang + 1)}
                 >
-                  Sau
+                  ›
                 </button>
               </div>
             </div>
@@ -845,6 +1184,12 @@ export default function DanhSachSanPham() {
         onDong={() => setModalChiTietMo(false)}
         onSuaNhanh={suaNhanhTuChiTiet}
         onNhanBan={nhanBanSanPham}
+      />
+
+      <ThungRacSanPham
+        mo={modalThungRacMo}
+        onDong={() => setModalThungRacMo(false)}
+        onKhoiPhucXong={taiDanhSach}
       />
     </div>
   );

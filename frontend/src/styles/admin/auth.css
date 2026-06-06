@@ -9,7 +9,10 @@
   align-items: center;
   justify-content: center;
   padding: 10px;
-  background: #f3f5f9;
+  background:
+    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+    url("https://images.unsplash.com/photo-1560272564-c83b66b1ad12?auto=format&fit=crop&w=1920&q=80")
+    center / cover no-repeat fixed;
 }
 
 .hop-dang-nhap {
@@ -18,7 +21,7 @@
   display: flex;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 24px 64px 0px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0,0,0,0.18);
   overflow: hidden;
 }
 

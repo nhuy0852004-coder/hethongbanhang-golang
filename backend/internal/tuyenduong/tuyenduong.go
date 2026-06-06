@@ -54,7 +54,8 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 	danhmucHandler := danhmuc.TaoDanhMucHandler(danhmucService)
 
 	sanphamRepository := sanpham.TaoSanPhamRepository(db)
-	sanphamService := sanpham.TaoSanPhamService(sanphamRepository)
+	lichSuKhoRepository := sanpham.TaoLichSuKhoRepository(db)
+	sanphamService := sanpham.TaoSanPhamService(sanphamRepository, lichSuKhoRepository)
 	sanphamHandler := sanpham.TaoSanPhamHandler(sanphamService)
 
 	thongbaoRepository := thongbao.TaoThongBaoRepository(db)
@@ -133,13 +134,19 @@ func DangKy(r *gin.Engine, db *sql.DB, cauhinh caidat.CauHinh, realtime *thoigia
 		nhomQuanTriGoc.POST("/danhmuc/:id/upload-anh", danhmucHandler.UploadAnh)
 
 		nhomQuanTriGoc.POST("/sanpham", sanphamHandler.Tao)
+		nhomQuanTriGoc.GET("/sanpham/export", sanphamHandler.ExportExcel)
+		nhomQuanTriGoc.POST("/sanpham/import", sanphamHandler.ImportExcel)
+		nhomQuanTriGoc.GET("/sanpham/thung-rac", sanphamHandler.DanhSachDaXoa)
 		nhomQuanTriGoc.PATCH("/sanpham/bulk-trangthai", sanphamHandler.BulkCapNhatTrangThai)
 		nhomQuanTriGoc.POST("/sanpham/bulk-xoa", sanphamHandler.BulkXoa)
 		nhomQuanTriGoc.PUT("/sanpham/:id", sanphamHandler.CapNhat)
 		nhomQuanTriGoc.DELETE("/sanpham/:id", sanphamHandler.Xoa)
+		nhomQuanTriGoc.PATCH("/sanpham/:id/khoiphuc", sanphamHandler.KhoiPhuc)
+		nhomQuanTriGoc.DELETE("/sanpham/:id/vinhvien", sanphamHandler.XoaVinhVien)
 		nhomQuanTriGoc.PATCH("/sanpham/:id/trangthai", sanphamHandler.CapNhatTrangThai)
 		nhomQuanTriGoc.POST("/sanpham/:id/upload-anh", sanphamHandler.UploadAnh)
 		nhomQuanTriGoc.POST("/sanpham/:id/upload-album", sanphamHandler.UploadAlbumAnh)
+		nhomQuanTriGoc.GET("/sanpham/:id/lich-su-kho", sanphamHandler.LichSuKho)
 
 		nhomQuanTriGoc.GET("/donhang", donhangHandler.DanhSach)
 		nhomQuanTriGoc.GET("/donhang/:id", donhangHandler.ChiTiet)

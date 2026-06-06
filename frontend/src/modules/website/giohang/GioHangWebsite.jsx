@@ -125,12 +125,12 @@ export default function GioHangWebsite() {
 
       <div className="gio-hang-grid">
         <div className="khung-gio-hang">
-          {danhSach.map((item) => {
+          {danhSach.map((item, index) => {
             const giaHienThi =
               item.giakhuyenmai && item.giakhuyenmai > 0 ? item.giakhuyenmai : item.giaban;
 
             return (
-              <div className="dong-gio-hang" key={item.id}>
+              <div className="dong-gio-hang" key={item.id ?? index}>
                 <Link to={`/sanpham/${item.id}`} className="anh-gio-hang">
                   {item.hinhanh ? (
                     <img src={layUrlAnh(item.hinhanh)} alt={item.tensanpham} />

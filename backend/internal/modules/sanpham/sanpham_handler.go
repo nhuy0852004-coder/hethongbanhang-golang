@@ -133,6 +133,72 @@ func (h *SanPhamHandler) Xoa(c *gin.Context) {
 	})
 }
 
+func (h *SanPhamHandler) KhoiPhuc(c *gin.Context) {
+	id, loi := strconv.ParseUint(c.Param("id"), 10, 64)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "id sản phẩm không hợp lệ", nil)
+		return
+	}
+
+	duLieu, loi := h.service.KhoiPhuc(id)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
+		return
+	}
+
+	phanhoi.ThanhCong(c, http.StatusOK, "Khôi phục sản phẩm thành công", duLieu)
+}
+
+func (h *SanPhamHandler) LichSuKho(c *gin.Context) {
+	id, loi := strconv.ParseUint(c.Param("id"), 10, 64)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "id sản phẩm không hợp lệ", nil)
+		return
+	}
+
+	trang, _ := strconv.Atoi(c.DefaultQuery("trang", "1"))
+	gioihan, _ := strconv.Atoi(c.DefaultQuery("gioihan", "20"))
+
+	duLieu, loi := h.service.LichSuKho(id, trang, gioihan)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
+		return
+	}
+
+	phanhoi.ThanhCong(c, http.StatusOK, "Lấy lịch sử biến động kho thành công", duLieu)
+}
+
+func (h *SanPhamHandler) XoaVinhVien(c *gin.Context) {
+	id, loi := strconv.ParseUint(c.Param("id"), 10, 64)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "id sản phẩm không hợp lệ", nil)
+		return
+	}
+
+	if loi := h.service.XoaVinhVien(id); loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
+		return
+	}
+
+	phanhoi.ThanhCong(c, http.StatusOK, "Xóa vĩnh viễn sản phẩm thành công", gin.H{
+		"id": id,
+	})
+}
+
+func (h *SanPhamHandler) DanhSachDaXoa(c *gin.Context) {
+	timkiem := c.Query("timkiem")
+	trang, _ := strconv.Atoi(c.DefaultQuery("trang", "1"))
+	gioihan, _ := strconv.Atoi(c.DefaultQuery("gioihan", "10"))
+
+	duLieu, loi := h.service.DanhSachDaXoa(timkiem, trang, gioihan)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
+		return
+	}
+
+	phanhoi.ThanhCong(c, http.StatusOK, "Lấy danh sách sản phẩm đã xóa thành công", duLieu)
+}
+
 func (h *SanPhamHandler) CapNhatTrangThai(c *gin.Context) {
 	id, loi := strconv.ParseUint(c.Param("id"), 10, 64)
 	if loi != nil {
@@ -321,4 +387,51 @@ func (h *SanPhamHandler) BulkXoa(c *gin.Context) {
 	}
 
 	phanhoi.ThanhCong(c, http.StatusOK, "Xóa sản phẩm hàng loạt thành công", duLieu)
+}
+
+func (h *SanPhamHandler) ExportExcel(c *gin.Context) {
+	danhmucID, _ := strconv.ParseUint(c.DefaultQuery("danhmuc_id", "0"), 10, 64)
+	giatu, _ := strconv.ParseUint(c.DefaultQuery("giatu", "0"), 10, 64)
+	giaden, _ := strconv.ParseUint(c.DefaultQuery("giaden", "0"), 10, 64)
+
+	loc := LocSanPhamRequest{
+		TimKiem:   c.Query("timkiem"),
+		TrangThai: c.Query("trangthai"),
+		TonKho:    c.Query("tonkho"),
+		SanPham:   c.Query("sanpham"),
+		SapXep:    c.DefaultQuery("sapxep", "cu_nhat"),
+		DanhMucID: danhmucID,
+		GiaTu:     giatu,
+		GiaDen:    giaden,
+	}
+
+	buf, tenFile, loi := h.service.ExportExcel(loc)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusInternalServerError, "Lỗi xuất file excel", gin.H{
+			"chitiet": loi.Error(),
+		})
+		return
+	}
+
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", tenFile))
+	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	c.Header("Content-Length", strconv.Itoa(buf.Len()))
+	c.Writer.Write(buf.Bytes())
+}
+
+func (h *SanPhamHandler) ImportExcel(c *gin.Context) {
+	file, _, loi := c.Request.FormFile("file")
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, "Không tìm thấy file tải lên", nil)
+		return
+	}
+	defer file.Close()
+
+	duLieu, loi := h.service.ImportExcel(file)
+	if loi != nil {
+		phanhoi.ThatBai(c, http.StatusBadRequest, loi.Error(), nil)
+		return
+	}
+
+	phanhoi.ThanhCong(c, http.StatusOK, "Xử lý file excel thành công", duLieu)
 }

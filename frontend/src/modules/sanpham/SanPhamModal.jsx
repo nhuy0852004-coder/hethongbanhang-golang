@@ -1,6 +1,27 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
-import { ImagePlus, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ImagePlus, Trash2, X } from "lucide-react";
 import NutBam from "../../components/ui/NutBam";
+
+// Tổ chức danh mục thành cây cha-con để hiển thị trong dropdown
+function xayDungCayDanhMuc(danhSach) {
+  const cha = danhSach.filter((d) => !d.danhmuccha_id);
+  const con = danhSach.filter((d) => d.danhmuccha_id);
+  const result = [];
+
+  cha.forEach((parent) => {
+    const children = con.filter((c) => String(c.danhmuccha_id) === String(parent.id));
+    result.push({ ...parent, _laCha: true, _con: children });
+    children.forEach((child) => result.push({ ...child, _laCon: true }));
+  });
+
+  // Danh mục con mà cha không hiển thị (hidden parent)
+  con.forEach((c) => {
+    const found = cha.find((p) => String(p.id) === String(c.danhmuccha_id));
+    if (!found) result.push(c);
+  });
+
+  return result;
+}
 import {
   chuyenTienNhapThanhSo,
   formatTienNhap,
@@ -21,6 +42,8 @@ const formMacDinh = {
   gianhap: "",
   giaban: "",
   giakhuyenmai: "",
+  km_bat_dau: "",
+  km_ket_thuc: "",
   soluongton: "",
   nguongcanhbao: "5",
   trongluong: "",
@@ -45,6 +68,7 @@ export default function SanPhamModal({
   onLuu,
 }) {
   const inputTenRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const [form, setForm] = useState(formMacDinh);
   const [loiForm, setLoiForm] = useState({});
@@ -52,6 +76,7 @@ export default function SanPhamModal({
   const [albumFiles, setAlbumFiles] = useState([]);
   const [anhXemTruoc, setAnhXemTruoc] = useState("");
   const [albumXemTruoc, setAlbumXemTruoc] = useState([]);
+  const [danhSachBienThe, setDanhSachBienThe] = useState([]);
 
   useEffect(() => {
     if (mo && duLieuSua) {
@@ -70,6 +95,12 @@ export default function SanPhamModal({
         giakhuyenmai: duLieuSua.giakhuyenmai
           ? formatTienNhap(duLieuSua.giakhuyenmai)
           : "",
+        km_bat_dau: duLieuSua.km_bat_dau
+          ? new Date(duLieuSua.km_bat_dau).toISOString().slice(0, 16)
+          : "",
+        km_ket_thuc: duLieuSua.km_ket_thuc
+          ? new Date(duLieuSua.km_ket_thuc).toISOString().slice(0, 16)
+          : "",
         soluongton: duLieuSua.soluongton ?? "",
         nguongcanhbao: duLieuSua.nguongcanhbao ?? "5",
         trongluong: duLieuSua.trongluong ?? "",
@@ -84,6 +115,7 @@ export default function SanPhamModal({
         bienthe: duLieuSua.bienthe || "",
       });
 
+      setDanhSachBienThe(duLieuSua.danhsachbienthe || []);
       setFileAnh(null);
       setAlbumFiles([]);
       setAnhXemTruoc(duLieuSua.hinhanh || "");
@@ -98,6 +130,7 @@ export default function SanPhamModal({
       setAlbumFiles([]);
       setAnhXemTruoc("");
       setAlbumXemTruoc([]);
+      setDanhSachBienThe([]);
       setLoiForm({});
 
       setTimeout(() => {
@@ -119,6 +152,11 @@ export default function SanPhamModal({
   const giaKhuyenMaiSo = useMemo(
     () => chuyenTienNhapThanhSo(form.giakhuyenmai),
     [form.giakhuyenmai]
+  );
+
+  const cayDanhMuc = useMemo(
+    () => xayDungCayDanhMuc(danhSachDanhMuc),
+    [danhSachDanhMuc]
   );
 
   if (!mo) return null;
@@ -172,10 +210,7 @@ export default function SanPhamModal({
     }
 
     setForm((duLieuCu) => {
-      const formMoi = {
-        ...duLieuCu,
-        [name]: giaTri,
-      };
+      const formMoi = { ...duLieuCu, [name]: giaTri };
 
       if (
         name === "soluongton" &&
@@ -188,24 +223,46 @@ export default function SanPhamModal({
       return formMoi;
     });
 
-    setLoiForm((loiCu) => ({
-      ...loiCu,
-      [name]: "",
-    }));
+    setLoiForm((loiCu) => ({ ...loiCu, [name]: "" }));
   };
 
   const chonAnh = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     setFileAnh(file);
     setAnhXemTruoc(URL.createObjectURL(file));
+    event.target.value = "";
   };
 
   const chonAlbum = (event) => {
     const files = Array.from(event.target.files || []);
     setAlbumFiles(files);
     setAlbumXemTruoc(files.map((file) => URL.createObjectURL(file)));
+  };
+
+  const themBienThe = () => {
+    setDanhSachBienThe([
+      ...danhSachBienThe,
+      {
+        sku: "",
+        tenthuoctinh1: "",
+        giatrithuoctinh1: "",
+        tenthuoctinh2: "",
+        giatrithuoctinh2: "",
+        giaban: "",
+        soluongton: 0,
+      },
+    ]);
+  };
+
+  const xoaBienThe = (index) => {
+    setDanhSachBienThe(danhSachBienThe.filter((_, i) => i !== index));
+  };
+
+  const capNhatBienThe = (index, field, value) => {
+    const newList = [...danhSachBienThe];
+    newList[index][field] = value;
+    setDanhSachBienThe(newList);
   };
 
   const xuLySubmit = (event) => {
@@ -228,6 +285,8 @@ export default function SanPhamModal({
       gianhap: giaNhapSo,
       giaban: giaBanSo,
       giakhuyenmai: giaKhuyenMaiSo > 0 ? giaKhuyenMaiSo : null,
+      km_bat_dau: giaKhuyenMaiSo > 0 && form.km_bat_dau ? new Date(form.km_bat_dau).toISOString() : null,
+      km_ket_thuc: giaKhuyenMaiSo > 0 && form.km_ket_thuc ? new Date(form.km_ket_thuc).toISOString() : null,
       soluongton: soLuongTon,
       nguongcanhbao: Number(form.nguongcanhbao || 0),
       trongluong: form.trongluong === "" ? null : Number(form.trongluong),
@@ -245,29 +304,35 @@ export default function SanPhamModal({
       chodattruoc: Boolean(form.chodattruoc),
       thuoctinh: form.thuoctinh.trim(),
       bienthe: form.bienthe.trim(),
+      danhsachbienthe: danhSachBienThe.map(bt => ({
+        ...bt,
+        giaban: bt.giaban ? chuyenTienNhapThanhSo(bt.giaban) : null,
+        soluongton: Number(bt.soluongton || 0),
+      })),
     };
 
     onLuu(duLieuGui, fileAnh, albumFiles);
   };
 
+  const urlAnhHienThi = anhXemTruoc
+    ? anhXemTruoc.startsWith("blob:")
+      ? anhXemTruoc
+      : layUrlAnh(anhXemTruoc)
+    : "";
+
   return (
     <div className="modal-phu">
       <div className="nen-modal" onClick={dangXuLy ? undefined : onDong} />
 
-      <div className="hop-modal hop-modal-san-pham-moi">
-        <div className="dau-modal dau-modal-san-pham-moi">
+      <div className="hop-modal hop-modal-san-pham-ngang">
+        {/* Header */}
+        <div className="dau-modal sp-modal-header">
           <div>
             <span className="nhan-modal-san-pham">
               {cheDo === "them" ? "Tạo mới" : "Cập nhật"}
             </span>
-
             <h3>{cheDo === "them" ? "Thêm sản phẩm" : "Sửa sản phẩm"}</h3>
-
-            <p>
-              Quản lý thông tin sản phẩm, giá bán, tồn kho, trạng thái và hình ảnh.
-            </p>
           </div>
-
           <button
             type="button"
             className="nut-dong-modal"
@@ -278,348 +343,420 @@ export default function SanPhamModal({
           </button>
         </div>
 
-        <form onSubmit={xuLySubmit} className="noi-dung-modal form-san-pham-moi" noValidate>
-          <div className="layout-form-san-pham-moi">
-            <div className="cot-chinh-form-san-pham">
-              <section className="card-form-san-pham">
-                <div className="tieu-de-card-form">
-                  <h4>Thông tin cơ bản</h4>
-                  <p>Thông tin nhận diện và phân loại sản phẩm.</p>
-                </div>
+        {/* Body */}
+        <form
+          onSubmit={xuLySubmit}
+          className="sp-modal-form"
+          noValidate
+        >
+          <div className="sp-modal-body">
+            {/* ===== CỘT TRÁI ===== */}
+            <div className="sp-modal-trai">
+              {/* Thông tin cơ bản */}
+              <div className="sp-section-label">Thông tin cơ bản</div>
 
+              <div className="nhom-form">
+                <label>Tên sản phẩm <span>*</span></label>
+                <input
+                  ref={inputTenRef}
+                  name="tensanpham"
+                  value={form.tensanpham}
+                  onChange={capNhatForm}
+                  className={loiForm.tensanpham ? "input-loi" : ""}
+                  placeholder="Ví dụ: Áo thun nam basic"
+                />
+                {loiForm.tensanpham && (
+                  <div className="loi-form">{loiForm.tensanpham}</div>
+                )}
+              </div>
+
+              <div className="sp-luoi-3">
                 <div className="nhom-form">
-                  <label>
-                    Tên sản phẩm <span>*</span>
-                  </label>
+                  <label>Mã sản phẩm</label>
                   <input
-                    ref={inputTenRef}
-                    name="tensanpham"
-                    value={form.tensanpham}
-                    onChange={capNhatForm}
-                    className={loiForm.tensanpham ? "input-loi" : ""}
-                    placeholder="Ví dụ: Áo thun nam basic"
+                    name="madinhdanh"
+                    value={form.madinhdanh || ""}
+                    readOnly
+                    className="input-tu-sinh"
+                    placeholder="Tự sinh sau khi lưu"
                   />
-                  {loiForm.tensanpham && (
-                    <div className="loi-form">{loiForm.tensanpham}</div>
-                  )}
                 </div>
-
-                <div className="luoi-form-3">
-                  <div className="nhom-form">
-                    <label>Mã sản phẩm</label>
-                    <input
-                      name="madinhdanh"
-                      value={form.madinhdanh || ""}
-                      readOnly
-                      className="input-tu-sinh"
-                      placeholder="Tự sinh sau khi lưu"
-                    />
-                    <small>Hệ thống tự tạo mã sản phẩm, không cần nhập tay.</small>
-                  </div>
-
-                  <div className="nhom-form">
-                    <label>SKU</label>
-                    <input
-                      name="sku"
-                      value={form.sku || ""}
-                      readOnly
-                      className="input-tu-sinh"
-                      placeholder="Tự sinh sau khi lưu"
-                    />
-                    <small>SKU sẽ được sinh tự động theo tên sản phẩm.</small>
-                  </div>
-
-                  <div className="nhom-form">
-                    <label>Barcode</label>
-                    <input
-                      name="barcode"
-                      value={form.barcode}
-                      onChange={capNhatForm}
-                      placeholder="Mã vạch nếu có"
-                    />
-                  </div>
+                <div className="nhom-form">
+                  <label>SKU</label>
+                  <input
+                    name="sku"
+                    value={form.sku || ""}
+                    readOnly
+                    className="input-tu-sinh"
+                    placeholder="Tự sinh tự động"
+                  />
                 </div>
+                <div className="nhom-form">
+                  <label>Barcode</label>
+                  <input
+                    name="barcode"
+                    value={form.barcode}
+                    onChange={capNhatForm}
+                    placeholder="Mã vạch (nếu có)"
+                  />
+                </div>
+              </div>
 
-                <div className="luoi-form-2">
-                  <div className="nhom-form">
-                    <label>Danh mục</label>
-                    <select
-                      name="danhmuc_id"
-                      value={form.danhmuc_id}
-                      onChange={capNhatForm}
-                    >
-                      <option value="">Chưa chọn danh mục</option>
-                      {danhSachDanhMuc.map((item) => (
+              <div className="sp-luoi-2">
+                <div className="nhom-form">
+                  <label>Danh mục</label>
+                  <select
+                    name="danhmuc_id"
+                    value={form.danhmuc_id}
+                    onChange={capNhatForm}
+                  >
+                    <option value="">— Chưa chọn danh mục —</option>
+                    {cayDanhMuc
+                      .filter((item) => item._laCon)
+                      .map((item) => (
                         <option key={item.id} value={item.id}>
                           {item.tendanhmuc}
                         </option>
                       ))}
-                    </select>
-                  </div>
-
-                  <div className="nhom-form">
-                    <label>Thương hiệu</label>
-                    <input
-                      name="thuonghieu"
-                      value={form.thuonghieu}
-                      onChange={capNhatForm}
-                      placeholder="Ví dụ: Local Brand"
-                    />
-                  </div>
+                  </select>
                 </div>
-
-                <div className="luoi-form-3">
-                  <div className="nhom-form">
-                    <label>Đơn vị tính</label>
-                    <input
-                      name="donvitinh"
-                      value={form.donvitinh}
-                      onChange={capNhatForm}
-                      className={loiForm.donvitinh ? "input-loi" : ""}
-                      placeholder="cái, bộ, hộp..."
-                    />
-                    {loiForm.donvitinh && (
-                      <div className="loi-form">{loiForm.donvitinh}</div>
-                    )}
-                  </div>
-
-                  <div className="nhom-form">
-                    <label>Trọng lượng</label>
-                    <input
-                      type="number"
-                      name="trongluong"
-                      value={form.trongluong}
-                      onChange={capNhatForm}
-                      onFocus={(event) => event.target.select()}
-                      className={loiForm.trongluong ? "input-loi" : ""}
-                      placeholder="Gram"
-                    />
-                    {loiForm.trongluong && (
-                      <div className="loi-form">{loiForm.trongluong}</div>
-                    )}
-                  </div>
-
-                  <div className="nhom-form">
-                    <label>Kích thước</label>
-                    <input
-                      name="kichthuoc"
-                      value={form.kichthuoc}
-                      onChange={capNhatForm}
-                      placeholder="D x R x C"
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section className="card-form-san-pham">
-                <div className="tieu-de-card-form">
-                  <h4>Giá bán và tồn kho</h4>
-                  <p>Kiểm soát giá nhập, giá bán, khuyến mãi và số lượng tồn.</p>
-                </div>
-
-                <div className="luoi-form-3">
-                  <div className="nhom-form">
-                    <label>Giá nhập</label>
-                    <input
-                      name="gianhap"
-                      value={form.gianhap}
-                      onChange={capNhatForm}
-                      onFocus={(event) => event.target.select()}
-                      placeholder="120.000"
-                    />
-                    <small>{giaNhapSo ? formatTienHienThi(giaNhapSo) : "0 ₫"}</small>
-                  </div>
-
-                  <div className="nhom-form">
-                    <label>
-                      Giá bán <span>*</span>
-                    </label>
-                    <input
-                      name="giaban"
-                      value={form.giaban}
-                      onChange={capNhatForm}
-                      onFocus={(event) => event.target.select()}
-                      className={loiForm.giaban ? "input-loi" : ""}
-                      placeholder="150.000"
-                    />
-                    {loiForm.giaban && (
-                      <div className="loi-form">{loiForm.giaban}</div>
-                    )}
-                    <small>{giaBanSo ? formatTienHienThi(giaBanSo) : "0 ₫"}</small>
-                  </div>
-
-                  <div className="nhom-form">
-                    <label>Giá khuyến mãi</label>
-                    <input
-                      name="giakhuyenmai"
-                      value={form.giakhuyenmai}
-                      onChange={capNhatForm}
-                      onFocus={(event) => event.target.select()}
-                      className={loiForm.giakhuyenmai ? "input-loi" : ""}
-                      placeholder="129.000"
-                    />
-                    {loiForm.giakhuyenmai && (
-                      <div className="loi-form">{loiForm.giakhuyenmai}</div>
-                    )}
-                    <small>
-                      {giaKhuyenMaiSo
-                        ? formatTienHienThi(giaKhuyenMaiSo)
-                        : "Không áp dụng"}
-                    </small>
-                  </div>
-                </div>
-
-                <div className="luoi-form-2">
-                  <div className="nhom-form">
-                    <label>Số lượng tồn kho</label>
-                    <input
-                      type="number"
-                      min="0"
-                      name="soluongton"
-                      value={form.soluongton}
-                      onChange={capNhatForm}
-                      onFocus={(event) => event.target.select()}
-                      className={loiForm.soluongton ? "input-loi" : ""}
-                    />
-                    {loiForm.soluongton && (
-                      <div className="loi-form">{loiForm.soluongton}</div>
-                    )}
-                  </div>
-
-                  <div className="nhom-form">
-                    <label>Ngưỡng cảnh báo tồn kho</label>
-                    <input
-                      type="number"
-                      min="0"
-                      name="nguongcanhbao"
-                      value={form.nguongcanhbao}
-                      onChange={capNhatForm}
-                      onFocus={(event) => event.target.select()}
-                      className={loiForm.nguongcanhbao ? "input-loi" : ""}
-                    />
-                    {loiForm.nguongcanhbao && (
-                      <div className="loi-form">{loiForm.nguongcanhbao}</div>
-                    )}
-                  </div>
-                </div>
-              </section>
-
-              <section className="card-form-san-pham">
-                <div className="tieu-de-card-form">
-                  <h4>Mô tả và biến thể</h4>
-                  <p>Nội dung hiển thị trên website và thông tin thuộc tính.</p>
-                </div>
-
                 <div className="nhom-form">
-                  <label>Mô tả ngắn</label>
-                  <textarea
-                    name="motangan"
-                    value={form.motangan}
+                  <label>Thương hiệu</label>
+                  <input
+                    name="thuonghieu"
+                    value={form.thuonghieu}
                     onChange={capNhatForm}
-                    rows={3}
-                    placeholder="Mô tả ngắn hiển thị trong danh sách hoặc SEO"
+                    placeholder="Ví dụ: Local Brand"
                   />
                 </div>
+              </div>
 
+              <div className="sp-luoi-3">
                 <div className="nhom-form">
-                  <label>Mô tả chi tiết</label>
-                  <textarea
-                    name="motachitiet"
-                    value={form.motachitiet}
+                  <label>Đơn vị tính <span>*</span></label>
+                  <input
+                    name="donvitinh"
+                    value={form.donvitinh}
                     onChange={capNhatForm}
-                    rows={5}
-                    placeholder="Mô tả chi tiết sản phẩm"
+                    className={loiForm.donvitinh ? "input-loi" : ""}
+                    placeholder="cái, bộ, hộp..."
+                  />
+                  {loiForm.donvitinh && (
+                    <div className="loi-form">{loiForm.donvitinh}</div>
+                  )}
+                </div>
+                <div className="nhom-form">
+                  <label>Trọng lượng (g)</label>
+                  <input
+                    type="number"
+                    name="trongluong"
+                    value={form.trongluong}
+                    onChange={capNhatForm}
+                    onFocus={(e) => e.target.select()}
+                    className={loiForm.trongluong ? "input-loi" : ""}
+                    placeholder="Gram"
+                  />
+                  {loiForm.trongluong && (
+                    <div className="loi-form">{loiForm.trongluong}</div>
+                  )}
+                </div>
+                <div className="nhom-form">
+                  <label>Kích thước</label>
+                  <input
+                    name="kichthuoc"
+                    value={form.kichthuoc}
+                    onChange={capNhatForm}
+                    placeholder="D × R × C"
                   />
                 </div>
+              </div>
 
+              {/* Giá & Tồn kho */}
+              <div className="sp-section-label sp-section-label--gap">Giá bán & Tồn kho</div>
+
+              <div className="sp-luoi-3">
+                <div className="nhom-form">
+                  <label>Giá nhập</label>
+                  <input
+                    name="gianhap"
+                    value={form.gianhap}
+                    onChange={capNhatForm}
+                    onFocus={(e) => e.target.select()}
+                    placeholder="120.000"
+                  />
+                  <small>{giaNhapSo ? formatTienHienThi(giaNhapSo) : "0 ₫"}</small>
+                </div>
+                <div className="nhom-form">
+                  <label>Giá bán <span>*</span></label>
+                  <input
+                    name="giaban"
+                    value={form.giaban}
+                    onChange={capNhatForm}
+                    onFocus={(e) => e.target.select()}
+                    className={loiForm.giaban ? "input-loi" : ""}
+                    placeholder="150.000"
+                  />
+                  {loiForm.giaban && (
+                    <div className="loi-form">{loiForm.giaban}</div>
+                  )}
+                  <small>{giaBanSo ? formatTienHienThi(giaBanSo) : "0 ₫"}</small>
+                </div>
+                <div className="nhom-form">
+                  <label>Giá khuyến mãi</label>
+                  <input
+                    name="giakhuyenmai"
+                    value={form.giakhuyenmai}
+                    onChange={capNhatForm}
+                    onFocus={(e) => e.target.select()}
+                    className={loiForm.giakhuyenmai ? "input-loi" : ""}
+                    placeholder="129.000"
+                  />
+                  {loiForm.giakhuyenmai && (
+                    <div className="loi-form">{loiForm.giakhuyenmai}</div>
+                  )}
+                  <small>{giaKhuyenMaiSo ? formatTienHienThi(giaKhuyenMaiSo) : "Không áp dụng"}</small>
+                </div>
+              </div>
+
+              {giaKhuyenMaiSo > 0 && (
                 <div className="luoi-form-2">
                   <div className="nhom-form">
-                    <label>Thuộc tính</label>
-                    <textarea
-                      name="thuoctinh"
-                      value={form.thuoctinh}
+                    <label>Bắt đầu KM</label>
+                    <input
+                      type="datetime-local"
+                      name="km_bat_dau"
+                      value={form.km_bat_dau}
                       onChange={capNhatForm}
-                      rows={3}
-                      placeholder="Ví dụ: Màu: Đen, Trắng; Chất liệu: Cotton"
                     />
+                    <small>Để trống = áp dụng ngay</small>
                   </div>
-
                   <div className="nhom-form">
-                    <label>Biến thể</label>
-                    <textarea
-                      name="bienthe"
-                      value={form.bienthe}
+                    <label>Kết thúc KM</label>
+                    <input
+                      type="datetime-local"
+                      name="km_ket_thuc"
+                      value={form.km_ket_thuc}
                       onChange={capNhatForm}
-                      rows={3}
-                      placeholder="Ví dụ: Size S, M, L; Màu Đen, Trắng"
                     />
+                    <small>Để trống = không giới hạn</small>
                   </div>
                 </div>
-              </section>
+              )}
+
+              <div className="sp-luoi-2">
+                <div className="nhom-form">
+                  <label>Số lượng tồn kho</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="soluongton"
+                    value={form.soluongton}
+                    onChange={capNhatForm}
+                    onFocus={(e) => e.target.select()}
+                    className={loiForm.soluongton ? "input-loi" : ""}
+                  />
+                  {loiForm.soluongton && (
+                    <div className="loi-form">{loiForm.soluongton}</div>
+                  )}
+                </div>
+                <div className="nhom-form">
+                  <label>Ngưỡng cảnh báo tồn kho</label>
+                  <input
+                    type="number"
+                    min="0"
+                    name="nguongcanhbao"
+                    value={form.nguongcanhbao}
+                    onChange={capNhatForm}
+                    onFocus={(e) => e.target.select()}
+                    className={loiForm.nguongcanhbao ? "input-loi" : ""}
+                  />
+                  {loiForm.nguongcanhbao && (
+                    <div className="loi-form">{loiForm.nguongcanhbao}</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Mô tả */}
+              <div className="sp-section-label sp-section-label--gap">Biến thể chi tiết</div>
+
+              <div className="nhom-form" style={{ gridColumn: "1 / -1" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+                  <label style={{ margin: 0 }}>Danh sách biến thể (Size, Màu sắc...)</label>
+                  <NutBam type="button" bienThe="phu" nho onClick={themBienThe}>
+                    + Thêm biến thể
+                  </NutBam>
+                </div>
+                
+                {danhSachBienThe.length === 0 ? (
+                  <div style={{ padding: 20, textAlign: "center", background: "#f8fafc", borderRadius: 6, border: "1px dashed #cbd5e1" }}>
+                    Chưa có biến thể nào. Nhấn "Thêm biến thể" để tạo (VD: Size S - Màu Đen).
+                  </div>
+                ) : (
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                      <thead>
+                        <tr style={{ background: "#f1f5f9", textAlign: "left" }}>
+                          <th style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>Thuộc tính 1</th>
+                          <th style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>Giá trị 1</th>
+                          <th style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>Thuộc tính 2</th>
+                          <th style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>Giá trị 2</th>
+                          <th style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>Giá bán riêng</th>
+                          <th style={{ padding: 8, borderBottom: "1px solid #e2e8f0" }}>Tồn kho</th>
+                          <th style={{ padding: 8, borderBottom: "1px solid #e2e8f0", width: 40 }}></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {danhSachBienThe.map((bt, index) => (
+                          <tr key={index}>
+                            <td style={{ padding: 4, borderBottom: "1px solid #e2e8f0" }}>
+                              <input
+                                style={{ width: "100%", padding: 6, border: "1px solid #cbd5e1", borderRadius: 4 }}
+                                placeholder="VD: Màu sắc"
+                                value={bt.tenthuoctinh1}
+                                onChange={(e) => capNhatBienThe(index, "tenthuoctinh1", e.target.value)}
+                              />
+                            </td>
+                            <td style={{ padding: 4, borderBottom: "1px solid #e2e8f0" }}>
+                              <input
+                                style={{ width: "100%", padding: 6, border: "1px solid #cbd5e1", borderRadius: 4 }}
+                                placeholder="VD: Đỏ"
+                                value={bt.giatrithuoctinh1}
+                                onChange={(e) => capNhatBienThe(index, "giatrithuoctinh1", e.target.value)}
+                              />
+                            </td>
+                            <td style={{ padding: 4, borderBottom: "1px solid #e2e8f0" }}>
+                              <input
+                                style={{ width: "100%", padding: 6, border: "1px solid #cbd5e1", borderRadius: 4 }}
+                                placeholder="VD: Kích cỡ"
+                                value={bt.tenthuoctinh2}
+                                onChange={(e) => capNhatBienThe(index, "tenthuoctinh2", e.target.value)}
+                              />
+                            </td>
+                            <td style={{ padding: 4, borderBottom: "1px solid #e2e8f0" }}>
+                              <input
+                                style={{ width: "100%", padding: 6, border: "1px solid #cbd5e1", borderRadius: 4 }}
+                                placeholder="VD: XL"
+                                value={bt.giatrithuoctinh2}
+                                onChange={(e) => capNhatBienThe(index, "giatrithuoctinh2", e.target.value)}
+                              />
+                            </td>
+                            <td style={{ padding: 4, borderBottom: "1px solid #e2e8f0" }}>
+                              <input
+                                style={{ width: "100%", padding: 6, border: "1px solid #cbd5e1", borderRadius: 4 }}
+                                placeholder="Để trống lấy mặc định"
+                                value={bt.giaban !== null && bt.giaban !== undefined ? bt.giaban : ""}
+                                onChange={(e) => capNhatBienThe(index, "giaban", formatTienNhap(e.target.value))}
+                                onFocus={(e) => e.target.select()}
+                              />
+                            </td>
+                            <td style={{ padding: 4, borderBottom: "1px solid #e2e8f0" }}>
+                              <input
+                                type="number"
+                                min="0"
+                                style={{ width: "100%", padding: 6, border: "1px solid #cbd5e1", borderRadius: 4 }}
+                                value={bt.soluongton}
+                                onChange={(e) => capNhatBienThe(index, "soluongton", e.target.value)}
+                              />
+                            </td>
+                            <td style={{ padding: 4, borderBottom: "1px solid #e2e8f0", textAlign: "center" }}>
+                              <button
+                                type="button"
+                                onClick={() => xoaBienThe(index)}
+                                style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: 4 }}
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <aside className="cot-phu-form-san-pham">
-              <section className="card-form-san-pham card-anh-san-pham">
-                <div className="tieu-de-card-form">
-                  <h4>Hình ảnh</h4>
-                  <p>Ảnh đại diện và album sản phẩm.</p>
-                </div>
+            {/* ===== CỘT PHẢI ===== */}
+            <div className="sp-modal-phai">
+              {/* Hình ảnh */}
+              <div>
+                <div className="sp-section-label">Hình ảnh</div>
 
-                <label className="khung-upload-anh">
-                  {anhXemTruoc ? (
-                    <img
-                      src={
-                        anhXemTruoc.startsWith("blob:")
-                          ? anhXemTruoc
-                          : layUrlAnh(anhXemTruoc)
-                      }
-                      alt="Ảnh sản phẩm"
-                    />
+                <div
+                  className="sp-khung-anh"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {urlAnhHienThi ? (
+                    <img src={urlAnhHienThi} alt="Ảnh sản phẩm" />
                   ) : (
-                    <div>
-                      <ImagePlus size={34} />
-                      <strong>Chọn ảnh chính</strong>
-                      <span>JPG, PNG, WEBP dưới 5MB</span>
+                    <div className="sp-khung-anh-trong">
+                      <ImagePlus size={28} strokeWidth={1.5} />
+                      <span>Nhấn để chọn ảnh</span>
                     </div>
                   )}
+                </div>
 
-                  <input type="file" accept="image/*" onChange={chonAnh} />
-                </label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={chonAnh}
+                />
 
-                <p className="ghi-chu-anh">
-                  Ảnh chính sẽ được upload sau khi lưu sản phẩm.
-                </p>
+                <div className="sp-hanh-dong-anh">
+                  <NutBam
+                    type="button"
+                    bienThe="phu"
+                    nho
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    Tải ảnh lên
+                  </NutBam>
+                  {anhXemTruoc && (
+                    <button
+                      type="button"
+                      className="sp-nut-xoa-anh"
+                      onClick={() => {
+                        setAnhXemTruoc("");
+                        setFileAnh(null);
+                      }}
+                    >
+                      <Trash2 size={13} /> Xóa
+                    </button>
+                  )}
+                </div>
 
-                <label className="khung-upload-album">
-                  <ImagePlus size={22} />
-                  <span>Chọn album ảnh</span>
+                <small className="sp-ghi-chu-anh">JPG, PNG, WEBP — tối đa 5MB</small>
+
+                <label className="sp-upload-album">
+                  <ImagePlus size={14} />
+                  <span>Thêm album ảnh</span>
                   <input
                     type="file"
                     accept="image/*"
                     multiple
+                    style={{ display: "none" }}
                     onChange={chonAlbum}
                   />
                 </label>
 
                 {albumXemTruoc.length > 0 && (
-                  <div className="album-preview-san-pham">
-                    {albumXemTruoc.map((src, index) => (
+                  <div className="sp-album-preview">
+                    {albumXemTruoc.map((src, i) => (
                       <img
-                        key={index}
+                        key={i}
                         src={src.startsWith("blob:") ? src : layUrlAnh(src)}
-                        alt={`Album ${index + 1}`}
+                        alt={`Album ${i + 1}`}
                       />
                     ))}
                   </div>
                 )}
-              </section>
+              </div>
 
-              <section className="card-form-san-pham">
-                <div className="tieu-de-card-form">
-                  <h4>Trạng thái hiển thị</h4>
-                  <p>Kiểm soát sản phẩm trên website.</p>
-                </div>
-
+              {/* Trạng thái */}
+              <div>
+                <div className="sp-section-label">Trạng thái</div>
                 <div className="dong-toggle-modal">
                   <button
                     type="button"
@@ -637,7 +774,6 @@ export default function SanPhamModal({
                   >
                     <span className="toggle-thumb"></span>
                   </button>
-
                   <div>
                     <strong>
                       {Number(form.soluongton || 0) <= 0
@@ -648,67 +784,62 @@ export default function SanPhamModal({
                     </strong>
                     <span>
                       {Number(form.soluongton || 0) <= 0
-                        ? "Sản phẩm hết tồn kho nên không thể bật hiển thị."
+                        ? "Hết tồn kho, không thể bật."
                         : form.trangthai === "hien_thi"
-                        ? "Sản phẩm sẽ hiển thị trên website bán hàng."
-                        : "Sản phẩm sẽ được ẩn khỏi website bán hàng."}
+                        ? "Hiển thị trên website."
+                        : "Ẩn khỏi website."}
                     </span>
                   </div>
                 </div>
-              </section>
+              </div>
 
-              <section className="card-form-san-pham">
-                <div className="tieu-de-card-form">
-                  <h4>Nhãn sản phẩm</h4>
-                  <p>Dùng để lọc, hiển thị và gợi ý trên website.</p>
-                </div>
-
-                <div className="luoi-check-san-pham layout-check-doc">
-                  <label>
+              {/* Nhãn sản phẩm */}
+              <div>
+                <div className="sp-section-label">Nhãn sản phẩm</div>
+                <div className="sp-nhan-list">
+                  <label className="sp-nhan-item">
                     <input
                       type="checkbox"
                       name="noibat"
                       checked={form.noibat}
                       onChange={capNhatForm}
                     />
-                    Sản phẩm nổi bật
+                    <span>Sản phẩm nổi bật</span>
                   </label>
-
-                  <label>
+                  <label className="sp-nhan-item">
                     <input
                       type="checkbox"
                       name="banchay"
                       checked={form.banchay}
                       onChange={capNhatForm}
                     />
-                    Sản phẩm bán chạy
+                    <span>Sản phẩm bán chạy</span>
                   </label>
-
-                  <label>
+                  <label className="sp-nhan-item">
                     <input
                       type="checkbox"
                       name="sanphammoi"
                       checked={form.sanphammoi}
                       onChange={capNhatForm}
                     />
-                    Sản phẩm mới
+                    <span>Sản phẩm mới</span>
                   </label>
-
-                  <label>
+                  <label className="sp-nhan-item">
                     <input
                       type="checkbox"
                       name="chodattruoc"
                       checked={form.chodattruoc}
                       onChange={capNhatForm}
                     />
-                    Cho phép đặt trước
+                    <span>Cho phép đặt trước</span>
                   </label>
                 </div>
-              </section>
-            </aside>
+              </div>
+            </div>
           </div>
 
-          <div className="chan-modal chan-modal-san-pham-moi">
+          {/* Footer */}
+          <div className="sp-modal-footer">
             <NutBam
               type="button"
               bienThe="phu"
@@ -717,7 +848,6 @@ export default function SanPhamModal({
             >
               Hủy
             </NutBam>
-
             <NutBam type="submit" dangXuLy={dangXuLy}>
               {cheDo === "them" ? "Thêm sản phẩm" : "Lưu thay đổi"}
             </NutBam>

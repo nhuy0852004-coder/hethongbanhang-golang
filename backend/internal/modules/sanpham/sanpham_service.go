@@ -11,11 +11,12 @@ import (
 )
 
 type SanPhamService struct {
-	repository *SanPhamRepository
+	repository  *SanPhamRepository
+	lichSuKho   *LichSuKhoRepository
 }
 
-func TaoSanPhamService(repository *SanPhamRepository) *SanPhamService {
-	return &SanPhamService{repository: repository}
+func TaoSanPhamService(repository *SanPhamRepository, lichSuKho *LichSuKhoRepository) *SanPhamService {
+	return &SanPhamService{repository: repository, lichSuKho: lichSuKho}
 }
 
 func (s *SanPhamService) DanhSach(loc LocSanPhamRequest) (*DanhSachSanPhamResponse, error) {
@@ -111,6 +112,10 @@ func (s *SanPhamService) Tao(request TaoSanPhamRequest) (*SanPham, error) {
 		return nil, loi
 	}
 
+	if request.SoLuongTon > 0 {
+		_ = s.lichSuKho.GhiLog(id, "khoi_tao", 0, request.SoLuongTon, "Khởi tạo sản phẩm mới", "")
+	}
+
 	return s.repository.ChiTiet(id)
 }
 
@@ -143,8 +148,19 @@ func (s *SanPhamService) CapNhat(id uint64, request CapNhatSanPhamRequest) (*San
 		request.SKU = skuTuDong
 	}
 
+	cuSanPham, _ := s.repository.ChiTiet(id)
+	soLuongCu := 0
+	if cuSanPham != nil {
+		soLuongCu = cuSanPham.SoLuongTon
+	}
+
 	if loi := s.repository.CapNhat(id, request, request.MaDinhDanh); loi != nil {
 		return nil, loi
+	}
+
+	if cuSanPham != nil && request.SoLuongTon != soLuongCu {
+		thayDoi := request.SoLuongTon - soLuongCu
+		_ = s.lichSuKho.GhiLog(id, "sua_tay", soLuongCu, thayDoi, "Cập nhật thủ công qua trang quản trị", "")
 	}
 
 	return s.repository.ChiTiet(id)
@@ -155,6 +171,47 @@ func (s *SanPhamService) Xoa(id uint64) error {
 		return errors.New("id sản phẩm không hợp lệ")
 	}
 	return s.repository.Xoa(id)
+}
+
+func (s *SanPhamService) KhoiPhuc(id uint64) (*SanPham, error) {
+	if id == 0 {
+		return nil, errors.New("id sản phẩm không hợp lệ")
+	}
+	if loi := s.repository.KhoiPhuc(id); loi != nil {
+		return nil, loi
+	}
+	return s.repository.ChiTiet(id)
+}
+
+func (s *SanPhamService) XoaVinhVien(id uint64) error {
+	if id == 0 {
+		return errors.New("id sản phẩm không hợp lệ")
+	}
+	return s.repository.XoaVinhVien(id)
+}
+
+func (s *SanPhamService) DanhSachDaXoa(timkiem string, trang int, gioihan int) (*DanhSachSanPhamResponse, error) {
+	if trang < 1 { trang = 1 }
+	if gioihan < 1 { gioihan = 10 }
+	if gioihan > 100 { gioihan = 100 }
+
+	danhSach, tongSoDong, loi := s.repository.DanhSachDaXoa(timkiem, trang, gioihan)
+	if loi != nil {
+		return nil, loi
+	}
+
+	tongSoTrang := int(math.Ceil(float64(tongSoDong) / float64(gioihan)))
+	if tongSoTrang < 1 { tongSoTrang = 1 }
+
+	return &DanhSachSanPhamResponse{
+		DanhSach: danhSach,
+		PhanTrang: PhanTrangResponse{
+			Trang:       trang,
+			GioiHan:     gioihan,
+			TongSoDong:  tongSoDong,
+			TongSoTrang: tongSoTrang,
+		},
+	}, nil
 }
 
 func (s *SanPhamService) CapNhatTrangThai(id uint64, request CapNhatTrangThaiSanPhamRequest) (*SanPham, error) {
@@ -264,6 +321,36 @@ func (s *SanPhamService) BulkCapNhatTrangThai(request BulkCapNhatTrangThaiSanPha
 	}
 
 	return response, nil
+}
+
+func (s *SanPhamService) LichSuKho(sanphamID uint64, trang int, gioihan int) (*DanhSachLichSuKhoResponse, error) {
+	if sanphamID == 0 {
+		return nil, errors.New("id sản phẩm không hợp lệ")
+	}
+	if trang < 1 {
+		trang = 1
+	}
+	if gioihan < 1 {
+		gioihan = 20
+	}
+	if gioihan > 100 {
+		gioihan = 100
+	}
+
+	danhSach, tongSoDong, loi := s.lichSuKho.DanhSach(sanphamID, trang, gioihan)
+	if loi != nil {
+		return nil, loi
+	}
+
+	return &DanhSachLichSuKhoResponse{
+		DanhSach: danhSach,
+		PhanTrang: PhanTrangResponse{
+			Trang:       trang,
+			GioiHan:     gioihan,
+			TongSoDong:  tongSoDong,
+			TongSoTrang: tinhTongSoTrang(tongSoDong, gioihan),
+		},
+	}, nil
 }
 
 func (s *SanPhamService) BulkXoa(request BulkXoaSanPhamRequest) (*BulkSanPhamKetQuaResponse, error) {

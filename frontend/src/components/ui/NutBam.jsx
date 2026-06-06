@@ -7,6 +7,7 @@ export default function NutBam({
   disabled = false,
   bienThe = "chinh",
   kichThuoc = "vua",
+  nho = false,
   icon: Icon,
   className,
   ...props

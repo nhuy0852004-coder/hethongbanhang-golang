@@ -3,7 +3,20 @@ package sanpham
 import (
 	"errors"
 	"strings"
+	"time"
 )
+
+type BienTheSanPhamRequest struct {
+	SKU              string  `json:"sku"`
+	TenThuocTinh1    string  `json:"tenthuoctinh1"`
+	GiaTriThuocTinh1 string  `json:"giatrithuoctinh1"`
+	TenThuocTinh2    string  `json:"tenthuoctinh2"`
+	GiaTriThuocTinh2 string  `json:"giatrithuoctinh2"`
+	GiaBan           *uint64 `json:"giaban"`
+	SoLuongTon       int     `json:"soluongton"`
+	HinhAnh          string  `json:"hinhanh"`
+}
+
 
 type TaoSanPhamRequest struct {
 	MaDinhDanh    string   `json:"madinhdanh"`
@@ -17,46 +30,52 @@ type TaoSanPhamRequest struct {
 	DonViTinh     string   `json:"donvitinh"`
 	GiaNhap       uint64   `json:"gianhap"`
 	GiaBan        uint64   `json:"giaban"`
-	GiaKhuyenMai  *uint64  `json:"giakhuyenmai"`
-	SoLuongTon    int      `json:"soluongton"`
-	NguongCanhBao int      `json:"nguongcanhbao"`
-	TrongLuong    *float64 `json:"trongluong"`
-	KichThuoc     string   `json:"kichthuoc"`
-	NoiBat        bool     `json:"noibat"`
-	BanChay       bool     `json:"banchay"`
-	SanPhamMoi    bool     `json:"sanphammoi"`
-	ChoDatTruoc   bool     `json:"chodattruoc"`
-	ThuocTinh     string   `json:"thuoctinh"`
-	BienThe       string   `json:"bienthe"`
-	TrangThai     string   `json:"trangthai"`
-	DanhMucID     *uint64  `json:"danhmuc_id"`
+	GiaKhuyenMai  *uint64    `json:"giakhuyenmai"`
+	KmBatDau      *time.Time `json:"km_bat_dau"`
+	KmKetThuc     *time.Time `json:"km_ket_thuc"`
+	SoLuongTon    int        `json:"soluongton"`
+	NguongCanhBao int        `json:"nguongcanhbao"`
+	TrongLuong    *float64   `json:"trongluong"`
+	KichThuoc     string     `json:"kichthuoc"`
+	NoiBat        bool       `json:"noibat"`
+	BanChay       bool       `json:"banchay"`
+	SanPhamMoi    bool       `json:"sanphammoi"`
+	ChoDatTruoc   bool       `json:"chodattruoc"`
+	ThuocTinh     string     `json:"thuoctinh"`
+	BienThe       string     `json:"bienthe"`
+	TrangThai     string     `json:"trangthai"`
+	DanhMucID     *uint64    `json:"danhmuc_id"`
+	DanhSachBienThe []BienTheSanPhamRequest `json:"danhsachbienthe"`
 }
 
 type CapNhatSanPhamRequest struct {
-	MaDinhDanh    string   `json:"madinhdanh"`
-	SKU           string   `json:"sku"`
-	Barcode       string   `json:"barcode"`
-	TenSanPham    string   `json:"tensanpham"`
-	MoTa          string   `json:"mota"`
-	MoTaNgan      string   `json:"motangan"`
-	MoTaChiTiet   string   `json:"motachitiet"`
-	ThuongHieu    string   `json:"thuonghieu"`
-	DonViTinh     string   `json:"donvitinh"`
-	GiaNhap       uint64   `json:"gianhap"`
-	GiaBan        uint64   `json:"giaban"`
-	GiaKhuyenMai  *uint64  `json:"giakhuyenmai"`
-	SoLuongTon    int      `json:"soluongton"`
-	NguongCanhBao int      `json:"nguongcanhbao"`
-	TrongLuong    *float64 `json:"trongluong"`
-	KichThuoc     string   `json:"kichthuoc"`
-	NoiBat        bool     `json:"noibat"`
-	BanChay       bool     `json:"banchay"`
-	SanPhamMoi    bool     `json:"sanphammoi"`
-	ChoDatTruoc   bool     `json:"chodattruoc"`
-	ThuocTinh     string   `json:"thuoctinh"`
-	BienThe       string   `json:"bienthe"`
-	TrangThai     string   `json:"trangthai"`
-	DanhMucID     *uint64  `json:"danhmuc_id"`
+	MaDinhDanh    string     `json:"madinhdanh"`
+	SKU           string     `json:"sku"`
+	Barcode       string     `json:"barcode"`
+	TenSanPham    string     `json:"tensanpham"`
+	MoTa          string     `json:"mota"`
+	MoTaNgan      string     `json:"motangan"`
+	MoTaChiTiet   string     `json:"motachitiet"`
+	ThuongHieu    string     `json:"thuonghieu"`
+	DonViTinh     string     `json:"donvitinh"`
+	GiaNhap       uint64     `json:"gianhap"`
+	GiaBan        uint64     `json:"giaban"`
+	GiaKhuyenMai  *uint64    `json:"giakhuyenmai"`
+	KmBatDau      *time.Time `json:"km_bat_dau"`
+	KmKetThuc     *time.Time `json:"km_ket_thuc"`
+	SoLuongTon    int        `json:"soluongton"`
+	NguongCanhBao int        `json:"nguongcanhbao"`
+	TrongLuong    *float64   `json:"trongluong"`
+	KichThuoc     string     `json:"kichthuoc"`
+	NoiBat        bool       `json:"noibat"`
+	BanChay       bool       `json:"banchay"`
+	SanPhamMoi    bool       `json:"sanphammoi"`
+	ChoDatTruoc   bool       `json:"chodattruoc"`
+	ThuocTinh     string     `json:"thuoctinh"`
+	BienThe       string     `json:"bienthe"`
+	TrangThai     string     `json:"trangthai"`
+	DanhMucID     *uint64    `json:"danhmuc_id"`
+	DanhSachBienThe []BienTheSanPhamRequest `json:"danhsachbienthe"`
 }
 
 type CapNhatTrangThaiSanPhamRequest struct {

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import DauTrangWebsite from "./DauTrangWebsite";
 import ChanTrangWebsite from "./ChanTrangWebsite";
+import ThanhTienTrinh from "../../components/ui/ThanhTienTrinh";
 import useCaiDatStore from "../../stores/caidatStore";
 
 export default function BocCucWebsite() {
@@ -13,6 +14,7 @@ export default function BocCucWebsite() {
 
   return (
     <div className="bo-cuc-website">
+      <ThanhTienTrinh />
       {/* Thanh thông báo vàng trên cùng */}
       <div className="mu-announcement-bar">
         <span className="mu-announcement-text">
